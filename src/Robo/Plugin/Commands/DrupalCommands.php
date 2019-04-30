@@ -100,7 +100,7 @@ class DrupalCommands extends DockworkerApplicationCommands {
    * @hook post-command dockworker:update
    */
   public function getDockworkerDrupalUpdates() {
-    $this->say('Checking for dockworker updates...');
+    $this->say('Checking for updates to unb-libraries/dockworker-drupal...');
     $this->taskExec('composer')
       ->dir($this->repoRoot)
       ->arg('update')
