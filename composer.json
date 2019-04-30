@@ -1,0 +1,20 @@
+{
+  "name": "unb-libraries/dockworker-drupal",
+  "description": "Services for wiring up drupal containers for development",
+  "type": "library",
+  "require": {
+    "unb-libraries/dockworker": "^2.0.0"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "UNB Libraries",
+      "email": "libsupport@unb.ca"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "DockWorker\\": "src"
+    }
+  }
+}
