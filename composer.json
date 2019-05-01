@@ -3,6 +3,8 @@
   "description": "Services for wiring up drupal containers for development",
   "type": "library",
   "require": {
+    "drupal/coder": "^8.2.12",
+    "boedah/robo-drush": "^3.1.1",
     "unb-libraries/dockworker": "^2.0.0"
   },
   "license": "MIT",
