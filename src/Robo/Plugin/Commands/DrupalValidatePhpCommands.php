@@ -2,8 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\DrupalCodeTrait;
-use Dockworker\PhpCsValidateTrait;
+use Dockworker\PhpValidateTrait;
 use Dockworker\RecursivePathFileOperatorTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
 
@@ -12,8 +11,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
  */
 class DrupalValidatePhpCommands extends DockworkerApplicationCommands {
 
-  use DrupalCodeTrait;
-  use PhpCsValidateTrait;
+  use PhpValidateTrait;
   use RecursivePathFileOperatorTrait;
 
   const INFO_CREATE_PHPCS_SYMLINK = 'Created symlink for Drupal coding standard to phpcs directory';
@@ -47,15 +45,15 @@ class DrupalValidatePhpCommands extends DockworkerApplicationCommands {
   }
 
   /**
-   * Validate PHP written for Drupal.
+   * Validate PHP intended for Drupal.
    *
    * @param string[] $files
    *   The files to validate.
    *
-   * @command validate:php
+   * @command validate:php:drupal
    */
-  public function validateDrupalFiles(array $files) {
-    return $this->validate(
+  public function validateDrupalPhpFiles(array $files) {
+    return $this->validatePhp(
       $files,
       self::PHPCS_STANDARDS
     );
@@ -64,7 +62,7 @@ class DrupalValidatePhpCommands extends DockworkerApplicationCommands {
   /**
    * Validate all PHP inside the Drupal custom path.
    *
-   * @command validate:php:custom
+   * @command validate:drupal:custom:php
    * @aliases validate-custom-php
    */
   public function validateCustom() {
@@ -72,7 +70,7 @@ class DrupalValidatePhpCommands extends DockworkerApplicationCommands {
       ["{$this->repoRoot}/custom"],
       self::PHPCS_EXTENSIONS
     );
-    return $this->setRunOtherCommand("drupal:validate:php {$this->getRecursivePathStringFileList()}");
+    return $this->setRunOtherCommand("validate:php:drupal {$this->getRecursivePathStringFileList()}");
   }
 
 }
