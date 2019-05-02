@@ -7,7 +7,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
 use Dockworker\YamlValidateTrait;
 
 /**
- * Defines commands to validate PHP .
+ * Defines commands to validate TAML.
  */
 class DrupalValidateYamlCommands extends DockworkerApplicationCommands {
 
@@ -20,7 +20,7 @@ class DrupalValidateYamlCommands extends DockworkerApplicationCommands {
   ];
 
   /**
-   * Validate YAML intended for Drupal.
+   * Validate YAML files against Drupal coding standards.
    *
    * @param string[] $files
    *   The files to validate.

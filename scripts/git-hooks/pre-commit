@@ -44,7 +44,7 @@ if [ $SNIFF_STATUS -ne 0 ]; then
 fi
 
 echo "Linting YML files..."
-${ROOT_DIR}/vendor/bin/dockworker validate:yaml:files "$LIST"
+${ROOT_DIR}/vendor/bin/dockworker validate:yaml:drupal "$LIST"
 SNIFF_STATUS=$?
 if [ $SNIFF_STATUS -ne 0 ]; then
   exec < /dev/tty
@@ -59,7 +59,7 @@ fi
 if [[ $LIST == *".twig"* ]];
 then
   echo "Linting custom twig files..."
-  ${ROOT_DIR}/vendor/bin/dockworker validate:twig:files "$LIST" || exit 1;
+  ${ROOT_DIR}/vendor/bin/dockworker validate:twig:drupal "$LIST" || exit 1;
 fi
 
 if [[ $LIST == *"composer."* ]];

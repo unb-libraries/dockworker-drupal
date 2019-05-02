@@ -45,7 +45,7 @@ class DrupalThemeCommands extends DockworkerApplicationCommands {
     if (file_exists($path)) {
       $this->path = $path;
       $this->setPermissionsThemeDist();
-      $this->setCompiler($this->repoRoot . '/vendor/bin/pscss');
+      $this->setScssCompiler($this->repoRoot . '/vendor/bin/pscss');
       $this->buildThemeScss();
       $this->buildImageAssets();
       $this->buildJsAssets();

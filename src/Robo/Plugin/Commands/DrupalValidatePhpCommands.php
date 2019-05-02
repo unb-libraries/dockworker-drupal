@@ -30,11 +30,11 @@ class DrupalValidatePhpCommands extends DockworkerApplicationCommands {
   /**
    * Set the Drupal coding symlink for phpcs.
    *
-   * @hook pre-command validate:php
+   * @hook pre-command validate:php:drupal
    */
   public function setPhpCsCoderSymlink() {
     $target = $this->repoRoot . '/vendor/drupal/coder/coder_sniffer/Drupal';
-    $link = $this->repoRoot . '/vendor/squizlabs/php_codesniffer/CodeSniffer/Standards/Drupal';
+    $link = $this->repoRoot . '/vendor/squizlabs/php_codesniffer/src/Standards/Drupal';
     if (!file_exists($link)) {
       symlink(
         $target,
@@ -45,7 +45,7 @@ class DrupalValidatePhpCommands extends DockworkerApplicationCommands {
   }
 
   /**
-   * Validate PHP intended for Drupal.
+   * Validate PHP files against Drupal coding standards.
    *
    * @param string[] $files
    *   The files to validate.
