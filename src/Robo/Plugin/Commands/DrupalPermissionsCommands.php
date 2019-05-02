@@ -12,7 +12,7 @@ class DrupalPermissionsCommands extends ApplicationPermissionsCommands {
   /**
    * Fix repository file permissions. Requires sudo.
    *
-   * @hook post-command application:permissions:fix
+   * @hook post-command permissions:fix
    */
   public function fixPermissions() {
     $paths = [

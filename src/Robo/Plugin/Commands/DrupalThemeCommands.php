@@ -25,7 +25,7 @@ class DrupalThemeCommands extends DockworkerApplicationCommands {
   /**
    * Compile Drupal themes before building the application containers.
    *
-   * @hook post-command application:theme:build-all
+   * @hook post-command theme:build-all
    * @throws \Exception
    */
   public function setBuildAllDrupalThemes() {

@@ -32,7 +32,7 @@ class DrupalValidatePhpCommands extends DockworkerApplicationCommands {
   /**
    * Set the Drupal coding symlink for phpcs.
    *
-   * @hook pre-command drupal:validate:php
+   * @hook pre-command validate:php
    */
   public function setPhpCsCoderSymlink() {
     $target = $this->repoRoot . '/vendor/drupal/coder/coder_sniffer/Drupal';
@@ -52,7 +52,7 @@ class DrupalValidatePhpCommands extends DockworkerApplicationCommands {
    * @param string[] $files
    *   The files to validate.
    *
-   * @command drupal:validate:php
+   * @command validate:php
    */
   public function validateDrupalFiles(array $files) {
     return $this->validate(
@@ -62,9 +62,10 @@ class DrupalValidatePhpCommands extends DockworkerApplicationCommands {
   }
 
   /**
-   * Validate all PHP inside the repository's custom directory.
+   * Validate all PHP inside the Drupal custom path.
    *
-   * @command drupal:validate:custom:php
+   * @command validate:php:custom
+   * @aliases validate-custom-php
    */
   public function validateCustom() {
     $this->addRecursivePathFilesFromPath(

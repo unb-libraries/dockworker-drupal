@@ -18,5 +18,10 @@
     "psr-4": {
       "Dockworker\\": "src"
     }
+  },
+  "scripts": {
+    "post-update-cmd": [
+      "vendor/bin/dockworker git:setup-hooks"
+    ]
   }
 }

@@ -12,7 +12,7 @@ class DrupalTestCommands extends DockworkerApplicationCommands {
   /**
    * Run all tests defined for the Drupal instance.
    *
-   * @hook post-command application:test-all
+   * @hook post-command test:all
    */
   public function runDrupalTests() {
     $this->setRunOtherCommand('drupal:test:behat');
@@ -21,7 +21,7 @@ class DrupalTestCommands extends DockworkerApplicationCommands {
   /**
    * Run the Behat tests defined for the Drupal instance.
    *
-   * @command drupal:test:behat
+   * @command test:behat
    * @aliases behat
    */
   public function runDrupalBehatTests() {
