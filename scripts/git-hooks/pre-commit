@@ -31,7 +31,7 @@ fi
 fi
 
 echo "Linting staged PHP files..."
-${ROOT_DIR}/vendor/bin/dockworker drupal:validate:php "$LIST"
+${ROOT_DIR}/vendor/bin/dockworker validate:php:drupal "$LIST"
 SNIFF_STATUS=$?
 if [ $SNIFF_STATUS -ne 0 ]; then
   exec < /dev/tty
