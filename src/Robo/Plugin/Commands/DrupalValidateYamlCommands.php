@@ -26,10 +26,12 @@ class DrupalValidateYamlCommands extends DockworkerApplicationCommands {
    *   The files to validate.
    *
    * @command validate:yaml:drupal
+   *
+   * @return mixed
    */
   public function validateDrupalYamlFiles(array $files) {
     return $this->validateYaml(
-      $files
+      self::filterArrayFilesByExtension($files, self::YAML_EXTENSIONS)
     );
   }
 

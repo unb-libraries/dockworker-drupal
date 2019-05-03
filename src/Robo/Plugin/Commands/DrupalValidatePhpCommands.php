@@ -51,10 +51,12 @@ class DrupalValidatePhpCommands extends DockworkerApplicationCommands {
    *   The files to validate.
    *
    * @command validate:php:drupal
+   *
+   * @return mixed
    */
   public function validateDrupalPhpFiles(array $files) {
     return $this->validatePhp(
-      $files,
+      self::filterArrayFilesByExtension($files, self::PHPCS_EXTENSIONS),
       self::PHPCS_STANDARDS
     );
   }
