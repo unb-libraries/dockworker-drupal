@@ -79,7 +79,7 @@ class DrupalThemeCommands extends DockworkerApplicationCommands {
       ->name('/^[^_].*\.scss$/');
     foreach ($finder as $file) {
       $source_file = $file->getRealPath();
-      $target_file = str_replace(['/src/scss/', '.scss'], ['/dist/', '.css'], $source_file);
+      $target_file = str_replace(['/src/scss/', '.scss'], ['/dist/css/', '.css'], $source_file);
       $this->compileScss($source_file, $target_file, $this->repoRoot);
     }
   }
