@@ -15,7 +15,7 @@ class DrupalTestCommands extends DockworkerApplicationCommands {
    * @hook post-command test:all
    */
   public function runDrupalTests() {
-    $this->setRunOtherCommand('drupal:test:behat');
+    $this->setRunOtherCommand('test:behat');
   }
 
   /**
