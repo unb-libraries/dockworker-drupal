@@ -60,22 +60,12 @@ class DrupalThemeCommands extends DockworkerApplicationCommands {
     $this->taskExecStack()
       ->stopOnFail()
       ->dir($this->path)
-      ->exec("mkdir -p dist")
+      ->exec("mkdir -p dist/css")
       ->run();
     $this->taskExecStack()
       ->stopOnFail()
       ->dir($this->path)
       ->exec("chmod -R g+w dist")
-      ->run();
-    $this->taskExecStack()
-      ->stopOnFail()
-      ->dir($this->path)
-      ->exec("mkdir -p css")
-      ->run();
-    $this->taskExecStack()
-      ->stopOnFail()
-      ->dir($this->path)
-      ->exec("chmod -R g+w css")
       ->run();
   }
 
