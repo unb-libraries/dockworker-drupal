@@ -23,8 +23,6 @@ class DrupalCustomEntityCommands extends DrupalCodeCommands {
 
   /**
    * Set the custom entities defined within the the current repository.
-   *
-   * @hook post-init
    */
   public function setCustomEntities() {
     $entities = [];
