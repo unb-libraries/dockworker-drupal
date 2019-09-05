@@ -61,6 +61,8 @@ class DrupalSyncCommands extends DockworkerApplicationCommands {
    * @throws \Exception
    */
   public function syncDrupalDatabaseFileSystemFromRemote($env, $opts = ['no-database' => FALSE, 'no-files' => FALSE]) {
+    $this->getapplicationRunning();
+
     $this->io()->title('Deployed Data Synchronization');
 
     $this->kubernetesPodNamespace = $env;
