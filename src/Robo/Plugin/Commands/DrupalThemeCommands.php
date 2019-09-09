@@ -65,7 +65,7 @@ class DrupalThemeCommands extends DockworkerApplicationCommands {
     $this->taskExecStack()
       ->stopOnFail()
       ->dir($this->path)
-      ->exec("chmod -R g+w dist")
+      ->exec("sudo chmod -R g+w dist")
       ->run();
   }
 
