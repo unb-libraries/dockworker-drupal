@@ -2,12 +2,12 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
  * Defines core Drupal instance operations.
  */
-class DrupalCommands extends DockworkerApplicationCommands {
+class DrupalLocalCommands extends DockworkerLocalCommands {
 
   use \Boedah\Robo\Task\Drush\loadTasks;
 
@@ -28,7 +28,7 @@ class DrupalCommands extends DockworkerApplicationCommands {
    *   The command to run.
    */
   private function runDrush($command) {
-    $this->getApplicationRunning();
+    $this->getLocalRunning();
     $this->taskDockerExec($this->instanceName)
       ->interactive()
       ->exec(
@@ -60,7 +60,7 @@ class DrupalCommands extends DockworkerApplicationCommands {
    * @aliases uli
    */
   public function uli($user_name = NULL) {
-    $this->getApplicationRunning();
+    $this->getLocalRunning();
     if (empty($user_name)) {
       $this->taskDockerExec($this->instanceName)
         ->interactive()
@@ -86,7 +86,7 @@ class DrupalCommands extends DockworkerApplicationCommands {
    * @aliases write-config
    */
   public function writeConfig() {
-    $this->getApplicationRunning();
+    $this->getLocalRunning();
     $this->taskDockerExec($this->instanceName)
       ->interactive()
       ->exec('/scripts/configExport.sh')
@@ -107,6 +107,38 @@ class DrupalCommands extends DockworkerApplicationCommands {
       ->arg('unb-libraries/dockworker-drupal')
       ->silent(TRUE)
       ->run();
+  }
+
+  /**
+   * Check the local instance logs for errors.
+   *
+   * @param array $opts
+   *   An array of options to pass to the builder.
+   *
+   * @hook replace-command local:logs:check
+   * @throws \Exception
+   * @return \Robo\Result
+   *   The result of the command.
+   */
+  public function localDrupalLogsCheck(array $opts = ['all' => FALSE]) {
+    $exceptions = [
+      '[notice] Synchronized extensions' => 'Modules that have "error" in their names are not errors',
+    ];
+    $this->logErrorExceptions = array_merge($this->logErrorExceptions, $exceptions);
+    return parent::localLogsCheck($opts);
+  }
+
+  /**
+   * Build the instance from scratch and run tests.
+   *
+   * @hook replace-command local:build-test
+   * @throws \Exception
+   */
+  public function buildAndTestDrupal() {
+    $this->_exec('docker-compose kill');
+    $this->setRunOtherCommand('local:rm');
+    $this->setRunOtherCommand('local:start --no-cache --no-tail-logs');
+    $this->setRunOtherCommand('test:all');
   }
 
 }

@@ -3,13 +3,13 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\RecursivePathFileOperatorTrait;
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Dockworker\TwigValidateTrait;
 
 /**
  * Defines commands to validate Twig.
  */
-class DrupalValidateTwigCommands extends DockworkerApplicationCommands {
+class DrupalValidateTwigCommands extends DockworkerLocalCommands {
 
   use RecursivePathFileOperatorTrait;
   use TwigValidateTrait;
@@ -25,6 +25,7 @@ class DrupalValidateTwigCommands extends DockworkerApplicationCommands {
    *   The files to validate.
    *
    * @command validate:twig:drupal
+   * @throws \Exception
    */
   public function validateDrupalTwigFiles(array $files) {
     return $this->validateTwig(

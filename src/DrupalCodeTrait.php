@@ -3,7 +3,7 @@
 namespace Dockworker;
 
 use Symfony\Component\Finder\Finder;
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
  * Defines trait for working with drupal modules and themes.
@@ -35,7 +35,6 @@ trait DrupalCodeTrait {
 
     foreach ($projects as $project) {
       $type = explode('/', $project->getRelativePath())[0];
-      $name = $project->getBasename('.info.yml');
       if ($type == 'modules') {
         $this->drupalModules[] = $project;
       }

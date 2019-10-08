@@ -2,12 +2,12 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
  * Defines drupal instance testing commands.
  */
-class DrupalTestCommands extends DockworkerApplicationCommands {
+class DrupalTestCommands extends DockworkerLocalCommands {
 
   /**
    * Run all tests defined for the Drupal instance.
@@ -25,7 +25,7 @@ class DrupalTestCommands extends DockworkerApplicationCommands {
    * @aliases behat
    */
   public function runDrupalBehatTests() {
-    $this->getApplicationRunning();
+    $this->getLocalRunning();
     return $this->taskDockerExec($this->instanceName)
       ->interactive()
       ->exec('/scripts/runTests.sh')

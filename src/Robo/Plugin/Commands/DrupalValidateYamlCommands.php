@@ -3,13 +3,13 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\RecursivePathFileOperatorTrait;
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Dockworker\YamlValidateTrait;
 
 /**
  * Defines commands to validate TAML.
  */
-class DrupalValidateYamlCommands extends DockworkerApplicationCommands {
+class DrupalValidateYamlCommands extends DockworkerLocalCommands {
 
   use RecursivePathFileOperatorTrait;
   use YamlValidateTrait;

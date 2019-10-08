@@ -2,12 +2,12 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
  * Defines commands to audit custom Drupal code for a 9 upgrade.
  */
-class DrupalUpgrade9AuditCommands extends DockworkerApplicationCommands {
+class DrupalUpgrade9AuditCommands extends DockworkerLocalCommands {
 
   /**
    * Audit all code in modules/themes in anticipation of a Drupal 9 upgrade.

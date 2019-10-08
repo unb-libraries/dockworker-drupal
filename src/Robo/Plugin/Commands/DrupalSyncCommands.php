@@ -4,12 +4,12 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DrupalKubernetesPodTrait;
 use Dockworker\DrupalLocalDockerContainerTrait;
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
  * Commands to synchronize remote Drupal data into the dockworker instance.
  */
-class DrupalSyncCommands extends DockworkerApplicationCommands {
+class DrupalSyncCommands extends DockworkerLocalCommands {
 
   use DrupalKubernetesPodTrait;
   use DrupalLocalDockerContainerTrait;
@@ -56,12 +56,12 @@ class DrupalSyncCommands extends DockworkerApplicationCommands {
    * @option bool $no-files
    *   Do not synchronize the drupal filesystem.
    *
-   * @command drupal:remote-sync
+   * @command local:content:remote-sync
    *
    * @throws \Exception
    */
   public function syncDrupalDatabaseFileSystemFromRemote($env, $opts = ['no-database' => FALSE, 'no-files' => FALSE]) {
-    $this->getapplicationRunning();
+    $this->getLocalRunning();
 
     $this->io()->title('Deployed Data Synchronization');
 

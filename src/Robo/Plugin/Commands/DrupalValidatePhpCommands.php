@@ -4,12 +4,12 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\PhpValidateTrait;
 use Dockworker\RecursivePathFileOperatorTrait;
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
  * Defines commands to validate PHP .
  */
-class DrupalValidatePhpCommands extends DockworkerApplicationCommands {
+class DrupalValidatePhpCommands extends DockworkerLocalCommands {
 
   use PhpValidateTrait;
   use RecursivePathFileOperatorTrait;

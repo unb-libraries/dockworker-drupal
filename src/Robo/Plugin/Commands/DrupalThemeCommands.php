@@ -3,14 +3,14 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DrupalCodeTrait;
-use Dockworker\Robo\Plugin\Commands\DockworkerApplicationCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Dockworker\ScssCompileTrait;
 use Symfony\Component\Finder\Finder;
 
 /**
  * Defines commands used to build Drupal themes.
  */
-class DrupalThemeCommands extends DockworkerApplicationCommands {
+class DrupalThemeCommands extends DockworkerLocalCommands {
 
   use DrupalCodeTrait;
   use ScssCompileTrait;
