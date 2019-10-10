@@ -8,21 +8,33 @@ use PhpParser\ParserFactory;
 use Symfony\Component\Finder\Finder;
 
 /**
- * Defines commands in the DrupalCustomEntityCommand namespace.
+ * Defines the commands used to interact with Drupal Custom Entity files.
  */
 class DrupalCustomEntityCommands extends DrupalCodeCommands {
 
   /**
    * The custom entities to operate on.
    *
-   * @var array
+   * @var string[]
    */
   protected $drupalCustomEntities = [];
+
+  /**
+   * The current chosen custom entity class.
+   *
+   * @var string
+   */
   protected $drupalChosenEntityClass = NULL;
+
+  /**
+   * The current chosen custom module.
+   *
+   * @var string[]
+   */
   protected $drupalChosenModule = NULL;
 
   /**
-   * Set the custom entities defined within the the current repository.
+   * Sets the custom entities defined within the the current repository.
    */
   public function setCustomEntities() {
     $entities = [];
@@ -46,7 +58,10 @@ class DrupalCustomEntityCommands extends DrupalCodeCommands {
   }
 
   /**
-   * Set the selected custom entity.
+   * Sets the selected custom entity.
+   *
+   * @param string[] $custom_entities
+   *   A list of custom entities to set.
    */
   private function setSelectedCustomEntities($custom_entities) {
     $choices = [];

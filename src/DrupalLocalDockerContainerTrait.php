@@ -5,22 +5,24 @@ namespace Dockworker;
 use Dockworker\LocalDockerContainerTrait;
 
 /**
- * Defines trait for interacting with local docker Drupal containers.
+ * Provides methods to interact with Drush in a local Drupal application.
  */
 trait DrupalLocalDockerContainerTrait {
 
   use LocalDockerContainerTrait;
 
   /**
-   * Execute a drush command in a local docker container.
+   * Executes a drush command in a local Drupal application.
    *
    * @param string $name
    *   The name of the container to execute the command in.
-   * @param $command
+   * @param string $command
    *   The drush command to execute.
    *
-   * @return mixed
-   * @throws \Exception
+   * @throws \Dockworker\DockworkerException
+   *
+   * @return string
+   *   The STDOUT of the Drush command.
    */
   protected function localDockerContainerDrushCommand($name, $command) {
     return $this->localDockerContainerExecCommand(

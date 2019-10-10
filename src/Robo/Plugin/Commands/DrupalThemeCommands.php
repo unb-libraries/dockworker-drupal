@@ -8,7 +8,7 @@ use Dockworker\ScssCompileTrait;
 use Symfony\Component\Finder\Finder;
 
 /**
- * Defines commands used to build Drupal themes.
+ * Defines commands used to build themes for the local Drupal application.
  */
 class DrupalThemeCommands extends DockworkerLocalCommands {
 
@@ -23,10 +23,9 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
   private $path = NULL;
 
   /**
-   * Compile Drupal themes before building the application containers.
+   * Compiles Drupal themes.
    *
    * @hook post-command theme:build-all
-   * @throws \Exception
    */
   public function setBuildAllDrupalThemes() {
     $this->getCustomModulesThemes();
@@ -36,7 +35,7 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Build a Drupal theme's assets.
+   * Builds a Drupal theme's assets.
    *
    * @param string $path
    *   The absolute path of the theme to build.
@@ -53,7 +52,9 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
   }
 
   /*
-   * Ensure the theme's dist directory exists, and is writable.
+   * Ensures the current theme's dist directory exists, and is writable.
+   *
+   * @throws \Robo\Exception\TaskException
    */
   private function setPermissionsThemeDist() {
     $this->say("Setting Permissions of dist in $this->path");
@@ -70,7 +71,7 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
   }
 
   /*
-   * Build the theme's SCSS files into CSS.
+   * Compiles the current theme's SCSS files into CSS.
    */
   private function buildThemeScss() {
     $finder = new Finder();
@@ -81,22 +82,21 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
       $source_file = $file->getRealPath();
       $target_file = str_replace(['/src/scss/', '.scss'], ['/dist/css/', '.css'], $source_file);
       $this->say("Compiling $source_file to $target_file...");
-      $this->compileScss($source_file, $target_file, $this->repoRoot);
+      $this->compileScss($source_file, $target_file);
     }
   }
 
   /*
-   * Build image assets.
+   * Builds the current theme's image assets.
    *
    * @TODO Optimize images into a standard instead of just copying them.
    */
   private function buildImageAssets() {
     $this->copyThemeAssets('img', 'Image');
-
   }
 
   /*
-   * Build Javascript assets.
+   * Builds the current theme's Javascript assets.
    *
    * @TODO Minify javascript files instead of just copying them.
    */
@@ -105,12 +105,14 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
   }
 
   /*
-   * Copy asset files unmodified from src to dist.
+   * Copies asset files unmodified from src to dist.
    *
    * @param string $asset_dir
    *   The directory to copy.
    * @param string $type
    *   A label to use when identifying the directory contents.
+   *
+   * @throws \Robo\Exception\TaskException
    */
   private function copyThemeAssets($asset_dir, $type) {
     $src_path = "$this->path/src/$asset_dir";

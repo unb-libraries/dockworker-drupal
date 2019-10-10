@@ -6,26 +6,26 @@ use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 use Symfony\Component\Finder\Finder;
 
 /**
- * Defines commands in the DrupalCodeCommands namespace.
+ * Defines the commands used to interact with Drupal theme and module files.
  */
 class DrupalCodeCommands extends DockworkerCommands {
 
   /**
    * The modules within the current repository.
    *
-   * @var array
+   * @var string[]
    */
   protected $drupalModules = [];
 
   /**
    * The themes within the current repository.
    *
-   * @var array
+   * @var string[]
    */
   protected $drupalThemes = [];
 
   /**
-   * Set the current custom modules and themes in the current repository.
+   * Sets up the custom modules and themes in the current repository.
    *
    * @hook init
    */

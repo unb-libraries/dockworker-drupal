@@ -2,11 +2,11 @@
 
 namespace Dockworker;
 
-use Symfony\Component\Finder\Finder;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
+use Symfony\Component\Finder\Finder;
 
 /**
- * Defines trait for working with drupal modules and themes.
+ * Provides methods to interact with a Drupal codebase.
  */
 trait DrupalCodeTrait {
 
@@ -25,7 +25,7 @@ trait DrupalCodeTrait {
   protected $drupalThemes = [];
 
   /**
-   * Set the current custom modules and themes in the current repository.
+   * Sets the current custom modules and themes in the current repository.
    *
    * @hook init
    */

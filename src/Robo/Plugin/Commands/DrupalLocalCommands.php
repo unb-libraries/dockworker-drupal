@@ -2,17 +2,18 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Boedah\Robo\Task\Drush\loadTasks;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
- * Defines core Drupal instance operations.
+ * Defines the commands used to interact with a local Drupal application.
  */
 class DrupalLocalCommands extends DockworkerLocalCommands {
 
-  use \Boedah\Robo\Task\Drush\loadTasks;
+  use loadTasks;
 
   /**
-   * Rebuild the cache in the Drupal container.
+   * Rebuilds the cache in the local Drupal application.
    *
    * @command drupal:cr
    * @aliases cr
@@ -22,10 +23,12 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Run a drush command in the Drupal container.
+   * Executes a drush command in the local Drupal application.
    *
    * @param string $command
    *   The command to run.
+   *
+   * @throws \Dockworker\DockworkerException
    */
   private function runDrush($command) {
     $this->getLocalRunning();
@@ -41,7 +44,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Perform any required entity updates in the instance.
+   * Performs any required entity updates in the instance.
    *
    * @command drupal:entup
    * @aliases entup
@@ -51,13 +54,14 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Get a ULI from the Drupal container.
+   * Generates a ULI link for the local Drupal application.
    *
    * @param string $user_name
    *   The user account name to generate the ULI for. Defaults to user 0.
    *
    * @command drupal:uli
    * @aliases uli
+   * @throws \Dockworker\DockworkerException
    */
   public function uli($user_name = NULL) {
     $this->getLocalRunning();
@@ -80,10 +84,11 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Write out the configuration from the instance.
+   * Exports the configuration local Drupal application.
    *
    * @command drupal:write-config
    * @aliases write-config
+   * @throws \Dockworker\DockworkerException
    */
   public function writeConfig() {
     $this->getLocalRunning();
@@ -95,7 +100,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Self-update.
+   * Self-updates dockworker.
    *
    * @hook post-command dockworker:update
    */
@@ -110,13 +115,14 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Check the local instance logs for errors.
+   * Checks the local Drupal application logs for errors.
    *
-   * @param array $opts
+   * @param string[] $opts
    *   An array of options to pass to the builder.
    *
    * @hook replace-command local:logs:check
-   * @throws \Exception
+   * @throws \Dockworker\DockworkerException
+   *
    * @return \Robo\Result
    *   The result of the command.
    */
@@ -129,10 +135,10 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Build the instance from scratch and run tests.
+   * Builds the local Drupal application from scratch and runs all tests.
    *
    * @hook replace-command local:build-test
-   * @throws \Exception
+   * @throws \Dockworker\DockworkerException
    */
   public function buildAndTestDrupal() {
     $this->_exec('docker-compose kill');

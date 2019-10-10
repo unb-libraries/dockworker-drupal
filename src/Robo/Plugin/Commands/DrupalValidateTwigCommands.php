@@ -7,7 +7,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Dockworker\TwigValidateTrait;
 
 /**
- * Defines commands to validate Twig.
+ * Defines commands to validate twig files for the local Drupal application.
  */
 class DrupalValidateTwigCommands extends DockworkerLocalCommands {
 
@@ -19,13 +19,16 @@ class DrupalValidateTwigCommands extends DockworkerLocalCommands {
   ];
 
   /**
-   * Validate twig files against Drupal coding standards.
+   * Validates twig files against standards.
    *
    * @param string[] $files
    *   The files to validate.
    *
    * @command validate:twig:drupal
-   * @throws \Exception
+   * @throws \Dockworker\DockworkerException
+   *
+   * @return int
+   *   The result of the validation command.
    */
   public function validateDrupalTwigFiles(array $files) {
     return $this->validateTwig(
@@ -34,10 +37,15 @@ class DrupalValidateTwigCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Validate all twig inside the Drupal custom path.
+   * Validates all twig inside the Drupal custom path.
    *
    * @command validate:drupal:custom:twig
    * @aliases validate-custom-twig
+   *
+   * @throws \Dockworker\DockworkerException
+   *
+   * @return int
+   *   The result of the validation command.
    */
   public function validateCustom() {
     $this->addRecursivePathFilesFromPath(

@@ -2,12 +2,13 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\DockworkerException;
 use Dockworker\DrupalKubernetesPodTrait;
 use Dockworker\DrupalLocalDockerContainerTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
- * Commands to synchronize remote Drupal data into the dockworker instance.
+ * Defines commands used to sync deployed data to the local Drupal application.
  */
 class DrupalSyncCommands extends DockworkerLocalCommands {
 
@@ -46,7 +47,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   private $drupalRemoteSyncPodName = NULL;
 
   /**
-   * Synchronize deployed Drupal data into the local dockworker instance.
+   * Synchronizes deployed Drupal data into the local Drupal application.
    *
    * @param string $env
    *   The deploy environment to synchronize from.
@@ -58,7 +59,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    *
    * @command local:content:remote-sync
    *
-   * @throws \Exception
+   * @throws \Dockworker\DockworkerException
    */
   public function syncDrupalDatabaseFileSystemFromRemote($env, $opts = ['no-database' => FALSE, 'no-files' => FALSE]) {
     $this->getLocalRunning();
@@ -100,7 +101,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Check the remote kubernetes pod responds as expected to drush commands.
+   * Checks if the remote kubernetes pod responds to drush commands.
    *
    * @throws \Exception
    */
@@ -110,13 +111,15 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Run a drush command in the remote kubernetes pod.
+   * Runs a drush command in the remote kubernetes pod.
    *
    * @param string $command
    *   The drush command to run.
    *
-   * @return mixed
    * @throws \Exception
+   *
+   * @return mixed
+   *   The command result.
    */
   private function runRemoteDrushCommand($command) {
     return $this->kubernetesPodDrushCommand(
@@ -127,23 +130,23 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Compare a drush status command output to determine if Drupal bootstrapped.
+   * Validates drush status command output to determine if Drupal bootstrapped.
    *
-   * @param array $output
+   * @param string[] $output
    *
-   * @throws \Exception
+   * @throws \Dockworker\DockworkerException
    */
   private function checkDrushCommandOutput(array $output) {
     if (stristr($output[0], '8.')) {
       return;
     }
-    throw new \Exception("Remote drush could not bootstrap Drupal instance.");
+    throw new DockworkerException("Remote drush could not bootstrap Drupal instance.");
   }
 
   /**
-   * Check the local docker container responds as expected to drush commands.
+   * Checks the local Drupal application responds as expected to drush commands.
    *
-   * @throws \Exception
+   * @throws \Dockworker\DockworkerException
    */
   private function checkLocalDrush() {
     $output = $this->runRemoteDrushCommand('status');
@@ -151,8 +154,9 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Compare the local docker container and emote kubernetes pod drush versions.
+   * Compares the local Drupal application and deployed drush versions.
    *
+   * @throws \Dockworker\DockworkerException
    * @throws \Exception
    */
   private function compareLocalRemoteDrupalVersions() {
@@ -167,17 +171,20 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
         )
       );
       $this->say('To sync, your local instance must be built with the exact same Drupal Core version as remote');
-      throw new \Exception("Remote-local version mismatch.");
+      throw new DockworkerException("Remote-local version mismatch.");
     }
   }
 
   /**
-   * Run a drush command in the local docker container.
+   * Runs a drush command in the local Drupal application.
    *
-   * @param $command
+   * @param string $command
+   *   The command string to execute.
+   *
+   * @throws \Exception
    *
    * @return mixed
-   * @throws \Exception
+   *   The command result.
    */
   private function runLocalDrushCommand($command) {
     return $this->localDockerContainerDrushCommand(
@@ -187,7 +194,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Synchronize a deployed database into the dockworker instance.
+   * Synchronizes a deployed database into the local Drupal application.
    *
    * @throws \Exception
    */
@@ -238,13 +245,15 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Run a command in the remote kubernetes pod.
+   * Runs a command in the remote kubernetes pod.
    *
    * @param string $command
    *   The command to run.
    *
+   * @throws \Dockworker\DockworkerException
+   *
    * @return mixed
-   * @throws \Exception
+   *   The command result.
    */
   private function runRemoteCommand($command) {
     return $this->kubernetesPodExecCommand(
@@ -255,15 +264,17 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Copy a remote file to the local (host) filesystem.
+   * Copies a remote file to the local (host) filesystem.
    *
    * @param string $remote_filename
    *   The remote filename to copy.
-   * @param $local_filename
+   * @param string $local_filename
    *   The local filename to write to.
    *
+   * @throws \Dockworker\DockworkerException
+   *
    * @return mixed
-   * @throws \Exception
+   *   The command result.
    */
   private function copyRemoteFileToLocal($remote_filename, $local_filename) {
     return $this->kubernetesPodFileCopyCommand(
@@ -274,15 +285,17 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Copy a local (host) file to the local docker container.
+   * Copies a local (host) file to the local Drupal application.
    *
    * @param string $local_filename
    *   The local filename to copy.
    * @param string $container_filename
    *   The container filename to write to.
    *
+   * @throws \Dockworker\DockworkerException
+   *
    * @return mixed
-   * @throws \Exception
+   *   The command result.
    */
   private function copyLocalFileToContainer($local_filename, $container_filename) {
     return $this->localDockerContainerCopyCommand(
@@ -292,13 +305,15 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    }
 
   /**
-   * Run a command in the local docker container.
+   * Runs a command in the local Drupal application.
    *
    * @param string $command
    *   The command to run.
    *
+   * @throws \Dockworker\DockworkerException
+   *
    * @return mixed
-   * @throws \Exception
+   *   The command result.
    */
   private function runLocalContainerCommand($command) {
     return $this->localDockerContainerExecCommand(
@@ -308,7 +323,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Synchronize a deployed Drupal filesystem into the dockworker instance.
+   * Synchronizes deployed Drupal filesystem into the local Drupal application.
    *
    * @throws \Exception
    */
@@ -349,9 +364,10 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Clean up and post-init tasks for sync.
+   * Cleans up and post-init tasks for sync.
    *
-   * @throws \Exception
+   * @see syncDrupalFileSystemFromRemote()
+   * @throws \Dockworker\DockworkerException
    */
   private function syncDrupalDatabaseFileSystemCleanup() {
     $this->io()->newLine();

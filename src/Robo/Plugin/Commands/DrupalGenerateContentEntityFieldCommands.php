@@ -8,21 +8,26 @@ use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Defines commands in the DrupalGenerateContentEntityFieldCommand namespace.
+ * Defines the commands used to generate entity field boilerplate.
  */
 class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommands {
 
   /**
-   * The templates available.
+   * The path to the entity template data directory.
+   */
+  const ENTITY_TEMPLATE_PATH = '/vendor/unb-libraries/dockworker-drupal/data/entity_fields';
+
+  /**
+   * The entity templates available.
    *
-   * @var array
+   * @var string[]
    */
   protected $drupalEntityTemplates = [];
 
   /**
-   * The chosen widget.
+   * The chosen entity widget.
    *
-   * @var array
+   * @var string[]
    */
   protected $drupalEntityChosenWidget = [];
 
@@ -34,12 +39,7 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   protected $drupalEntityTemplateTokens = [];
 
   /**
-   * The path to the data directory.
-   */
-  const ENTITY_TEMPLATE_PATH = '/vendor/unb-libraries/dockworker-drupal/data/entity_fields';
-
-  /**
-   * Generate the boilerplate necessary to add a field to an entity.
+   * Generates the boilerplate necessary to add a field to an entity.
    *
    * @command drupal:generate:entity-field
    * @aliases gef
@@ -56,7 +56,24 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the chosen template.
+   * Sets the templates that are available.
+   *
+   * @hook post-init
+   */
+  private function setTemplates() {
+    try {
+      $field_definitions = $this->repoRoot . self::ENTITY_TEMPLATE_PATH . '/entity_fields.yml';
+      $field_definitions = Yaml::parse(
+        file_get_contents($field_definitions)
+      );
+      $this->drupalEntityTemplates = $field_definitions['entity_fields'];
+    } catch (ParseException $exception) {
+      printf('Unable to parse the YAML string: %s', $exception->getMessage());
+    }
+  }
+
+  /**
+   * Sets the chosen entity template.
    */
   private function setChosenTemplate() {
     $this->listTemplates();
@@ -82,7 +99,7 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Output a formatted list of templates available.
+   * Outputs a formatted list of templates available.
    */
   protected function listTemplates() {
     $wrapped_rows = [];
@@ -103,27 +120,7 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the templates available.
-   *
-   * @hook post-init
-   */
-  private function setTemplates() {
-    try {
-      $field_definitions = $this->repoRoot . self::ENTITY_TEMPLATE_PATH . '/entity_fields.yml';
-      $field_definitions = Yaml::parse(
-        file_get_contents($field_definitions)
-      );
-      $this->drupalEntityTemplates = $field_definitions['entity_fields'];
-    } catch (ParseException $exception) {
-      printf('Unable to parse the YAML string: %s', $exception->getMessage());
-    }
-  }
-
-  /**
-   * Get the output from all files in this template.
-   *
-   * @param \PhpParser\Parser $parser
-   *   The entity file currently being parsed.
+   * Generates the output from all files in this template.
    */
   private function getTokenizedTemplateOutputs() {
     $this->setEntityTemplateTokens();
@@ -133,49 +130,12 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Get the absolute filepath to a template.
-   *
-   * @param array $template
-   *   The template to build the filepath for.
-   */
-  private function getAbsoluteTemplateFile(array $template) {
-    $file_index = $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] == 'BaseFieldDefinition::CARDINALITY_UNLIMITED'
-      ? 'multiple'
-      : 'single';
-    return $this->repoRoot . self::ENTITY_TEMPLATE_PATH . '/' . $template['template_files'][$file_index];
-  }
-
-  /**
-   * Output the tokenized version of a template.
-   *
-   * @param array $template
-   *   The template to output.
-   */
-  private function getOutputTemplateFile(array $template) {
-    $contents = file_get_contents(
-      $this->getAbsoluteTemplateFile($template)
-    );
-    $this->io->newLine();
-    $this->say($template['name']);
-    foreach ($this->drupalEntityTemplateTokens as $token => $output_value) {
-      $contents = str_replace($token, $output_value, $contents);
-    }
-    $this->io->text($contents);
-  }
-
-  /**
-   * Set the tokens necessary for generating the templates.
+   * Sets the tokens necessary for generating the templates.
    */
   private function setEntityTemplateTokens() {
     $this->setStandardEntityTemplateTokens();
     switch ($this->drupalEntityChosenWidget['id']) {
       case 'string':
-        $this->setCardinalityTokens();
-        $this->setRequiredFieldTokens();
-        $this->setTranslatableFieldTokens();
-        $this->setTextTypeFieldTemplateTokens();
-        $this->setShortTextTypeFieldTemplateTokens();
-        break;
       case 'text':
         $this->setCardinalityTokens();
         $this->setRequiredFieldTokens();
@@ -184,12 +144,6 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
         $this->setShortTextTypeFieldTemplateTokens();
         break;
       case 'string_long':
-        $this->setCardinalityTokens();
-        $this->setRequiredFieldTokens();
-        $this->setTranslatableFieldTokens();
-        $this->setTextTypeFieldTemplateTokens();
-        $this->setLongFieldTemplateTokens();
-        break;
       case 'text_long':
         $this->setCardinalityTokens();
         $this->setRequiredFieldTokens();
@@ -256,19 +210,7 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Transform the interface namespace for an entity into a leadingless one.
-   */
-  private function setLeadinglessNamespaceToken() {
-    if (!empty($this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'])) {
-      $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_LEADINGLESS_INTERFACE_NAMESPACE'] = ltrim(
-        $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'],
-        '\\'
-      );
-    }
-  }
-
-  /**
-   * Set the tokens necessary for all templates.
+   * Sets the tokens necessary for all templates.
    */
   private function setStandardEntityTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_MACHINE_NAME'] =
@@ -299,7 +241,31 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the tokens necessary for the string_long and text_long templates.
+   * Sets the tokens necessary for cardinality configurable field templates.
+   */
+  private function setCardinalityTokens() {
+    $cardinality = $this->askDefault('Enter the *new field* cardinality (0 for unlimited):', '1');
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] = $cardinality == 0 ? 'BaseFieldDefinition::CARDINALITY_UNLIMITED' : $cardinality;
+  }
+
+  /**
+   * Sets the tokens necessary for required field templates.
+   */
+  private function setRequiredFieldTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_REQUIRED'] =
+      $this->confirm('Is this *new field* required?') ? 'TRUE' : 'FALSE';
+  }
+
+  /**
+   * Sets the tokens necessary for translatable field templates.
+   */
+  private function setTranslatableFieldTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TRANSLATABLE'] =
+      $this->confirm('Is this *new field* translatable?') ? 'TRUE' : 'FALSE';
+  }
+
+  /**
+   * Sets the tokens necessary for the string_long and text_long templates.
    */
   private function setTextTypeFieldTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_DEFAULT_VALUE'] =
@@ -307,7 +273,7 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the tokens necessary for the string_long and text_long templates.
+   * Sets the tokens necessary for the string_long and text_long templates.
    */
   private function setShortTextTypeFieldTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_MAX_LENGTH'] =
@@ -315,7 +281,7 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the tokens necessary for the string_long and text_long templates.
+   * Sets the tokens necessary for the string_long and text_long templates.
    */
   private function setLongFieldTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_LONG_TEXT_FIELD_ROWS'] =
@@ -323,7 +289,7 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the tokens necessary for taxonomy term reference templates.
+   * Sets the tokens necessary for taxonomy term reference templates.
    */
   private function setTaxonomyTermTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_CLASS'] = 'Term';
@@ -334,7 +300,19 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the tokens necessary for taxonomy term reference templates.
+   * Transforms the interface namespace for an entity into a leadingless one.
+   */
+  private function setLeadinglessNamespaceToken() {
+    if (!empty($this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'])) {
+      $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_LEADINGLESS_INTERFACE_NAMESPACE'] = ltrim(
+        $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'],
+        '\\'
+      );
+    }
+  }
+
+  /**
+   * Sets the tokens necessary for taxonomy term reference templates.
    */
   private function setEntityRefAutocompleteTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TAXONOMY_AUTO_CREATE'] =
@@ -344,7 +322,7 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the tokens necessary for taxonomy term reference templates.
+   * Sets the tokens necessary for taxonomy term reference templates.
    */
   private function setEntityReferenceTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_NAME'] =
@@ -361,16 +339,10 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the tokens necessary for taxonomy term reference templates.
-   */
-  private function setFileUploadTemplateTokens() {
-    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_CLASS'] = 'File';
-    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'] = '\Drupal\file\FileInterface';
-    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE'] = 'FileInterface';
-  }
-
-  /**
-   * Set the tokens necessary for file reference templates.
+   * Sets the tokens necessary for file reference templates.
+   *
+   * @param string $permitted_extensions
+   *   The permitted extensions.
    */
   private function setFileTemplateTokens($permitted_extensions) {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FILE_FIELD_EXTENSIONS'] =
@@ -381,7 +353,16 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the tokens necessary for image reference templates.
+   * Sets the tokens necessary for taxonomy term reference templates.
+   */
+  private function setFileUploadTemplateTokens() {
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_CLASS'] = 'File';
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE_NAMESPACE'] = '\Drupal\file\FileInterface';
+    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_INTERFACE'] = 'FileInterface';
+  }
+
+  /**
+   * Sets the tokens necessary for image reference templates.
    */
   private function setImageTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_ENTITY_CLASS'] = 'Image';
@@ -392,15 +373,7 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the tokens necessary for cardinality configurable field templates.
-   */
-  private function setCardinalityTokens() {
-    $cardinality = $this->askDefault('Enter the *new field* cardinality (0 for unlimited):', '1');
-    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] = $cardinality == 0 ? 'BaseFieldDefinition::CARDINALITY_UNLIMITED' : $cardinality;
-  }
-
-  /**
-   * Set the tokens necessary for boolean type field templates.
+   * Sets the tokens necessary for boolean type field templates.
    */
   private function setBooleanTemplateTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_BOOLEAN_FIELD_DEFAULT_VALUE'] =
@@ -408,23 +381,7 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the tokens necessary for required field templates.
-   */
-  private function setRequiredFieldTokens() {
-    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_REQUIRED'] =
-      $this->confirm('Is this *new field* required?') ? 'TRUE' : 'FALSE';
-  }
-
-  /**
-   * Set the tokens necessary for translatable field templates.
-   */
-  private function setTranslatableFieldTokens() {
-    $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_TRANSLATABLE'] =
-      $this->confirm('Is this *new field* translatable?') ? 'TRUE' : 'FALSE';
-  }
-
-  /**
-   * Set the tokens necessary for taxonomy term reference templates.
+   * Sets the tokens necessary for taxonomy term reference templates.
    */
   private function setParagraphsFieldTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CUSTOM_TARGET_PARAGRAPH_NAME'] =
@@ -435,11 +392,45 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
   }
 
   /**
-   * Set the tokens necessary for date field templates.
+   * Sets the tokens necessary for date field templates.
    */
   private function setDateFieldTokens() {
     $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_DATETIME_TYPE'] =
       $this->confirm('Should the *new field* also store a time (Date is default)?') ? 'DateTimeItem::DATETIME_TYPE_DATETIME' : 'DateTimeItem::DATETIME_TYPE_DATE';
+  }
+
+  /**
+   * Outputs the tokenized version of templates.
+   *
+   * @param string[] $template
+   *   The template file paths to output.
+   */
+  private function getOutputTemplateFile(array $template) {
+    $contents = file_get_contents(
+      $this->getAbsoluteTemplateFile($template)
+    );
+    $this->io->newLine();
+    $this->say($template['name']);
+    foreach ($this->drupalEntityTemplateTokens as $token => $output_value) {
+      $contents = str_replace($token, $output_value, $contents);
+    }
+    $this->io->text($contents);
+  }
+
+  /**
+   * Determines the absolute filepath to a template.
+   *
+   * @param string[] $template
+   *   The template to build the filepath for.
+   *
+   * @return string
+   *   The absolute filepath to the template.
+   */
+  private function getAbsoluteTemplateFile(array $template) {
+    $file_index = $this->drupalEntityTemplateTokens['DOCKWORKER_FIELD_CARDINALITY'] == 'BaseFieldDefinition::CARDINALITY_UNLIMITED'
+      ? 'multiple'
+      : 'single';
+    return $this->repoRoot . self::ENTITY_TEMPLATE_PATH . '/' . $template['template_files'][$file_index];
   }
 
 }

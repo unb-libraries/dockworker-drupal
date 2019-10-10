@@ -5,12 +5,12 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Dockworker\Robo\Plugin\Commands\ApplicationPermissionsCommands;
 
 /**
- * Defines commands to set proper permissions for a drupal repository.
+ * Defines commands used to fix repository permissions local Drupal application.
  */
 class DrupalPermissionsCommands extends ApplicationPermissionsCommands {
 
   /**
-   * Fix repository file permissions. Requires sudo.
+   * Fixes repository file permissions. Requires sudo.
    *
    * @hook post-command permissions:fix
    */

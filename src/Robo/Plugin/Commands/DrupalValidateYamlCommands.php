@@ -7,7 +7,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Dockworker\YamlValidateTrait;
 
 /**
- * Defines commands to validate TAML.
+ * Defines commands to validate YAML files for the local Drupal application.
  */
 class DrupalValidateYamlCommands extends DockworkerLocalCommands {
 
@@ -20,14 +20,15 @@ class DrupalValidateYamlCommands extends DockworkerLocalCommands {
   ];
 
   /**
-   * Validate YAML files against Drupal coding standards.
+   * Validates YAML files against Drupal coding standards.
    *
    * @param string[] $files
    *   The files to validate.
    *
    * @command validate:yaml:drupal
    *
-   * @return mixed
+   * @return int
+   *   The return value of the command.
    */
   public function validateDrupalYamlFiles(array $files) {
     return $this->validateYaml(
@@ -36,10 +37,14 @@ class DrupalValidateYamlCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Validate all YAML inside the Drupal custom path.
+   * Validates all YAML inside the Drupal custom path.
    *
    * @command validate:drupal:custom:yaml
    * @aliases validate-custom-yaml
+   * @throws \Dockworker\DockworkerException
+   *
+   * @return int
+   *   The return value of the command.
    */
   public function validateCustom() {
     $this->addRecursivePathFilesFromPath(

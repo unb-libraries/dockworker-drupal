@@ -7,7 +7,7 @@ use Dockworker\RecursivePathFileOperatorTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
- * Defines commands to validate PHP .
+ * Defines commands to validate PHP code for the local Drupal application.
  */
 class DrupalValidatePhpCommands extends DockworkerLocalCommands {
 
@@ -15,6 +15,7 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
   use RecursivePathFileOperatorTrait;
 
   const INFO_CREATE_PHPCS_SYMLINK = 'Created symlink for Drupal coding standard to phpcs directory';
+
   const PHPCS_EXTENSIONS = [
     'inc',
     'install',
@@ -23,12 +24,13 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
     'php',
     'theme',
   ];
+
   const PHPCS_STANDARDS = [
     'Drupal',
   ];
 
   /**
-   * Set the Drupal coding symlink for phpcs.
+   * Sets the Drupal coding symlink for phpcs.
    *
    * @hook pre-command validate:php:drupal
    */
@@ -45,14 +47,15 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Validate PHP files against Drupal coding standards.
+   * Validates PHP files against Drupal coding standards.
    *
    * @param string[] $files
    *   The files to validate.
    *
    * @command validate:php:drupal
    *
-   * @return mixed
+   * @return \Robo\Result
+   *   The result of the command.
    */
   public function validateDrupalPhpFiles(array $files) {
     return $this->validatePhp(
@@ -62,10 +65,14 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Validate all PHP inside the Drupal custom path.
+   * Validates all PHP inside the Drupal custom path.
    *
    * @command validate:drupal:custom:php
    * @aliases validate-custom-php
+   * @throws \Dockworker\DockworkerException
+   *
+   * @return int
+   *   The return code from the validation command.
    */
   public function validateCustom() {
     $this->addRecursivePathFilesFromPath(

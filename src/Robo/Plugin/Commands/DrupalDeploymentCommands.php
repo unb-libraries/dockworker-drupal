@@ -5,19 +5,19 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Dockworker\Robo\Plugin\Commands\DockworkerDeploymentCommands;
 
 /**
- * Defines core Drupal instance operations.
+ * Defines the commands used to interact with a deployed Drupal application.
  */
 class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
 
   /**
-   * Check the deployment logs for errors.
+   * Checks the remote deployment logs for errors.
    *
    * @param string $env
-   *   The deploy environment to print.
+   *   The deploy environment to check.
    *
    * @hook replace-command deployment:logs:check
-   *
    * @throws \Exception
+   *
    * @return \Robo\Result
    *   The result of the command.
    */

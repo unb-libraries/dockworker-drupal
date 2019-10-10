@@ -5,12 +5,12 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 
 /**
- * Git commands.
+ * Defines the commands used to setup the git hooks for a Drupal repository.
  */
 class DrupalGitCommands extends DockworkerCommands {
 
   /**
-   * Setup git hooks.
+   * Sets up the required git hooks.
    *
    * @hook post-command git:setup-hooks
    */
