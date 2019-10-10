@@ -2,7 +2,8 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Robo\Plugin\Commands\DrupalCodeCommands;
+use Dockworker\DrupalCodeTrait;
+use Dockworker\Robo\Plugin\Commands\DockworkerCommands;
 use PhpParser\Error;
 use PhpParser\ParserFactory;
 use Symfony\Component\Finder\Finder;
@@ -10,7 +11,9 @@ use Symfony\Component\Finder\Finder;
 /**
  * Defines the commands used to interact with Drupal Custom Entity files.
  */
-class DrupalCustomEntityCommands extends DrupalCodeCommands {
+class DrupalCustomEntityCommands extends DockworkerCommands {
+
+  use DrupalCodeTrait;
 
   /**
    * The custom entities to operate on.

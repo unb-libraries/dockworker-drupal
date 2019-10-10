@@ -13,26 +13,30 @@ trait DrupalCodeTrait {
   /**
    * The modules within the current repository.
    *
-   * @var array
+   * @var string[]
    */
   protected $drupalModules = [];
 
   /**
    * The themes within the current repository.
    *
-   * @var array
+   * @var string[]
    */
   protected $drupalThemes = [];
 
   /**
-   * Sets the current custom modules and themes in the current repository.
+   * Sets up the custom modules and themes in the current repository.
+   *
+   * @hook init
+   */
+  /**
+   * Sets up the custom modules and themes in the current repository.
    *
    * @hook init
    */
   public function getCustomModulesThemes() {
     $projects = new Finder();
     $projects->files()->in($this->repoRoot . '/custom/')->files()->name('*info.yml');;
-
     foreach ($projects as $project) {
       $type = explode('/', $project->getRelativePath())[0];
       if ($type == 'modules') {
