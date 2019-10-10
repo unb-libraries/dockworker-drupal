@@ -34,7 +34,6 @@ class DrupalCodeCommands extends DockworkerCommands {
     $projects->files()->in($this->repoRoot . '/custom/')->files()->name('*info.yml');;
     foreach ($projects as $project) {
       $type = explode('/', $project->getRelativePath())[0];
-      $name = $project->getBasename('.info.yml');
       if ($type == 'modules') {
         $this->drupalModules[] = $project;
       }
