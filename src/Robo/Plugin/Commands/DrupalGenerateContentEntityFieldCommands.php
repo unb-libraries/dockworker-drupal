@@ -85,7 +85,6 @@ class DrupalGenerateContentEntityFieldCommands extends DrupalCustomEntityCommand
           foreach ($type['widgets'] as $widget) {
             if ($widget['id'] == $widget_chosen) {
               $this->drupalEntityChosenWidget = $widget;
-              $value_chosen == TRUE;
               break 3;
             }
           }

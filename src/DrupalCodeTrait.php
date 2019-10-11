@@ -13,14 +13,14 @@ trait DrupalCodeTrait {
   /**
    * The modules within the current repository.
    *
-   * @var string[]
+   * @var \Symfony\Component\Finder\SplFileInfo[]
    */
   protected $drupalModules = [];
 
   /**
    * The themes within the current repository.
    *
-   * @var string[]
+   * @var \Symfony\Component\Finder\SplFileInfo[]
    */
   protected $drupalThemes = [];
 

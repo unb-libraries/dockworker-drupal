@@ -63,8 +63,8 @@ class DrupalCustomEntityCommands extends DockworkerCommands {
   /**
    * Sets the selected custom entity.
    *
-   * @param string[] $custom_entities
-   *   A list of custom entities to set.
+   * @param \Symfony\Component\Finder\SplFileInfo[] $custom_entities
+   *   A list of custom entities files to set.
    */
   private function setSelectedCustomEntities($custom_entities) {
     $choices = [];
@@ -81,7 +81,7 @@ class DrupalCustomEntityCommands extends DockworkerCommands {
       $real_path = $custom_entity->getRealPath();
       $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
       try {
-        $ast = $parser->parse(
+        $parser->parse(
           file_get_contents($real_path)
         );
       } catch (Error $error) {

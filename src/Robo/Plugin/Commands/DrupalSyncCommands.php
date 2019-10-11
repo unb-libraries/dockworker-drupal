@@ -16,13 +16,9 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   use DrupalLocalDockerContainerTrait;
 
   const POD_DATABASE_DUMP_COMPRESSED_FILENAME = 'tmpdb.sql.gz';
-
   const POD_DATABASE_DUMP_FILENAME = 'tmpdb.sql';
-
   const POD_FILES_DUMP_FILENAME = 'tmpfiles.tar.gz';
-
   const POD_FILES_SOURCE = '/app/html/sites/default/files';
-
   const POD_TEMPORARY_FILE_LOCATION = '/tmp';
 
   /**
@@ -51,6 +47,8 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    *
    * @param string $env
    *   The deploy environment to synchronize from.
+   * @param string[] $opts
+   *   An array of options to pass to the builder.
    *
    * @option bool $no-database
    *   Do not synchronize the drupal database.
@@ -147,6 +145,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * Checks the local Drupal application responds as expected to drush commands.
    *
    * @throws \Dockworker\DockworkerException
+   * @throws \Exception
    */
   private function checkLocalDrush() {
     $output = $this->runRemoteDrushCommand('status');

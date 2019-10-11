@@ -48,6 +48,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
    *
    * @command drupal:entup
    * @aliases entup
+   * @throws \Dockworker\DockworkerException
    */
   public function updateEntities() {
     $this->runDrush('entup');

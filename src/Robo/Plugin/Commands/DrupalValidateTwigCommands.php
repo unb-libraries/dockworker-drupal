@@ -26,12 +26,9 @@ class DrupalValidateTwigCommands extends DockworkerLocalCommands {
    *
    * @command validate:twig:drupal
    * @throws \Dockworker\DockworkerException
-   *
-   * @return int
-   *   The result of the validation command.
    */
   public function validateDrupalTwigFiles(array $files) {
-    return $this->validateTwig(
+    $this->validateTwig(
       $files
     );
   }
