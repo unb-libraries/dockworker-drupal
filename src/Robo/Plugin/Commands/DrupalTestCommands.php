@@ -12,17 +12,18 @@ class DrupalTestCommands extends DockworkerLocalCommands {
   /**
    * Runs all tests defined for the local Drupal application.
    *
-   * @hook post-command test:all
+   * @hook post-command tests:all
    * @throws \Dockworker\DockworkerException
    */
   public function runDrupalTests() {
-    $this->setRunOtherCommand('test:behat');
+    $this->setRunOtherCommand('tests:behat');
+    $this->setRunOtherCommand('tests:unit');
   }
 
   /**
    * Runs the Behat tests defined for the local Drupal application.
    *
-   * @command test:behat
+   * @command tests:behat
    * @aliases behat
    * @throws \Dockworker\DockworkerException
    *
@@ -33,7 +34,25 @@ class DrupalTestCommands extends DockworkerLocalCommands {
     $this->getLocalRunning();
     return $this->taskDockerExec($this->instanceName)
       ->interactive()
-      ->exec('/scripts/runTests.sh')
+      ->exec('/scripts/runBehatTests.sh')
+      ->run();
+  }
+
+  /**
+   * Runs the PHPUnit tests defined for the local Drupal application.
+   *
+   * @command tests:phpunit
+   * @aliases phpunit
+   * @throws \Dockworker\DockworkerException
+   *
+   * @return mixed
+   *   The testing command result.
+   */
+  public function runDrupalUnitTests() {
+    $this->getLocalRunning();
+    return $this->taskDockerExec($this->instanceName)
+      ->interactive()
+      ->exec('/scripts/runUnitTests.sh')
       ->run();
   }
 

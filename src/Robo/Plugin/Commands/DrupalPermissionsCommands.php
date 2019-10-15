@@ -10,9 +10,9 @@ use Dockworker\Robo\Plugin\Commands\ApplicationPermissionsCommands;
 class DrupalPermissionsCommands extends ApplicationPermissionsCommands {
 
   /**
-   * Fixes repository file permissions. Requires sudo.
+   * Sets the correct repository file permissions. Requires sudo.
    *
-   * @hook post-command permissions:fix
+   * @hook post-command dockworker:permissions:fix
    */
   public function fixPermissions() {
     $paths = [

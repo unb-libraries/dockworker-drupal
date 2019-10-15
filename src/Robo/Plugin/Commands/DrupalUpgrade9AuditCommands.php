@@ -12,12 +12,12 @@ class DrupalUpgrade9AuditCommands extends DockworkerLocalCommands {
   const AUDIT_DOCKER_IMAGE = 'jacobsanford/drupal-check:latest';
 
   /**
-   * Audits all code in modules/themes in anticipation of a Drupal 9 upgrade.
+   * Audits all code in modules/themes against Drupal 9 standards.
    *
    * @param string $module_theme_root
    *   The relative path to the module/theme root.
    *
-   * @command drupal:audit:9-upgrade
+   * @command validate:drupal:9-upgrade
    * @link https://github.com/JacobSanford/docker-drupal-check
    *
    * @return \Robo\Result
