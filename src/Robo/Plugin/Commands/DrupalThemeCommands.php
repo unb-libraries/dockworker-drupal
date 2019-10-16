@@ -34,6 +34,7 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
     foreach ($this->drupalThemes as $theme) {
       $this->buildDrupalThemeAssets($theme->getPath());
     }
+
   }
 
   /**
@@ -64,6 +65,13 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
       ->stopOnFail()
       ->dir($this->path)
       ->exec("mkdir -p dist/css")
+      ->run();
+
+    $gid = posix_getgid();
+    $this->taskExec('sudo chgrp')
+      ->arg($gid)
+      ->arg('-R')
+      ->arg($this->path)
       ->run();
     $this->taskExecStack()
       ->stopOnFail()
