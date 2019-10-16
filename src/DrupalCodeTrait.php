@@ -24,15 +24,11 @@ trait DrupalCodeTrait {
    */
   protected $drupalThemes = [];
 
+
   /**
    * Sets up the custom modules and themes in the current repository.
    *
-   * @hook init
-   */
-  /**
-   * Sets up the custom modules and themes in the current repository.
-   *
-   * @hook init
+   * @hook init @drupalcode
    */
   public function getCustomModulesThemes() {
     $projects = new Finder();

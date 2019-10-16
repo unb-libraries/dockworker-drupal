@@ -26,6 +26,8 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
    * Compiles Drupal themes.
    *
    * @hook post-command theme:build-all
+   *
+   * @drupalcode
    */
   public function setBuildAllDrupalThemes() {
     $this->getCustomModulesThemes();

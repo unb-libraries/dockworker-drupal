@@ -58,6 +58,9 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * @command local:content:remote-sync
    *
    * @throws \Dockworker\DockworkerException
+   *
+   * @github
+   * @kubectl
    */
   public function syncDrupalDatabaseFileSystemFromRemote($env, $opts = ['no-database' => FALSE, 'no-files' => FALSE]) {
     $this->getLocalRunning();
