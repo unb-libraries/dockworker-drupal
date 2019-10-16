@@ -97,7 +97,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
       ->interactive()
       ->exec('/scripts/configExport.sh')
       ->run();
-    $this->setRunOtherCommand('permissions:fix');
+    $this->setRunOtherCommand('dockworker:permissions:fix');
   }
 
   /**
