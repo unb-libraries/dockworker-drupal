@@ -116,23 +116,14 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Checks the local Drupal application logs for errors.
+   * Provides log checker with ignored log exception items for local Drupal.
    *
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
-   *
-   * @hook replace-command local:logs:check
-   * @throws \Dockworker\DockworkerException
-   *
-   * @return \Robo\Result
-   *   The result of the command.
+   * @hook on-event dockworker-local-log-error-exceptions
    */
-  public function localDrupalLogsCheck(array $opts = ['all' => FALSE]) {
-    $exceptions = [
-      '[notice] Synchronized extensions' => 'Modules that have "error" in their names are not errors',
+  public function getErrorLogExceptions() {
+    return [
+        '[notice] Synchronized extensions' => 'Modules that have "error" in their names are not errors',
     ];
-    $this->logErrorExceptions = array_merge($this->logErrorExceptions, $exceptions);
-    return parent::localLogsCheck($opts);
   }
 
   /**

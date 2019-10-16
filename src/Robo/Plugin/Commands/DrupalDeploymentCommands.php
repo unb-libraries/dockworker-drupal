@@ -10,24 +10,15 @@ use Dockworker\Robo\Plugin\Commands\DockworkerDeploymentCommands;
 class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
 
   /**
-   * Checks the remote deployment logs for errors.
+   * Provides log checker with ignored log exception items for deployed Drupal.
    *
-   * @param string $env
-   *   The deploy environment to check.
-   *
-   * @hook replace-command deployment:logs:check
-   * @throws \Exception
-   *
-   * @return \Robo\Result
-   *   The result of the command.
+   * @hook on-event dockworker-deployment-log-error-exceptions
    */
-  public function checkDrupalDeploymentLogs($env) {
-    $exceptions = [
+  public function getErrorLogDeploymentExceptions() {
+    return [
       '[notice] Synchronized extensions' => 'Ignore installation of modules that have "error" in their names',
       'config_importer is already importing' => 'Ignore errors when only one pod imports config',
     ];
-    $this->logErrorExceptions = array_merge($this->logErrorExceptions, $exceptions);
-    return parent::checkDeploymentLogs($env);
   }
 
 }
