@@ -17,7 +17,7 @@ class DrupalTestCommands extends DockworkerLocalCommands {
    */
   public function runDrupalTests() {
     $this->setRunOtherCommand('tests:behat');
-    $this->setRunOtherCommand('tests:unit');
+    $this->setRunOtherCommand('tests:phpunit');
   }
 
   /**
