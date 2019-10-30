@@ -110,17 +110,8 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
    *
    * @TODO Minify javascript files instead of just copying them.
    */
-
-  private function copyThemeAssets($asset_dir, $type) {
-    $src_path = "$this->path/src/$asset_dir";
-    if (file_exists($src_path)) {
-      $this->say("Deploying $type Assets in $src_path");
-      $this->taskExecStack()
-        ->stopOnFail()
-        ->dir($this->path)
-        ->exec("cp -r src/$asset_dir dist/ || true")
-        ->run();
-    }
+  private function buildJsAssets() {
+    $this->copyThemeAssets('js', 'Javascript');
   }
 
   /*
@@ -133,9 +124,16 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
    *
    * @throws \Robo\Exception\TaskException
    */
-
-  private function buildJsAssets() {
-    $this->copyThemeAssets('js', 'Javascript');
+  private function copyThemeAssets($asset_dir, $type) {
+    $src_path = "$this->path/src/$asset_dir";
+    if (file_exists($src_path)) {
+      $this->say("Deploying $type Assets in $src_path");
+      $this->taskExecStack()
+        ->stopOnFail()
+        ->dir($this->path)
+        ->exec("cp -r src/$asset_dir dist/ || true")
+        ->run();
+    }
   }
 
 }
