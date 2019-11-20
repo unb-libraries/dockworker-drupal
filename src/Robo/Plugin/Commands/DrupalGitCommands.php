@@ -12,7 +12,7 @@ class DrupalGitCommands extends DockworkerCommands {
   /**
    * Sets up the required git hooks.
    *
-   * @hook post-command git:setup-hooks
+   * @hook post-command dockworker:git:setup-hooks
    */
   public function setupHooks() {
     $source_dir = $this->repoRoot . "/vendor/unb-libraries/dockworker-drupal/scripts/git-hooks";
