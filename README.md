@@ -1,6 +1,6 @@
 # Dockworker for Drupal Instances
 ## Develop, Test and Deploy into Kubernetes Docker-Based Drupal Applications
-Dockworker is a framework of (mostly) Robo commands that tests, deploys and allows local development (in Linux, OSX) of docker-based web applications. Stand-alone, this package offers very little benefit, but to see how we use dockworker: check out [an example of how we use dockworker to deploy lib.unb.ca](https://github.com/unb-libraries/lib.unb.ca).
+Dockworker is a framework of (mostly) Robo commands that makes local development of docker-based web applications a breeze. It also tests and deploys these applications into kubernetes. Stand-alone, this package offers very little benefit, but to see how we use dockworker: check out [an example of how we use dockworker to deploy lib.unb.ca](https://github.com/unb-libraries/lib.unb.ca).
 
 This package extends the base [dockworker](https://github.com/unb-libraries/dockworker) framework to provide additional functionality for Drupal applications.
 
