@@ -18,8 +18,14 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
    * @command drupal:cr
    * @aliases cr
    */
-  public function resetCache() {
-    $this->runDrush('cr');
+  public function rebuildCache() {
+    $this->getLocalRunning();
+    $this->taskDockerExec($this->instanceName)
+      ->interactive()
+      ->exec(
+        '/scripts/clearDrupalCache.sh'
+      )
+      ->run();
   }
 
   /**
