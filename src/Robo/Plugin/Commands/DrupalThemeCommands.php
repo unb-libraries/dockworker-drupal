@@ -51,6 +51,7 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
       $this->buildThemeScss();
       $this->buildImageAssets();
       $this->buildJsAssets();
+      $this->copyThemeAssets('fonts', 'Fonts');
     }
   }
 
