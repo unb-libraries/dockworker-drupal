@@ -36,4 +36,40 @@ trait DrupalKubernetesPodTrait {
     );
   }
 
+  /**
+   * Clears the Drupal cache inside a remote k8s pod.
+   *
+   * @param $pod_id
+   *   The pod to target.
+   *
+   * @return \Robo\Result
+   */
+  private function kubernetesPodDrushClearCache($pod, $namespace) {
+    $this->kubernetesPodDrushCommand(
+      $pod,
+      $namespace,
+      'cr'
+    );
+  }
+
+  /**
+   * Executes a composer command inside remote k8s pod.
+   *
+   * @param $pod_id
+   *   The pod to target.
+   * @param array $args
+   *   The composer command to execute.
+   *
+   * @return \Robo\Result
+   */
+  private function kubernetesPodComposerCommand($pod, $namespace, $command) {
+    return $this->kubernetesPodExecCommand(
+      $pod,
+      $namespace,
+      sprintf('composer --working-dir=/app/html %s',
+        $command
+      )
+    );
+  }
+
 }
