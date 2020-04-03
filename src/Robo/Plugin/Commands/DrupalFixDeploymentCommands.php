@@ -4,12 +4,12 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DockworkerException;
 use Dockworker\DrupalKubernetesPodTrait;
-use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerDeploymentCommands;
 
 /**
  * Defines the commands used to interact with a deployed Drupal application.
  */
-class DrupalFixDeploymentCommands extends DockworkerLocalCommands {
+class DrupalFixDeploymentCommands extends DockworkerDeploymentCommands {
 
   use DrupalKubernetesPodTrait;
 
@@ -43,7 +43,7 @@ class DrupalFixDeploymentCommands extends DockworkerLocalCommands {
       );
 
       $this->kubernetesPodDrushCommand(
-        $pod,
+        $first_pod_id,
         $this->kubernetesPodNamespace,
         'en module_missing_message_fixer'
       );
@@ -54,13 +54,13 @@ class DrupalFixDeploymentCommands extends DockworkerLocalCommands {
       );
 
       $this->kubernetesPodDrushCommand(
-        $pod,
+        $first_pod_id,
         $this->kubernetesPodNamespace,
         'mmmff --all'
       );
 
       $this->kubernetesPodDrushCommand(
-        $pod,
+        $first_pod_id,
         $this->kubernetesPodNamespace,
         'pmu module_missing_message_fixer'
       );
