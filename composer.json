@@ -7,6 +7,9 @@
     "boedah/robo-drush": "~3",
     "unb-libraries/dockworker": "~3"
   },
+  "conflict": {
+    "drupal/coder": ">8.3.8"
+  },
   "license": "MIT",
   "authors": [
     {
