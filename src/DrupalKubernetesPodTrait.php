@@ -45,10 +45,10 @@ trait DrupalKubernetesPodTrait {
    * @return \Robo\Result
    */
   private function kubernetesPodDrushClearCache($pod, $namespace) {
-    $this->kubernetesPodDrushCommand(
+    return $this->kubernetesPodExecCommand(
       $pod,
       $namespace,
-      'cr'
+      '/scripts/clearDrupalCache.sh'
     );
   }
 
