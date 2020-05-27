@@ -12,6 +12,74 @@ The following packages are required to be globally installed on your development
 * [Composer](https://getcomposer.org/)
 * [docker](https://www.docker.com)/[docker-compose](https://docs.docker.com/compose/) - An installation HowTo for OSX and Linux [is located here, in section 2.](https://github.com/unb-libraries/docker-drupal/wiki/2.-Setting-Up-Prerequisites).
 
+## Commands
+```
+ deployment
+  deployment:apply                       Updates the application's k8s deployment definition.
+  deployment:drupal:fix-missing-modules  Removes any references to missing modules in application's k8s pod(s).
+  deployment:image:update                Updates the application's k8s deployment image.
+  deployment:logs                        Displays the application's k8s deployed pod(s) logs.
+  deployment:logs:check                  Checks the application's deployed k8s pod(s) logs for errors.
+  deployment:restart                     Restarts the k8s deployment rollout.
+  deployment:shell                       Open a shell into the k8s deployment.
+  deployment:status                      Checks the application's k8s deployment rollout status.
+ dockworker
+  dockworker:docker:cleanup              Clean up unused local docker assets.
+  dockworker:git:setup-hooks             Set up the required git hooks for dockworker.
+  dockworker:permissions:fix             [pfix] Sets the correct repository file permissions. Requires sudo.
+  dockworker:update                      [update] Self-updates the dockworker application.
+ drupal
+  drupal:cr                              [cr] Rebuilds the cache in the local Drupal application.
+  drupal:entup                           [entup] Performs any required entity updates in the instance.
+  drupal:generate:entity-field           [gef] Generates the boilerplate necessary to add a field to an entity.
+  drupal:uli                             [uli] Generates a ULI link for the local Drupal application.
+  drupal:write-config                    [write-config] Exports the configuration local Drupal application.
+ image
+  image:build                            Builds the application's docker image.
+  image:build-push                       Builds the application's docker image and pushes it to the deployment repository.
+  image:deploy                           Builds, tags, pushes and deploys the application's docker image.
+ local
+  local:build                            [build] Builds the local application's docker image.
+  local:build-test                       Builds the application image, starts a local container, and runs all tests.
+  local:content:remote-sync              Synchronizes deployed Drupal data into the local Drupal application.
+  local:destroy                          Halts the local application and removes any persistent data.
+  local:halt                             Halts the local application without removing any persistent data.
+  local:hard-reset                       Destroys the local application, and removes any uncommitted repo changes.
+  local:logs                             Displays the local application's container logs.
+  local:logs:check                       Checks the local application's container logs for errors.
+  local:logs:tail                        [logs] Display previous local application container logs and monitor for new ones.
+  local:pull-upstream                    Pulls any upstream images used in building the local application image.
+  local:rebuild                          [rebuild] Stops the local container and re-starts it, preserving persistent data.
+  local:rm                               [rm] Removes removes all persistent data from the local docker application.
+  local:shell                            [shell] Opens the local application container's shell.
+  local:start                            [start] Brings up the local application container, displays the application logs.
+  local:start-over                       [start-over|deploy] Kills the local container, removes persistent data, and rebuilds/restarts.
+  local:up                               [up] Brings up the local application container.
+  local:update-hostfile                  Updates the local system hostfile for the local application. Requires sudo.
+ tests
+  tests:all                              [test] Tests the local application using all testing frameworks.
+  tests:behat                            [behat] Runs the Behat tests defined for the local Drupal application.
+  tests:phpunit                          [phpunit] Runs the PHPUnit tests defined for the local Drupal application.
+ theme
+  theme:build-all                        [build-themes] Builds the local application's deployable theme assets from source.
+ travis
+  travis:id:latest                       Retrieves the latest travis build ID for the application.
+  travis:info:latest                     Retrieves the latest travis build details for the application.
+  travis:logs                            Retrieves logs for a travis build for the application.
+  travis:logs:latest                     Retrieves logs for the latest travis build for the application.
+  travis:restart                         Restarts a travis build for the application.
+  travis:restart:latest                  Restarts the latest travis build for the application.
+ validate
+  validate:drupal:9-upgrade              Audits all code in modules/themes against Drupal 9 standards.
+  validate:drupal:custom:php             [validate-custom-php] Validates all PHP inside the Drupal custom path.
+  validate:drupal:custom:twig            [validate-custom-twig] Validates all twig inside the Drupal custom path.
+  validate:drupal:custom:yaml            [validate-custom-yaml] Validates all YAML inside the Drupal custom path.
+  validate:git:commit-msg                Validates a git commit message against project standards.
+  validate:php:drupal                    Validates PHP files against Drupal coding standards.
+  validate:twig:drupal                   Validates twig files against standards.
+  validate:yaml:drupal                   Validates YAML files against Drupal coding standards.
+```
+
 ## Author / Licensing
 - Developed by [![UNB Libraries](https://github.com/unb-libraries/assets/raw/master/unblibbadge.png "UNB Libraries")](https://lib.unb.ca/)
 - This work is published through our strong commitment to making as much of our development/workflow as possible freely available.
