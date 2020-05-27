@@ -39,7 +39,7 @@ class DrupalFixDeploymentCommands extends DockworkerDeploymentCommands {
       $this->kubernetesPodComposerCommand(
         $first_pod_id,
         $this->kubernetesPodNamespace,
-        'require drupal/module_missing_message_fixer'
+        'require drupal/module_missing_message_fixer:1.2'
       );
 
       $this->kubernetesPodDrushCommand(
