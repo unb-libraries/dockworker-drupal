@@ -14,10 +14,12 @@ class DrupalFixDeploymentCommands extends DockworkerDeploymentCommands {
   use DrupalKubernetesPodTrait;
 
   /**
-   * Removes any references to missing modules in application's k8s pod(s).
+   * Removes any references to a missing module in the application's k8s pod(s).
    *
    * Beware : This command has the potential to destroy your instance.
    *
+   * @param string $module
+   *   The environment to obtain the logs from.
    * @param string $env
    *   The environment to obtain the logs from.
    *
@@ -28,7 +30,7 @@ class DrupalFixDeploymentCommands extends DockworkerDeploymentCommands {
    *
    * @kubectl
    */
-  public function fixDeploymentMissingModules($env) {
+  public function fixDeploymentMissingModules($module, $env) {
     $this->deploymentCommandInit($this->repoRoot, $env);
     $this->kubernetesPodNamespace = $this->deploymentK8sNameSpace;
     $this->kubernetesSetupPods($this->deploymentK8sName, "Logs");
@@ -39,13 +41,13 @@ class DrupalFixDeploymentCommands extends DockworkerDeploymentCommands {
       $this->kubernetesPodComposerCommand(
         $first_pod_id,
         $this->kubernetesPodNamespace,
-        'require drupal/module_missing_message_fixer:1.2'
+        "require drupal/$module"
       );
 
       $this->kubernetesPodDrushCommand(
         $first_pod_id,
         $this->kubernetesPodNamespace,
-        'en module_missing_message_fixer'
+        "en $module"
       );
 
       $this->kubernetesPodDrushClearCache(
@@ -56,19 +58,24 @@ class DrupalFixDeploymentCommands extends DockworkerDeploymentCommands {
       $this->kubernetesPodDrushCommand(
         $first_pod_id,
         $this->kubernetesPodNamespace,
-        'mmmff --all'
+        'updb'
+      );
+
+      $this->kubernetesPodDrushClearCache(
+        $first_pod_id,
+        $this->kubernetesPodNamespace
       );
 
       $this->kubernetesPodDrushCommand(
         $first_pod_id,
         $this->kubernetesPodNamespace,
-        'pmu module_missing_message_fixer'
+        "pmu $module"
       );
 
       $this->kubernetesPodComposerCommand(
         $first_pod_id,
         $this->kubernetesPodNamespace,
-        'remove drupal/module_missing_message_fixer --update-with-dependencies'
+        "remove drupal/$module --update-with-dependencies"
       );
 
       $this->kubernetesPodDrushClearCache(
