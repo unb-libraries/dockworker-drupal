@@ -82,7 +82,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
       $first_drupal_pod_id = reset($this->kubernetesCurPods);
       $this->setUpInstanceIndices($first_drupal_pod_id);
       foreach ($this->drupalSolrServerIndices as $index_name) {
-        $this->output->title(sprintf(
+        $this->io()->title(sprintf(
           self::MSG_REINDEXING_INDEX,
           $index_name,
           $this->deploymentK8sName,
@@ -139,7 +139,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
       $this->setSolrServerPodId($opts);
       $this->solrServerInit();
 
-      $this->output->title(sprintf(
+      $this->io()->title(sprintf(
         self::MSG_SOLR_UPDATING,
         $this->drupalSolrServerPodId
       ));
@@ -154,7 +154,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
       }
 
       if ($opts['no-reindex'] != TRUE) {
-        $this->output->title(sprintf(
+        $this->io()->title(sprintf(
           self::MSG_DRUPAL_REINDEXING,
           $first_drupal_pod_id
         ));
@@ -185,13 +185,13 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
     $this->deploymentCommandInit($this->repoRoot, $this->drupalSolrServerPodEnv);
     $this->kubernetesPodNamespace = $this->deploymentK8sNameSpace;
 
-    $this->output->title(sprintf(
+    $this->io()->title(sprintf(
       self::MSG_INITIALIZING_PODS,
       $this->deploymentK8sName,
       $this->deploymentK8sNameSpace
     ));
     $this->kubernetesSetupPods($this->deploymentK8sName, "Reindex");
-    $this->output->text(self::MSG_DONE);
+    $this->io()->text(self::MSG_DONE);
   }
 
   /**
@@ -317,7 +317,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
           )
         );
       }
-      $this->output->text(
+      $this->io()->text(
         sprintf(
           self::MSG_CONFIRMED_CORE_HAS_DATA,
           $index_name,
@@ -371,7 +371,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
       $this->drupalSolrServerPodEnv,
       'solr delete -c ' . $core_name
     );
-    $this->output->text(
+    $this->io()->text(
       sprintf(
         self::MSG_CONFIRMED_CORE_REMOVED,
         $core_name,
@@ -405,7 +405,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
       $this->drupalSolrServerPodEnv,
       'solr create -c ' . $core_name
     );
-    $this->output->text(
+    $this->io()->text(
       sprintf(
         self::MSG_CONFIRMED_CORE_CREATED,
         $core_name,

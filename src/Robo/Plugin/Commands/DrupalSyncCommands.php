@@ -65,7 +65,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   public function syncDrupalDatabaseFileSystemFromRemote($env, $opts = ['no-database' => FALSE, 'no-files' => FALSE]) {
     $this->getLocalRunning();
 
-    $this->output->title('Deployed Data Synchronization');
+    $this->io()->title('Deployed Data Synchronization');
 
     $this->kubernetesPodNamespace = $env;
     $this->kubernetesSetupPods($this->instanceName, "Synchronization");
@@ -201,8 +201,8 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * @throws \Exception
    */
   private function syncDrupalDatabaseFromRemote() {
-    $this->output->newLine();
-    $this->output->section("Synchronizing Drupal database from [{$this->drupalRemoteSyncPodName}]");
+    $this->io()->newLine();
+    $this->io()->section("Synchronizing Drupal database from [{$this->drupalRemoteSyncPodName}]");
     $dump_file = self::POD_TEMPORARY_FILE_LOCATION . '/' . self::POD_DATABASE_DUMP_FILENAME;
     $gz_dump_file = $dump_file . '.gz';
 
@@ -330,8 +330,8 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * @throws \Exception
    */
   private function syncDrupalFileSystemFromRemote() {
-    $this->output->newLine();
-    $this->output->section("Synchronizing Drupal filesystem from [{$this->drupalRemoteSyncPodName}]");
+    $this->io()->newLine();
+    $this->io()->section("Synchronizing Drupal filesystem from [{$this->drupalRemoteSyncPodName}]");
     $files_dump_name = self::POD_TEMPORARY_FILE_LOCATION . '/' . self::POD_FILES_DUMP_FILENAME;
 
     $this->say("[Remote] (optionally) Removing Drupal filesystem archive...");
@@ -372,8 +372,8 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * @throws \Dockworker\DockworkerException
    */
   private function syncDrupalDatabaseFileSystemCleanup() {
-    $this->output->newLine();
-    $this->output->section('Cleaning Up');
+    $this->io()->newLine();
+    $this->io()->section('Cleaning Up');
     $this->say("Generating New ULI Link...");
     $this->say(
       $this->runLocalContainerCommand("/scripts/drupalUli.sh")[0]

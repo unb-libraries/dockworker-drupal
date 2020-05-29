@@ -73,7 +73,7 @@ class DrupalCustomEntityCommands extends DockworkerCommands {
       $choices[$custom_entity->getBasename()] = $custom_entity;
     }
     if (!empty($choices)) {
-      $entity_key = $this->output->choice("Which entity to modify?", array_keys($choices));
+      $entity_key = $this->io()->choice("Which entity to modify?", array_keys($choices));
       $entity = $choices[$entity_key];
       preg_match('|.*/(.*)/src/Entity|', $entity->getPath(), $matches);
       $this->drupalChosenModule = $matches[1];
