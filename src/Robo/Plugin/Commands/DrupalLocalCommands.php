@@ -34,6 +34,9 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
    * @param string $command
    *   The command to run.
    *
+   * @command drupal:drush
+   * @aliases drush
+   *
    * @throws \Dockworker\DockworkerException
    */
   private function runDrush($command) {

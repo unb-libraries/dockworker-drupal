@@ -63,4 +63,44 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
     }
   }
 
+  /**
+   * Generates a ULI link for a remote drupal deployment.
+   *
+   * @param string $env
+   *   The environment to obtain the login link from.
+   *
+   * @command deployment:drupal:uli
+   * @aliases ruli
+   * @throws \Exception
+   *
+   * @usage deployment:drupal:uli prod
+   *
+   * @kubectl
+   */
+  public function generateRemoteDrupalUli($env) {
+    $this->deploymentCommandInit($this->repoRoot, $env);
+    $this->kubernetesPodNamespace = $this->deploymentK8sNameSpace;
+    $this->kubernetesSetupPods($this->deploymentK8sName, "Generate ULI");
+
+    if (!empty($this->kubernetesCurPods)) {
+      $first_pod_id = reset($this->kubernetesCurPods);
+      $this->io()->text(
+        $this->kubernetesPodExecCommand(
+          $first_pod_id,
+          $env,
+          '/scripts/drupalUli.sh'
+        )
+      );
+    }
+    else {
+      throw new DockworkerException(
+        sprintf(
+          self::ERROR_NO_PODS_IN_DEPLOYMENT,
+          $this->deploymentK8sName,
+          $this->deploymentK8sNameSpace
+        )
+      );
+    }
+  }
+
 }
