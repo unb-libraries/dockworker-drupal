@@ -362,7 +362,7 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
     return $this->kubernetesPodFileCopyCommand(
       $namespace,
       $local_filename,
-      $pod_id . ':' . $remote_filename,
+      $pod_id . ':' . $remote_filename
     );
   }
 
