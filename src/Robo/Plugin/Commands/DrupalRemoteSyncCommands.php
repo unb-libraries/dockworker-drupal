@@ -408,7 +408,7 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
     $this->say("[{$this->drupalRemoteSyncTargetEnv}] Setting config sync permissions...");
     $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, '/scripts/pre-init.d/71_set_config_sync_permissions.sh');
     $this->say("[{$this->drupalRemoteSyncTargetEnv}] Setting public filesystem permissions...");
-    $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, '/scripts/pre-init.d/71_set_public_file_permissions.shh');
+    $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, '/scripts/pre-init.d/71_set_public_file_permissions.sh');
   }
 
   /**
