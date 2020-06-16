@@ -5,7 +5,7 @@
   "require": {
     "drupal/coder": "~8",
     "boedah/robo-drush": "~3",
-    "unb-libraries/dockworker": ">3.0.29"
+    "unb-libraries/dockworker": ">3.0.35"
   },
   "conflict": {
     "drupal/coder": ">8.3.8"
