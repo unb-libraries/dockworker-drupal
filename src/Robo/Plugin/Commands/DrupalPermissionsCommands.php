@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Consolidation\AnnotatedCommand\CommandData;
 use Dockworker\Robo\Plugin\Commands\ApplicationPermissionsCommands;
 
 /**
@@ -14,12 +15,19 @@ class DrupalPermissionsCommands extends ApplicationPermissionsCommands {
    *
    * @hook post-command dockworker:permissions:fix
    */
-  public function fixPermissions() {
-    $paths = [
-      'custom',
-      'config-yml',
-      'tests',
-    ];
+  public function fixDrupalPermissions($result, CommandData $commandData) {
+    $opts = $commandData->options();
+    if (empty($opts['path'])) {
+      $paths = [
+        'custom',
+        'config-yml',
+        'tests',
+      ];
+    }
+    else {
+      $paths = [$opts['path']];
+    }
+
     foreach ($paths as $path) {
       $this->setPermissions($path);
     }
