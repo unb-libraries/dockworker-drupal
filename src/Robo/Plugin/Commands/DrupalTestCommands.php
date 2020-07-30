@@ -34,7 +34,6 @@ class DrupalTestCommands extends DockworkerLocalCommands {
     $this->io()->title("Running Behat Tests");
     $this->getLocalRunning();
     return $this->taskDockerExec($this->instanceName)
-      ->interactive()
       ->exec('/scripts/runBehatTests.sh')
       ->run();
   }
@@ -53,7 +52,6 @@ class DrupalTestCommands extends DockworkerLocalCommands {
     $this->io()->title("Running PHPUnit Tests");
     $this->getLocalRunning();
     return $this->taskDockerExec($this->instanceName)
-      ->interactive()
       ->exec('/scripts/runUnitTests.sh')
       ->run();
   }
