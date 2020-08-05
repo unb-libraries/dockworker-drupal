@@ -27,6 +27,7 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
 
   const PHPCS_STANDARDS = [
     'Drupal',
+    'DrupalPractice',
   ];
 
   /**
@@ -35,15 +36,17 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
    * @hook pre-command validate:php:drupal
    */
   public function setPhpCsCoderSymlink() {
-    $target = $this->repoRoot . '/vendor/drupal/coder/coder_sniffer/Drupal';
-    $link = $this->repoRoot . '/vendor/squizlabs/php_codesniffer/src/Standards/Drupal';
-    if (!file_exists($link)) {
-      symlink(
-        $target,
-        $link
-      );
-      $this->logger->info(self::INFO_CREATE_PHPCS_SYMLINK);
-    };
+    foreach (self::PHPCS_STANDARDS as $standard) {
+      $target = $this->repoRoot . "/vendor/drupal/coder/coder_sniffer/$standard";
+      $link = $this->repoRoot . "/vendor/squizlabs/php_codesniffer/src/Standards/$standard";
+      if (!file_exists($link)) {
+        symlink(
+          $target,
+          $link
+        );
+        $this->logger->info(self::INFO_CREATE_PHPCS_SYMLINK);
+      };
+    }
   }
 
   /**
