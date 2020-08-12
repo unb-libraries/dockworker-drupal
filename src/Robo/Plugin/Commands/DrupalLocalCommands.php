@@ -110,21 +110,6 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Self-updates dockworker.
-   *
-   * @hook post-command dockworker:update
-   */
-  public function getDockworkerDrupalUpdates() {
-    $this->say('Checking for updates to unb-libraries/dockworker-drupal...');
-    $this->taskExec('composer')
-      ->dir($this->repoRoot)
-      ->arg('update')
-      ->arg('unb-libraries/dockworker-drupal')
-      ->silent(TRUE)
-      ->run();
-  }
-
-  /**
    * Provides log checker with ignored log exception items for local Drupal.
    *
    * @hook on-event dockworker-local-log-error-exceptions
