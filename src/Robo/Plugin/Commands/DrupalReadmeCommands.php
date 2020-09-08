@@ -12,15 +12,9 @@ class DrupalReadmeCommands extends DockworkerReadmeCommands {
   /**
    * Updates the Drupal application's README.md.
    *
-   * @command dockworker:readme:update
-   * @aliases update-readme
-   *
-   * @usage dockworker:readme:update
-   *
-   * @github
-   * @readmecommand
+   * @hook replace-command dockworker:readme:update
    */
-  public function setApplicationReadme() {
+  public function setDrupalApplicationReadme() {
     $this->readMeTemplatePaths[] = $this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/README';
     parent::setApplicationReadme();
   }
