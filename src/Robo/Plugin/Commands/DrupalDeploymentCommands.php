@@ -40,27 +40,13 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @kubectl
    */
   public function rebuildRemoteDrupalCache($env) {
-    $this->deploymentCommandInit($this->repoRoot, $env);
-    $this->kubernetesPodNamespace = $this->deploymentK8sNameSpace;
-    $this->kubernetesSetupPods($this->deploymentK8sName, "Rebuild Cache");
-
-    if (!empty($this->kubernetesCurPods)) {
-      $first_pod_id = reset($this->kubernetesCurPods);
-      $this->kubernetesPodExecCommand(
-        $first_pod_id,
-        $env,
-        '/scripts/clearDrupalCache.sh'
-      );
-    }
-    else {
-      throw new DockworkerException(
-        sprintf(
-          self::ERROR_NO_PODS_IN_DEPLOYMENT,
-          $this->deploymentK8sName,
-          $this->deploymentK8sNameSpace
-        )
-      );
-    }
+    $pods = $this->getDeploymentExecPodIds($env);
+    $pod_id = array_shift($pods);
+    $this->kubernetesPodExecCommand(
+      $pod_id,
+      $env,
+      '/scripts/clearDrupalCache.sh'
+    );
   }
 
   /**
@@ -78,29 +64,15 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @kubectl
    */
   public function generateRemoteDrupalUli($env) {
-    $this->deploymentCommandInit($this->repoRoot, $env);
-    $this->kubernetesPodNamespace = $this->deploymentK8sNameSpace;
-    $this->kubernetesSetupPods($this->deploymentK8sName, "Generate ULI");
-
-    if (!empty($this->kubernetesCurPods)) {
-      $first_pod_id = reset($this->kubernetesCurPods);
-      $this->io()->text(
-        $this->kubernetesPodExecCommand(
-          $first_pod_id,
-          $env,
-          '/scripts/drupalUli.sh'
-        )
-      );
-    }
-    else {
-      throw new DockworkerException(
-        sprintf(
-          self::ERROR_NO_PODS_IN_DEPLOYMENT,
-          $this->deploymentK8sName,
-          $this->deploymentK8sNameSpace
-        )
-      );
-    }
+    $pods = $this->getDeploymentExecPodIds($env);
+    $pod_id = array_shift($pods);
+    $this->io()->text(
+      $this->kubernetesPodExecCommand(
+        $pod_id,
+        $env,
+        '/scripts/drupalUli.sh'
+      )
+    );
   }
 
 }

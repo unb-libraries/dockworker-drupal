@@ -31,67 +31,53 @@ class DrupalFixDeploymentCommands extends DockworkerDeploymentCommands {
    * @kubectl
    */
   public function fixDeploymentMissingModules($module, $env) {
-    $this->deploymentCommandInit($this->repoRoot, $env);
-    $this->kubernetesPodNamespace = $this->deploymentK8sNameSpace;
-    $this->kubernetesSetupPods($this->deploymentK8sName, "Logs");
+    $pods = $this->getDeploymentExecPodIds($env);
+    $pod_id = array_shift($pods);
 
-    if (!empty($this->kubernetesCurPods)) {
-      $first_pod_id = reset($this->kubernetesCurPods);
+    $this->kubernetesPodComposerCommand(
+      $pod_id,
+      $this->kubernetesPodNamespace,
+      "require drupal/$module"
+    );
 
-      $this->kubernetesPodComposerCommand(
-        $first_pod_id,
-        $this->kubernetesPodNamespace,
-        "require drupal/$module"
-      );
+    $this->kubernetesPodDrushCommand(
+      $pod_id,
+      $this->kubernetesPodNamespace,
+      "en $module"
+    );
 
-      $this->kubernetesPodDrushCommand(
-        $first_pod_id,
-        $this->kubernetesPodNamespace,
-        "en $module"
-      );
+    $this->kubernetesPodDrushClearCache(
+      $pod_id,
+      $this->kubernetesPodNamespace
+    );
 
-      $this->kubernetesPodDrushClearCache(
-        $first_pod_id,
-        $this->kubernetesPodNamespace
-      );
+    $this->kubernetesPodDrushCommand(
+      $pod_id,
+      $this->kubernetesPodNamespace,
+      'updb'
+    );
 
-      $this->kubernetesPodDrushCommand(
-        $first_pod_id,
-        $this->kubernetesPodNamespace,
-        'updb'
-      );
+    $this->kubernetesPodDrushClearCache(
+      $pod_id,
+      $this->kubernetesPodNamespace
+    );
 
-      $this->kubernetesPodDrushClearCache(
-        $first_pod_id,
-        $this->kubernetesPodNamespace
-      );
+    $this->kubernetesPodDrushCommand(
+      $pod_id,
+      $this->kubernetesPodNamespace,
+      "pmu $module"
+    );
 
-      $this->kubernetesPodDrushCommand(
-        $first_pod_id,
-        $this->kubernetesPodNamespace,
-        "pmu $module"
-      );
+    $this->kubernetesPodComposerCommand(
+      $pod_id,
+      $this->kubernetesPodNamespace,
+      "remove drupal/$module --update-with-dependencies"
+    );
 
-      $this->kubernetesPodComposerCommand(
-        $first_pod_id,
-        $this->kubernetesPodNamespace,
-        "remove drupal/$module --update-with-dependencies"
-      );
-
-      $this->kubernetesPodDrushClearCache(
-        $first_pod_id,
-        $this->kubernetesPodNamespace
-      );
-    }
-    else {
-      throw new DockworkerException(
-        sprintf(
-          self::ERROR_NO_PODS_IN_DEPLOYMENT,
-          $this->deploymentK8sName,
-          $this->deploymentK8sNameSpace
-        )
-      );
-    }
+    $this->kubernetesPodDrushClearCache(
+      $pod_id,
+      $this->kubernetesPodNamespace
+    );
   }
 
 }
