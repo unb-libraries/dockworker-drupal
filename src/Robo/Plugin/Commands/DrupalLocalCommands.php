@@ -112,6 +112,17 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   /**
    * Provides log checker with ignored log exception items for local Drupal.
    *
+   * @hook on-event dockworker-local-log-error-triggers
+   */
+  public function getErrorLogTriggers() {
+    return [
+      'SQLSTATE',
+    ];
+  }
+
+  /**
+   * Provides log checker with ignored log exception items for local Drupal.
+   *
    * @hook on-event dockworker-local-log-error-exceptions
    */
   public function getErrorLogExceptions() {

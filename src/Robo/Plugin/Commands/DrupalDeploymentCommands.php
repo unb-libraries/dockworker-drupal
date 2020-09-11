@@ -17,6 +17,17 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
   /**
    * Provides log checker with ignored log exception items for deployed Drupal.
    *
+   * @hook on-event dockworker-deployment-log-error-triggers
+   */
+  public function getErrorLogDeploymentTriggers() {
+    return [
+      'SQLSTATE',
+    ];
+  }
+
+  /**
+   * Provides log checker with ignored log exception items for deployed Drupal.
+   *
    * @hook on-event dockworker-deployment-log-error-exceptions
    */
   public function getErrorLogDeploymentExceptions() {
