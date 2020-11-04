@@ -43,28 +43,17 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   private $drupalRemoteSyncPodName = NULL;
 
   /**
-   * Encrypt deployed Drupal data into dockworker content archive(s).
-   *
-   * @param string $env
-   *   The deploy environment to dump from.
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
-   *
-   * @option bool $no-database
-   *   Do not dump the drupal database.
-   * @option bool $no-files
-   *   Do not dump the drupal filesystem.
+   * Encrypt local Drupal data into dockworker content archive(s).
    *
    * @command repo:test-content:update
    *
    * @throws \Dockworker\DockworkerException
    *
    * @github
-   * @kubectl
    */
-  public function encryptDrupalDatabaseFileSystemFromRemote($env, $opts = ['no-database' => FALSE, 'no-files' => FALSE]) {
+  public function encryptDrupalDatabaseFileSystemFromLocal() {
     $passphrase = $this->ask('Passphrase to encrypt content with?');
-    $this->dumpDrupalDatabaseFileSystemFromRemote($env, $opts);
+    $this->dumpDrupalDatabaseFileSystemFromLocal();
 
     exec("mkdir -p {$this->repoRoot}/data/content/");
 
@@ -82,63 +71,68 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   /**
    * Dumps deployed Drupal data into local archive(s).
    *
-   * @param string $env
-   *   The deploy environment to dump from.
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
-   *
-   * @option bool $no-database
-   *   Do not dump the drupal database.
-   * @option bool $no-files
-   *   Do not dump the drupal filesystem.
-   *
-   * @command deployment:content:dump
+   * @command local:content:dump
    *
    * @throws \Dockworker\DockworkerException
    *
    * @github
-   * @kubectl
    */
-  public function dumpDrupalDatabaseFileSystemFromRemote($env, $opts = ['no-database' => FALSE, 'no-files' => FALSE]) {
-    $this->getLocalRunning();
+  public function dumpDrupalDatabaseFileSystemFromLocal() {
+    $this->io()->newLine();
+    $this->io()->section("Dumping Drupal filesystem from local...");
+    $files_dump_name = self::POD_TEMPORARY_FILE_LOCATION . '/' . self::POD_FILES_DUMP_FILENAME;
 
-    $this->io()->title('Deployed Data Synchronization');
+    $this->say("[Local] (optionally) Removing Drupal filesystem archive...");
+    $this->runLocalContainerCommand('rm -f '. $files_dump_name);
 
-    $this->kubernetesPodNamespace = $env;
-    $this->kubernetesSetupPods($this->instanceName, "Synchronization");
+    $this->say("[Local] Creating Drupal filesystem archive...");
 
-    // All pods should return the same data, so simply use the first.
-    $this->drupalRemoteSyncPodName = $this->kubernetesCurPods[0];
+    $excludes = [
+      '*.css',
+      '*.css.gz',
+      '*.js',
+      '*.js.gz',
+      'app/html/sites/default/files/php',
+      'app/html/sites/default/files/styles'
+    ];
 
-    // Determine operations to perform.
-    $this->drupalRemoteSyncDatabase = !$opts['no-database'];
-    $this->drupalRemoteSyncFiles = !$opts['no-files'];
-
-    // Dump out no-op users.
-    if (!$this->drupalRemoteSyncDatabase && !$this->drupalRemoteSyncFiles) {
-      $this->say('No operations requested. Exiting...');
-      return;
+    $exclude_string = NULL;
+    foreach ($excludes as $exclude) {
+      $exclude_string .= "--exclude='$exclude' ";
     }
 
-    // Error Checking.
-    $this->checkRemoteDrush();
-    $this->checkLocalDrush();
-    $this->compareLocalRemoteDrupalVersions();
+    $archive_command = "tar -cvpzf $files_dump_name $exclude_string" . self::POD_FILES_SOURCE;
+    $this->runLocalContainerCommand($archive_command);
 
-    if ($this->drupalRemoteSyncDatabase) {
-      $this->syncDrupalDatabaseFromRemote(TRUE);
-    }
+    $this->say("[Local] Copying Drupal filesystem archive to Docker Host's temporary directory...");
+    $this->copyContainerFileToLocal($files_dump_name, $files_dump_name);
 
-    if ($this->drupalRemoteSyncFiles) {
-      $this->syncDrupalFileSystemFromRemote(TRUE);
-    }
+    $this->say("[Remote] Removing Drupal filesystem archive file...");
+    $this->runLocalContainerCommand('rm -f '. $files_dump_name);
 
-    if ($this->drupalRemoteSyncDatabase) {
-      $this->say('Database dumped to ' . self::POD_TEMPORARY_FILE_LOCATION  . '/' . self::POD_DATABASE_DUMP_COMPRESSED_FILENAME);
-    }
-    if ($this->drupalRemoteSyncFiles) {
-      $this->say('Files dumped to ' . self::POD_TEMPORARY_FILE_LOCATION  . '/' . self::POD_FILES_DUMP_FILENAME);
-    }
+    // Database
+    $this->io()->newLine();
+    $this->io()->section("Synchronizing Drupal database from local...");
+    $dump_file = self::POD_TEMPORARY_FILE_LOCATION . '/' . self::POD_DATABASE_DUMP_FILENAME;
+    $gz_dump_file = $dump_file . '.gz';
+
+    $this->say("[Local] (optionally) Removing Drupal database archive file...");
+    $this->runLocalContainerCommand('rm -f '. $gz_dump_file);
+
+    $this->say("[Local] Clearing cache {$this->drupalRemoteSyncPodName}...");
+    $this->runLocalContainerCommand('$DRUSH cr');
+
+    $this->say("[Local] Dumping Drupal database from {$this->drupalRemoteSyncPodName}...");
+    $this->runLocalContainerCommand('$DRUSH sql-dump --result-file=' . $dump_file);
+
+    $this->say("[Local] Compressing Drupal database archive file...");
+    $this->runLocalContainerCommand('gzip '. $dump_file);
+
+    $this->say("[Local] Copying Drupal database archive file to Docker Host's temporary directory...");
+    $this->copyContainerFileToLocal($gz_dump_file, $gz_dump_file);
+
+    $this->say("[Local] Removing Drupal database archive file...");
+    $this->runLocalContainerCommand('rm -f '. $gz_dump_file);
   }
 
   /**
@@ -407,6 +401,13 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
     );
    }
 
+  private function copyContainerFileToLocal($local_filename, $container_filename) {
+    return $this->localDockerContainerCopyCommand(
+      $this->instanceName . ':' . $container_filename,
+      $local_filename
+    );
+  }
+
   /**
    * Runs a command in the local Drupal application.
    *
@@ -430,7 +431,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    *
    * @throws \Exception
    */
-  private function syncDrupalFileSystemFromRemote($dump_only = FALSE) {
+  private function syncDrupalFileSystemFromRemote($dump_only = FALSE, $exclude_files = []) {
     $this->io()->newLine();
     $this->io()->section("Synchronizing Drupal filesystem from [{$this->drupalRemoteSyncPodName}]");
     $files_dump_name = self::POD_TEMPORARY_FILE_LOCATION . '/' . self::POD_FILES_DUMP_FILENAME;
@@ -439,6 +440,15 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
     $this->runRemoteCommand('rm -f '. $files_dump_name);
 
     $this->say("[Remote] Creating Drupal filesystem archive...");
+
+    $exclude_string = NULL;
+    if (!empty($exclude_files)) {
+      foreach ($exclude_files as $exclude_path) {
+        $exclude_string .= "--exclude='$exclude_path'";
+      }
+    }
+
+    $archive_command = "tar -cvpzf $exclude_string $files_dump_name " . self::POD_FILES_SOURCE;
     $this->runRemoteCommand("tar -cvpzf  $files_dump_name " . self::POD_FILES_SOURCE);
 
     $this->say("[Remote] Copying Drupal filesystem archive to Docker Host's temporary directory...");
