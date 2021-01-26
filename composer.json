@@ -5,7 +5,7 @@
   "require": {
     "drupal/coder": "~8",
     "boedah/robo-drush": "~3",
-    "unb-libraries/dockworker": ">3.0.35"
+    "unb-libraries/dockworker": "4"
   },
   "license": "MIT",
   "authors": [

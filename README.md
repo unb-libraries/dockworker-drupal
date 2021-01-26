@@ -15,69 +15,50 @@ The following packages are required to be globally installed on your development
 ## Commands
 ```
  deployment
-  deployment:apply                       Updates the application's k8s deployment definition.
-  deployment:drupal:fix-missing-modules  Removes any references to missing modules in application's k8s pod(s).
-  deployment:image:update                Updates the application's k8s deployment image.
-  deployment:logs                        Displays the application's k8s deployed pod(s) logs.
-  deployment:logs:check                  Checks the application's deployed k8s pod(s) logs for errors.
-  deployment:restart                     Restarts the k8s deployment rollout.
-  deployment:shell                       Open a shell into the k8s deployment.
-  deployment:status                      Checks the application's k8s deployment rollout status.
+  deployment:apply            Updates the application's k8s deployment definition.
+  deployment:copy-from        Copies a file from a k8s deployment to the local development instance.
+  deployment:copy-to          Copies a file from a local development instance to the k8s deployment.
+  deployment:delete           Deletes the application's k8s deployment definition.
+  deployment:delete-apply     Deletes and applies the application's k8s deployment definition.
+  deployment:image:update     Updates the application's k8s deployment image.
+  deployment:logs             Displays the application's k8s deployed pod(s) logs.
+  deployment:logs:check       Checks the application's deployed k8s pod(s) logs for errors.
+  deployment:restart          Restarts the k8s deployment rollout.
+  deployment:shell            Open a shell into the k8s deployment.
+  deployment:status           Checks the application's k8s deployment rollout status.
  dockworker
-  dockworker:docker:cleanup              Clean up unused local docker assets.
-  dockworker:git:setup-hooks             Set up the required git hooks for dockworker.
-  dockworker:permissions:fix             [pfix] Sets the correct repository file permissions. Requires sudo.
-  dockworker:update                      [update] Self-updates the dockworker application.
- drupal
-  drupal:cr                              [cr] Rebuilds the cache in the local Drupal application.
-  drupal:entup                           [entup] Performs any required entity updates in the instance.
-  drupal:generate:entity-field           [gef] Generates the boilerplate necessary to add a field to an entity.
-  drupal:uli                             [uli] Generates a ULI link for the local Drupal application.
-  drupal:write-config                    [write-config] Exports the configuration local Drupal application.
+  dockworker:docker:cleanup   Clean up unused local docker assets.
+  dockworker:git:setup-hooks  Set up the required git hooks for dockworker.
+  dockworker:permissions:fix  [pfix] Sets the correct repository file permissions. Requires sudo.
+  dockworker:readme:update    [update-readme] Updates the application's README.md.
+  dockworker:update           [update] Self-updates the dockworker application.
  image
-  image:build                            Builds the application's docker image.
-  image:build-push                       Builds the application's docker image and pushes it to the deployment repository.
-  image:deploy                           Builds, tags, pushes and deploys the application's docker image.
+  image:build                 Builds the application's docker image.
+  image:build-push            Builds the application's docker image and pushes it to the deployment repository.
+  image:deploy                Optionally Builds, tags, pushes and deploys the application's docker image.
  local
-  local:build                            [build] Builds the local application's docker image.
-  local:build-test                       Builds the application image, starts a local container, and runs all tests.
-  local:content:remote-sync              Synchronizes deployed Drupal data into the local Drupal application.
-  local:destroy                          Halts the local application and removes any persistent data.
-  local:halt                             Halts the local application without removing any persistent data.
-  local:hard-reset                       Destroys the local application, and removes any uncommitted repo changes.
-  local:logs                             Displays the local application's container logs.
-  local:logs:check                       Checks the local application's container logs for errors.
-  local:logs:tail                        [logs] Display previous local application container logs and monitor for new ones.
-  local:pull-upstream                    Pulls any upstream images used in building the local application image.
-  local:rebuild                          [rebuild] Stops the local container and re-starts it, preserving persistent data.
-  local:rm                               [rm] Removes removes all persistent data from the local docker application.
-  local:shell                            [shell] Opens the local application container's shell.
-  local:start                            [start] Brings up the local application container, displays the application logs.
-  local:start-over                       [start-over|deploy] Kills the local container, removes persistent data, and rebuilds/restarts.
-  local:up                               [up] Brings up the local application container.
-  local:update-hostfile                  Updates the local system hostfile for the local application. Requires sudo.
+  local:build                 [build] Builds the local application's docker image.
+  local:build-test            Builds the application image, starts a local container, and runs all tests.
+  local:destroy               Halts the local application and removes any persistent data.
+  local:halt                  Halts the local application without removing any persistent data.
+  local:hard-reset            Destroys the local application, and removes any uncommitted repo changes.
+  local:logs                  Displays the local application's container logs.
+  local:logs:check            Checks the local application's container logs for errors.
+  local:logs:tail             [logs] Display previous local application container logs and monitor for new ones.
+  local:pull-upstream         Pulls any upstream images used in building the local application image.
+  local:rebuild               [rebuild] Stops the local container and re-starts it, preserving persistent data.
+  local:rm                    [rm] Removes removes all persistent data from the local docker application.
+  local:shell                 [shell] Opens the local application container's shell.
+  local:start                 [start] Builds and deploys the local application, displaying the application logs.
+  local:start-over            [start-over|deploy] Kills the local container, removes persistent data, and rebuilds/restarts.
+  local:up                    [up] Brings up the local application container.
+  local:update-hostfile       Updates the local system hostfile for the local application. Requires sudo.
  tests
-  tests:all                              [test] Tests the local application using all testing frameworks.
-  tests:behat                            [behat] Runs the Behat tests defined for the local Drupal application.
-  tests:phpunit                          [phpunit] Runs the PHPUnit tests defined for the local Drupal application.
+  tests:all                   [test] Tests the local application using all testing frameworks.
  theme
-  theme:build-all                        [build-themes] Builds the local application's deployable theme assets from source.
- travis
-  travis:id:latest                       Retrieves the latest travis build ID for the application.
-  travis:info:latest                     Retrieves the latest travis build details for the application.
-  travis:logs                            Retrieves logs for a travis build for the application.
-  travis:logs:latest                     Retrieves logs for the latest travis build for the application.
-  travis:restart                         Restarts a travis build for the application.
-  travis:restart:latest                  Restarts the latest travis build for the application.
+  theme:build-all             [build-themes] Builds the local application's deployable theme assets from source.
  validate
-  validate:drupal:9-upgrade              Audits all code in modules/themes against Drupal 9 standards.
-  validate:drupal:custom:php             [validate-custom-php] Validates all PHP inside the Drupal custom path.
-  validate:drupal:custom:twig            [validate-custom-twig] Validates all twig inside the Drupal custom path.
-  validate:drupal:custom:yaml            [validate-custom-yaml] Validates all YAML inside the Drupal custom path.
-  validate:git:commit-msg                Validates a git commit message against project standards.
-  validate:php:drupal                    Validates PHP files against Drupal coding standards.
-  validate:twig:drupal                   Validates twig files against standards.
-  validate:yaml:drupal                   Validates YAML files against Drupal coding standards.
+  validate:git:commit-msg     Validates a git commit message against project standards.
 ```
 
 ## Author / Licensing
