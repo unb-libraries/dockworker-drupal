@@ -65,6 +65,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
             $pod_id,
             '--namespace',
             $env,
+            '--timestamps'
           ],
           FALSE
         );
