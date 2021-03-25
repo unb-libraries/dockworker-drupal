@@ -35,7 +35,9 @@ class DrupalKubernetesBackupCommands extends DockworkerApplicationInfoCommands {
     $frequency_string = implode(',', $backup_frequencies);
 
     $frequency = $this->askDefault("What backup frequency? ($frequency_string):", 'hourly');
-    $this->drupalBackupDatabaseName = $this->ask("Database name?");
+
+    $db_guess = shell_exec('cat Dockerfile | grep DRUPAL_SITE_ID | cut -d " " -f 3 | tr -d "\n"');
+    $this->drupalBackupDatabaseName = $this->askDefault("Database name?", $db_guess . '_db');
     $backup_file_source = "$drupalBackupSourcePath/$frequency.yaml";
 
     if (!file_exists($backup_file_source)) {
