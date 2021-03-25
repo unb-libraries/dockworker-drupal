@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 90Ti
   claimRef:
-    name: backup-INSTANCE_SLUG-ca
+    name: backup-INSTANCE_SLUG
     namespace: prod
   nfs:
     path: /mnt/storage0/KubeNFS/INSTANCE_SLUG/backup
