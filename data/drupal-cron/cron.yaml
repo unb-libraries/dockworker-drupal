@@ -1,0 +1,54 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cron-INSTANCE_SLUG
+  namespace: CRON_DEPLOY_ENV
+  labels:
+    app: drupal
+    tier: cron
+spec:
+  schedule: "CRON_TIMINGS"
+  startingDeadlineSeconds: 480
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    metadata:
+      name: cron-INSTANCE_SLUG
+      labels:
+        app: drupal
+        tier: cron
+    spec:
+      template:
+        spec:
+          nodeSelector:
+            deployenv: CRON_DEPLOY_ENV
+          containers:
+            -
+              name: cron-INSTANCE_SLUG
+              command:
+                - /scripts/drupalCronEntry.sh
+              env:
+                -
+                  name: DEPLOY_ENV
+                  value: CRON_DEPLOY_ENV
+                -
+                  name: MYSQL_HOSTNAME
+                  value: drupal-mysql-lib-unb-ca
+                -
+                  name: MYSQL_PORT
+                  value: "3306"
+              image: "||DEPLOYMENTIMAGE||"
+              imagePullPolicy: Always
+              volumeMounts:
+                -
+                  mountPath: /app/html/sites/default
+                  name: drupal-persistent-storage
+          priorityClassName: cron-priority-services
+          imagePullSecrets:
+            -
+              name: github-container-registry-auth
+          restartPolicy: Never
+          volumes:
+            -
+              name: drupal-persistent-storage
+              persistentVolumeClaim:
+                claimName: INSTANCE_SLUG
