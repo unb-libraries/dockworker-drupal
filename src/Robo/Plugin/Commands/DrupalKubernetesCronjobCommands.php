@@ -30,14 +30,26 @@ class DrupalKubernetesCronjobCommands extends DockworkerApplicationInfoCommands 
     $cronjob_file_source = str_replace('INSTANCE_SLUG', $this->instanceSlug, $cronjob_file_source);
     $cronjob_file_source = str_replace('CRON_TIMINGS', $this->getApplicationFifteenCronString(), $cronjob_file_source);
 
-    $tmp_dir = TemporaryDirectoryTrait::tempdir();
+    if (!empty($_SERVER['KUBERNETES_METADATA_REPO_PATH'])) {
+      $tmp_dir = $_SERVER['KUBERNETES_METADATA_REPO_PATH'] . "/services/{$this->instanceSlug}";
+    }
+    else {
+      $tmp_dir = TemporaryDirectoryTrait::tempdir();
+    }
+
     foreach(['dev', 'prod'] as $deploy_env) {
       file_put_contents(
         $this->repoRoot . "/.dockworker/deployment/k8s/$deploy_env/cron.yaml",
         str_replace(['CRON_DEPLOY_ENV', 'DEPLOY_IMAGE'], [$deploy_env, '||DEPLOYMENTIMAGE||'], $cronjob_file_source)
       );
+
       $filename = "{$this->instanceSlug}.CronJob.$deploy_env.yaml";
-      $tmp_file = "$tmp_dir/$filename";
+      if (!empty($_SERVER['KUBERNETES_METADATA_REPO_PATH'])) {
+        $tmp_file = "$tmp_dir/$deploy_env/$filename";
+      }
+      else {
+        $tmp_file = "$tmp_dir/$filename";
+      }
       file_put_contents(
         $tmp_file,
         str_replace(['CRON_DEPLOY_ENV', 'DEPLOY_IMAGE'], [$deploy_env, "ghcr.io/unb-libraries/{$this->instanceName}:$deploy_env"], $cronjob_file_source)
