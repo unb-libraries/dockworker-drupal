@@ -18,7 +18,7 @@ jobs:
             {
               attachments: [{
                 color: 'warning',
-                text: `${process.env.AS_REPO} ${CI_REF_NAME} - Build Started :shipit: (${process.env.AS_ACTION})\n${process.env.AS_COMMIT} ${process.env.AS_MESSAGE}\n${process.env.AS_AUTHOR}`,
+                text: `${process.env.AS_REPO} ${process.env.CI_REF_NAME} - Build Started :shipit: (${process.env.AS_ACTION})\n${process.env.AS_COMMIT} ${process.env.AS_MESSAGE}\n${process.env.AS_AUTHOR}`,
               }]
             }
         env:
@@ -433,7 +433,7 @@ jobs:
             {
               attachments: [{
                 color: '${{ env.WORKFLOW_CONCLUSION }}' === 'success' ? 'good' : '${{ env.WORKFLOW_CONCLUSION }}' === 'failure' ? 'danger' : 'warning',
-                text: `${process.env.AS_REPO} ${CI_REF_NAME} - ${{ env.WORKFLOW_CONCLUSION }} ${{ env.DEPLOY_EMOJI }} (${process.env.AS_ACTION})\n${process.env.AS_COMMIT} ${process.env.AS_MESSAGE}\n${process.env.AS_AUTHOR}`,
+                text: `${process.env.AS_REPO} ${process.env.CI_REF_NAME} - ${{ env.WORKFLOW_CONCLUSION }} ${{ env.DEPLOY_EMOJI }} (${process.env.AS_ACTION})\n${process.env.AS_COMMIT} ${process.env.AS_MESSAGE}\n${process.env.AS_AUTHOR}`,
               }]
             }
         env:
