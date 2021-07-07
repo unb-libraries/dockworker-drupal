@@ -123,7 +123,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
     $this->runLocalContainerCommand('$DRUSH cr');
 
     $this->say("[Local] Dumping Drupal database from {$this->drupalRemoteSyncPodName}...");
-    $this->runLocalContainerCommand('$DRUSH sql-dump --result-file=' . $dump_file);
+    $this->runLocalContainerCommand('$DRUSH sql-dump --extra-dump=--no-tablespaces --structure-tables-list="accesslog,batch,cache,cache_*,ctools_css_cache,ctools_object_cache,flood,search_*,history,queue,semaphore,sessions,watchdog,webform_submitted_data" --result-file=' . $dump_file);
 
     $this->say("[Local] Compressing Drupal database archive file...");
     $this->runLocalContainerCommand('gzip '. $dump_file);
@@ -306,7 +306,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
     $this->runRemoteDrushCommand('cr');
 
     $this->say("[Remote] Dumping Drupal database from {$this->drupalRemoteSyncPodName}...");
-    $this->runRemoteDrushCommand('sql-dump --result-file=' . $dump_file);
+    $this->runRemoteDrushCommand('sql-dump --extra-dump=--no-tablespaces --structure-tables-list="accesslog,batch,cache,cache_*,ctools_css_cache,ctools_object_cache,flood,search_*,history,queue,semaphore,sessions,watchdog,webform_submitted_data" --result-file=' . $dump_file);
 
     $this->say("[Remote] Compressing Drupal database archive file...");
     $this->runRemoteCommand('gzip '. $dump_file);

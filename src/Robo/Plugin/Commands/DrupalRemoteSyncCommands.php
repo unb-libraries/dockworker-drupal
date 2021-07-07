@@ -264,7 +264,7 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
     $this->runRemoteCommand($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, '/scripts/clearDrupalCache.sh');
 
     $this->say("[{$this->drupalRemoteSyncSourceEnv}] Dumping Drupal database...");
-    $this->runRemoteDrushCommand($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, 'sql-dump --result-file=' . $dump_file);
+    $this->runRemoteDrushCommand($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, 'sql-dump --extra-dump=--no-tablespaces --structure-tables-list="accesslog,batch,cache,cache_*,ctools_css_cache,ctools_object_cache,flood,search_*,history,queue,semaphore,sessions,watchdog,webform_submitted_data" --result-file=' . $dump_file);
 
     $this->say("[{$this->drupalRemoteSyncSourceEnv}] Compressing Drupal database archive file...");
     $this->runRemoteCommand($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, 'gzip '. $dump_file);
