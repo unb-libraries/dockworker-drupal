@@ -136,6 +136,22 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
+   * Synchronizes deployed Drupal config data into the local Drupal application.
+   *
+   * @param string $env
+   *   The deploy environment to synchronize from.
+   *
+   * @command local:config:remote-sync
+   */
+  public function synchronizeConfig($env = 'prod') {
+    if ($this->confirm('This will destroy your local instance data and require a start-over. Continue?')) {
+      $this->setRunOtherCommand("local:content:remote-sync --no-files $env");
+      $this->setRunOtherCommand('write-config');
+      $this->say("$env Config has been written to your local repository.");
+    }
+  }
+
+  /**
    * Synchronizes deployed Drupal data into the local Drupal application.
    *
    * @param string $env
