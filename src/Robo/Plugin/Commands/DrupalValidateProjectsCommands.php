@@ -95,7 +95,7 @@ class DrupalValidateProjectsCommands extends DockworkerLocalCommands {
       $this->io()->title('Potentially Extraneous Projects:');
       $this->io()->block(implode("\n", $this->extraneousProjects));
       $this->io()
-        ->block('The above drupal projects were build in build/composer.json but not detected as enabled in core.extension. This does not necessarily mean they are extraneous! As an example - bootstrap may be the base theme for a custom theme (subthemes do not need the parent theme enabled). Other modules may be enabled as submodules that are different than their names.');
+        ->block('The above Drupal projects are built into the container per build/composer.json, but are not detected as enabled in core.extension.yml. This does not necessarily mean they are extraneous! As an example - bootstrap may be the base theme for a custom theme (subthemes do not need the parent theme enabled). Other modules may be enabled as submodules that are different than their names.');
     }
     else {
       $this->say('Hooray! No projects detected as built, but not enabled.');
