@@ -43,8 +43,8 @@ class DrupalValidateProjectsCommands extends DockworkerLocalCommands {
         $this->coreExtensionsFilePath
       )
     );
-    if (!empty($this->coreExtensionsFile['project'])) {
-      $this->enabledProjects = array_keys($this->coreExtensionsFile['project']);
+    if (!empty($this->coreExtensionsFile['module'])) {
+      $this->enabledProjects = array_keys($this->coreExtensionsFile['module']);
     }
   }
 
