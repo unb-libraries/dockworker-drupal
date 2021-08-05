@@ -248,7 +248,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * @throws \Dockworker\DockworkerException
    */
   private function checkDrushCommandOutput(array $output) {
-    if (stristr($output[0], '8.')) {
+    if (stristr($output[0], '8.') || stristr($output[0], '8.')) {
       return;
     }
     throw new DockworkerException("Remote drush could not bootstrap Drupal instance.");
