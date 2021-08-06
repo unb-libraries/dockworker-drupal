@@ -142,14 +142,28 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    *   The deploy environment to synchronize from. Defaults to 'prod'.
    *
    * @command local:config:remote-sync
+   *
+   * @kubectl
    */
   public function synchronizeConfig($env = 'prod') {
-    $this->getLocalRunning();
-    if ($this->confirm('Synchronizing configuration will likely destroy your local development instance data and require a "start-over" to function normally. Continue anyway?')) {
-      $this->setRunOtherCommand("local:content:remote-sync --no-files $env");
-      $this->setRunOtherCommand('write-config');
-      $this->say("Configuration from $env has been written to your local ./config-yml directory.");
-    }
+    $this->kubernetesPodNamespace = $env;
+    $this->kubernetesSetupPods($this->instanceName, "Synchronization");
+    $pod_id = array_shift($this->kubernetesCurPods);
+
+    $this->say("Exporing live config from $env/$pod_id...");
+    $this->kubernetesPodExecCommand(
+      $pod_id,
+      $env,
+      '/scripts/configExport.sh'
+    );
+
+    $this->say("Copying config from $env/$pod_id to local...");
+    $this->kubernetesCopyFromPodCommand(
+      $pod_id,
+      $env,
+      '/app/configuration',
+      './config-yml'
+    );
   }
 
   /**
