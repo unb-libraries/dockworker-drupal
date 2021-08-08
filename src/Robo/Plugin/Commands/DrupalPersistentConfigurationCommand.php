@@ -74,13 +74,14 @@ class DrupalPersistentConfigurationCommand extends DockworkerDeploymentCommands 
    */
   protected function stageConfigurationMatchingMask($persistent_config_mask, $persistent_config_description) {
     $this->say("Searching for $persistent_config_description configuration objects...");
-    $persistent_config_files = glob("{$this->repoRoot}/config-yml/$persistent_config_mask");
-    if (!empty($persistent_config_files)) {
+    $preg_match_pattern = "/config-yml\/$persistent_config_mask\.yml/";
+    $changed_persistent_config_files = $this->getGitRepoChanges($preg_match_pattern);
+    if (!empty($changed_persistent_config_files)) {
       $this->drupalPersistentConfigHasChanges = TRUE;
       $this->say("Adding new/changed $persistent_config_description configuration objects...");
-      $progressBar = new ProgressBar($this->output, count($persistent_config_files));
+      $progressBar = new ProgressBar($this->output, count($changed_persistent_config_files));
       $progressBar->start();
-      foreach ($persistent_config_files as $persistent_config_file) {
+      foreach ($changed_persistent_config_files as $persistent_config_file => $persistent_config_file_status) {
         $this->repoGit->addFile($persistent_config_file);
         $progressBar->advance();
       }
