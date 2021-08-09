@@ -18,7 +18,13 @@ class DrupalGithubActionsWorkflowCommands extends DockworkerGithubActionsWorkflo
    * @actionsworkflowcommand
    */
   public function setDrupalApplicationGithubActionsWorkflowFile() {
-    $this->githubActionsWorkflowSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/gh-actions/test-suite.yaml';
+    $major = Robo::Config()->get('dockworker.drupal.major');
+    if (!empty($major) && $major == '9') {
+      $this->githubActionsWorkflowSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/gh-actions/9-test-suite.yaml';
+    }
+    else {
+      $this->githubActionsWorkflowSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/gh-actions/test-suite.yaml';
+    }
     $this->writeApplicationGithubActionsWorkflowFile();
   }
 
