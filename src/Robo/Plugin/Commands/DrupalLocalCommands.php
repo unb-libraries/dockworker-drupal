@@ -15,7 +15,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   /**
    * Rebuilds the cache in the local Drupal application.
    *
-   * @command drupal:cr
+   * @command local:drupal:cr
    * @aliases cr
    */
   public function rebuildCache() {
@@ -34,7 +34,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
    * @param string $command
    *   The command to run.
    *
-   * @command drupal:drush
+   * @command local:drupal:drush
    * @aliases drush
    *
    * @throws \Dockworker\DockworkerException
@@ -55,7 +55,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   /**
    * Performs any required entity updates in the instance.
    *
-   * @command drupal:entup
+   * @command local:drupal:entup
    * @aliases entup
    * @throws \Dockworker\DockworkerException
    */
@@ -69,7 +69,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
    * @param string $user_name
    *   The user account name to generate the ULI for. Defaults to user 0.
    *
-   * @command drupal:uli
+   * @command local:drupal:uli
    * @aliases uli
    * @throws \Dockworker\DockworkerException
    */
@@ -96,7 +96,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   /**
    * Exports the configuration local Drupal application.
    *
-   * @command drupal:write-config
+   * @command local:drupal:write-config
    * @aliases write-config
    * @throws \Dockworker\DockworkerException
    */
