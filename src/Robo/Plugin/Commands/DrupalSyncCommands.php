@@ -3,6 +3,7 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DockworkerException;
+use Dockworker\DrupalDrushSqlDumpTrait;
 use Dockworker\DrupalKubernetesPodTrait;
 use Dockworker\DrupalLocalDockerContainerTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
@@ -14,6 +15,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
 
   use DrupalKubernetesPodTrait;
   use DrupalLocalDockerContainerTrait;
+  use DrupalDrushSqlDumpTrait;
 
   const POD_DATABASE_DUMP_COMPRESSED_FILENAME = 'tmpdb.sql.gz';
   const POD_DATABASE_DUMP_FILENAME = 'tmpdb.sql';
@@ -123,7 +125,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
     $this->runLocalContainerCommand('$DRUSH cr');
 
     $this->say("[Local] Dumping Drupal database from {$this->drupalRemoteSyncPodName}...");
-    $this->runLocalContainerCommand('$DRUSH sql-dump --extra-dump=--no-tablespaces --structure-tables-list="accesslog,batch,cache,cache_*,ctools_css_cache,ctools_object_cache,flood,search_*,history,queue,semaphore,sessions,watchdog,webform_submitted_data" --result-file=' . $dump_file);
+    $this->runLocalContainerCommand('$DRUSH ' . $this->getDrushDumpCommand() . ' --result-file=' . $dump_file);
 
     $this->say("[Local] Compressing Drupal database archive file...");
     $this->runLocalContainerCommand('gzip '. $dump_file);
@@ -337,7 +339,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
     $this->runRemoteDrushCommand('cr');
 
     $this->say("[Remote] Dumping Drupal database from {$this->drupalRemoteSyncPodName}...");
-    $this->runRemoteDrushCommand('sql-dump --extra-dump=--no-tablespaces --structure-tables-list="accesslog,batch,cache,cache_*,ctools_css_cache,ctools_object_cache,flood,search_*,history,queue,semaphore,sessions,watchdog,webform_submitted_data" --result-file=' . $dump_file);
+    $this->runRemoteDrushCommand($this->getDrushDumpCommand() . ' --result-file=' . $dump_file);
 
     $this->say("[Remote] Compressing Drupal database archive file...");
     $this->runRemoteCommand('gzip '. $dump_file);
