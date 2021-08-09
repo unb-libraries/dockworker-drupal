@@ -133,4 +133,21 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
     ];
   }
 
+  /**
+   * Generates a list of installed composer packages for the local application.
+   *
+   * @command local:drupal:composer-packages
+   * @aliases ldcp
+   * @throws \Dockworker\DockworkerException
+   */
+  public function getInstalledLocalComposerPackages() {
+    $this->getLocalRunning();
+    $this->io()->title('[local] Installed Composer Packages');
+    $this->taskDockerExec($this->instanceName)
+      ->exec(
+        'composer show --working-dir=/app/html'
+      )
+      ->run();
+  }
+
 }

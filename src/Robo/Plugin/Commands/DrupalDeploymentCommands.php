@@ -165,4 +165,29 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
     );
   }
 
+  /**
+   * Generates a list of installed packages for remote drupal deployment.
+   *
+   * @param string $env
+   *   The environment to obtain the list from.
+   *
+   * @command deployment:drupal:composer-packages
+   * @aliases ddcp
+   * @throws \Dockworker\DockworkerException
+   *
+   * @kubectl
+   */
+  public function getInstalledDeployedComposerPackages($env) {
+    $pods = $this->getDeploymentExecPodIds($env);
+    $pod_id = array_shift($pods);
+    $this->io()->title("[$env][$pod_id] Installed Composer Packages");
+    $this->io()->text(
+      $this->kubernetesPodExecCommand(
+        $pod_id,
+        $env,
+        'composer show --working-dir=/app/html'
+      )
+    );
+  }
+
 }
