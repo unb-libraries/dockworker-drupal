@@ -4,6 +4,7 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\RepoGithubActionsWorkflowWriterTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerGithubActionsWorkflowCommands;
+use Robo\Robo;
 
 /**
  * Defines a class to write a standardized build file to a repository.
