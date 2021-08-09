@@ -91,6 +91,9 @@ class DrupalPersistentConfigurationCommand extends DockworkerDeploymentCommands 
       $progressBar->finish();
       $this->io()->newLine();
     }
+    else {
+      $this->say("No changes found!");
+    }
   }
 
 }
