@@ -80,8 +80,11 @@ class DrupalPersistentConfigurationCommand extends DockworkerDeploymentCommands 
       $this->drupalPersistentConfigHasChanges = TRUE;
       $this->say("Adding new/changed $persistent_config_description configuration objects...");
       $progressBar = new ProgressBar($this->output, count($changed_persistent_config_files));
+      ProgressBar::setFormatDefinition('custom', ' %current%/%max% [%bar%] %message%');
+      $progressBar->setFormat('custom');
       $progressBar->start();
       foreach ($changed_persistent_config_files as $persistent_config_file => $persistent_config_file_status) {
+        $progressBar->setMessage($persistent_config_file);
         $this->repoGit->addFile($persistent_config_file);
         $progressBar->advance();
       }
