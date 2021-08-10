@@ -238,8 +238,8 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
    */
   private function checkDangerousOperation() {
     $warn = FALSE;
-    if ($this->drupalRemoteSyncSourceEnv == 'dev' && $this->drupalRemoteSyncTargetEnv == 'prod') {
-      $this->io()->warning('You seem to be synchronizing from dev -> prod. This is NOT advised.');
+    if ($this->drupalRemoteSyncTargetEnv == 'prod') {
+      $this->io()->warning('You are about to synchronize ALL content from another environment to prod. This is destructive and likely NOT what you want to do!');
       $warn = TRUE;
     }
 
