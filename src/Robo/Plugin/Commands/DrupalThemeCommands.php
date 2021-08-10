@@ -34,7 +34,15 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
     foreach ($this->drupalThemes as $theme) {
       $this->buildDrupalThemeAssets($theme->getPath());
     }
+  }
 
+  /**
+   * Validates base-build project versions.
+   *
+   * @hook pre-command theme:build-all
+   */
+  public function setValidateThemeInherits() {
+    $this->setRunOtherCommand('validate:projects:base-build');
   }
 
   /**

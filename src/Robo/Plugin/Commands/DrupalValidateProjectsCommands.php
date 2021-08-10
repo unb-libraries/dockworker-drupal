@@ -12,6 +12,9 @@ class DrupalValidateProjectsCommands extends DockworkerLocalCommands {
   protected $buildFile;
   protected $buildFilePath;
   protected $buildProjects = [];
+  protected $baseFile;
+  protected $baseFilePath;
+  protected $baseProjects = [];
   protected $coreExtensionsFile;
   protected $coreExtensionsFilePath;
   protected $enabledProjects = [];
@@ -35,6 +38,51 @@ class DrupalValidateProjectsCommands extends DockworkerLocalCommands {
   }
 
   /**
+   * Validate the dockworker projects against build projects.
+   *
+   * @command validate:projects:base-build
+   */
+  public function validateBaseBuildProjectFiles() {
+    $this->buildFilePath = $this->repoRoot . '/build/composer.json';
+    $this->baseFilePath = $this->repoRoot . '/composer.json';
+    $this->setBaseProjects(FALSE);
+    $this->setBuildProjects(FALSE);
+    $base_projects = $this->getProjectsFromFile($this->baseFile);
+    $build_projects = $this->getProjectsFromFile($this->buildFile);
+    $common_projects = array_intersect_key($base_projects, $build_projects);
+    $versions_aligned = TRUE;
+    foreach (array_keys($common_projects) as $common_project) {
+      if ($base_projects[$common_project] != $build_projects[$common_project]) {
+        $versions_aligned = FALSE;
+      }
+    }
+    if (!$versions_aligned) {
+      $common_project_names = implode(', ', array_keys($common_projects));
+      $this->io()->warning("Identical projects ($common_project_names) are defined in composer.json and build/composer.json with different versions. This can have serious implications with Drupal themes, as inherits will differ.");
+    }
+  }
+
+  /**
+   * Retrieves a list of projects and versions defined in a composer file.
+   *
+   * @param object $file_obj
+   *   The composer file object.
+   *
+   * @return string[]
+   *   All projects and versions defined in the file.
+   */
+  protected function getProjectsFromFile($file_obj) {
+    $projects = [];
+    $file_array = (array) $file_obj;
+    foreach (['require', 'require-dev'] as $require_type) {
+      if (isset($file_array[$require_type])) {
+        $projects = array_merge($projects, (array) $file_array[$require_type]);
+      }
+    }
+    return $projects;
+  }
+
+  /**
    * Sets the enabled projects.
    */
   protected function setEnabledProjects() {
@@ -51,7 +99,7 @@ class DrupalValidateProjectsCommands extends DockworkerLocalCommands {
   /**
    * Sets the projects built via composer.
    */
-  protected function setBuildProjects() {
+  protected function setBuildProjects($strip_prefixes = TRUE) {
     $this->buildFile = json_decode(
       file_get_contents(
         $this->buildFilePath
@@ -60,7 +108,31 @@ class DrupalValidateProjectsCommands extends DockworkerLocalCommands {
     if (!empty($this->buildFile->require)) {
       foreach ($this->buildFile->require as $project_name => $project_version) {
         if (substr( $project_name, 0, 7 ) === "drupal/" && $project_name != 'drupal/core') {
-          $this->setProjectAsBuilt(str_replace('drupal/', '', $project_name));
+          if ($strip_prefixes) {
+            $project_name = str_replace('drupal/', '', $project_name);
+          }
+          $this->setProjectAsBuilt($project_name);
+        }
+      }
+    }
+  }
+
+  /**
+   * Sets the projects built via composer.
+   */
+  protected function setBaseProjects($strip_prefixes = TRUE) {
+    $this->baseFile = json_decode(
+      file_get_contents(
+        $this->baseFilePath
+      )
+    );
+    if (!empty($this->baseFile->require)) {
+      foreach ($this->baseFile->require as $project_name => $project_version) {
+        if (substr( $project_name, 0, 7 ) === "drupal/" && $project_name != 'drupal/core') {
+          if ($strip_prefixes) {
+            $project_name = str_replace('drupal/', '', $project_name);
+          }
+          $this->setProjectAsBuilt($project_name);
         }
       }
     }
