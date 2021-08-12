@@ -110,6 +110,8 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    *
    * @param string $env
    *   The environment to update.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option string $config-repo-name
    *   The github repository name that contains the deployment configuration.
@@ -131,12 +133,12 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    *
    * @kubectl
    */
-  public function updateSolrConfigurationWithLatest($env, $opts = ['config-repo-name' => 'docker-solr-drupal', 'config-repo-owner' => 'unb-libraries', 'config-repo-path' => '/data/conf', 'config-repo-refspec' => '8.x-4.x', 'no-reindex' => FALSE, 'solr-deployment-name' => 'drupal-solr-lib-unb-ca']) {
+  public function updateSolrConfigurationWithLatest($env, array $options = ['config-repo-name' => 'docker-solr-drupal', 'config-repo-owner' => 'unb-libraries', 'config-repo-path' => '/data/conf', 'config-repo-refspec' => '8.x-4.x', 'no-reindex' => FALSE, 'solr-deployment-name' => 'drupal-solr-lib-unb-ca']) {
     $this->initDrupalPodInstances($env);
     if (!empty($this->kubernetesCurPods)) {
       $first_drupal_pod_id = reset($this->kubernetesCurPods);
       $this->setUpInstanceIndices($first_drupal_pod_id);
-      $this->setSolrServerPodId($opts);
+      $this->setSolrServerPodId($options);
       $this->solrServerInit();
 
       $this->io()->title(sprintf(
@@ -145,7 +147,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
       ));
 
       $this->verifySolrServerIndicesExistHaveData();
-      $this->initDrupalSolrConfig($opts);
+      $this->initDrupalSolrConfig($options);
       $this->copyDrupalSolrConfigToPod();
 
       foreach ($this->drupalSolrServerIndices as $core_name) {
@@ -153,7 +155,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
         $this->createSolrCore($core_name, $this->drupalRemoteSolrConfigDir);
       }
 
-      if ($opts['no-reindex'] != TRUE) {
+      if ($options['no-reindex'] != TRUE) {
         $this->io()->title(sprintf(
           self::MSG_DRUPAL_REINDEXING,
           $first_drupal_pod_id
@@ -249,18 +251,18 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    *
    * @param string $env
    *   The k8s deploy environment to query.
-   * @param string[] $opts
+   * @param string[] $options
    *   An associative array of options passed to the robo command.
    *
    * @throws \Dockworker\DockworkerException
    */
-  private function setSolrServerPodId($opts) {
-    $solr_pods = $this->kubernetesGetMatchingPods($opts['solr-deployment-name'], $this->drupalSolrServerPodEnv);
+  private function setSolrServerPodId($options) {
+    $solr_pods = $this->kubernetesGetMatchingPods($options['solr-deployment-name'], $this->drupalSolrServerPodEnv);
     if (empty($solr_pods[0])) {
       throw new DockworkerException(
         sprintf(
           self::ERROR_NO_SOLR_SERVER_PODS,
-          $opts['solr-deployment-name'],
+          $options['solr-deployment-name'],
           $this->drupalSolrServerPodEnv
         )
       );
@@ -331,15 +333,15 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
   /**
    * Initializes the parameters used when downloading the solr configuration.
    *
-   * @param string[] $opts
+   * @param string[] $options
    *   An associative array of options passed to the robo command.
    */
-  private function initDrupalSolrConfig($opts) {
+  private function initDrupalSolrConfig($options) {
     $this->drupalLocalSolrConfigDir = $this->downloadGithubRepositoryContents(
-      $opts['config-repo-owner'],
-      $opts['config-repo-name'],
-      $opts['config-repo-refspec'],
-      $opts['config-repo-path']
+      $options['config-repo-owner'],
+      $options['config-repo-name'],
+      $options['config-repo-refspec'],
+      $options['config-repo-path']
     );
     $date = new \DateTime();
     $timestamp = $date->getTimestamp();

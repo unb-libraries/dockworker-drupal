@@ -21,7 +21,7 @@ class DrupalVisualRegressionTestCommands extends DrupalLocalCommands {
   protected $backstopFileContents = NULL;
   protected $backstopFilePath = NULL;
   protected $backstopPath = NULL;
-  protected $opts = [];
+  protected $options = [];
 
 
   /**
@@ -37,6 +37,9 @@ class DrupalVisualRegressionTestCommands extends DrupalLocalCommands {
   /**
    * Initializes visual regression tests for this instance.
    *
+   * @param string[] $options
+   *   The array of available CLI options.
+   *
    * @option bool yes
    *   Assume a 'yes' answer for all prompts.
    *
@@ -45,8 +48,8 @@ class DrupalVisualRegressionTestCommands extends DrupalLocalCommands {
    *
    * @usage visreg:init
    */
-  public function drupalInitVisualRegressionTests($options = ['yes' => FALSE]) {
-    $this->opts = $options;
+  public function drupalInitVisualRegressionTests(array $options = ['yes' => FALSE]) {
+    $this->options = $options;
     $this->checkDeleteExistingVisualRegressionTests();
     $this->runBackstopCommand('init', "initializing");
     $this->replaceBackstopFileDefaultValues();
@@ -56,7 +59,7 @@ class DrupalVisualRegressionTestCommands extends DrupalLocalCommands {
   protected function warnUserAboutContentIssues() {
     $this->io()->warning(self::MESSAGE_WARNING_UPSTREAM_CONTENT_NEEDED);
     $this->say(self::MESSAGE_WARNING_UPSTREAM_CONTENT_SYNC_NEEDED);
-    if (!$this->opts['yes'] && !$this->confirm(self::MESSAGE_WARNING_UPSTREAM_CONTENT_CONFIRM)) {
+    if (!$this->options['yes'] && !$this->confirm(self::MESSAGE_WARNING_UPSTREAM_CONTENT_CONFIRM)) {
       throw new DockworkerException(
         'User Aborted!'
       );
@@ -113,6 +116,9 @@ class DrupalVisualRegressionTestCommands extends DrupalLocalCommands {
   /**
    * Generate visual regression references for this instance.
    *
+   * @param string[] $options
+   *   The array of available CLI options.
+   *
    * @option bool yes
    *   Assume a 'yes' answer for all prompts.
    *
@@ -121,8 +127,8 @@ class DrupalVisualRegressionTestCommands extends DrupalLocalCommands {
    *
    * @usage visreg:update
    */
-  public function drupalGenerateVisualRegressionReferences($options = ['yes' => FALSE]) {
-    $this->opts = $options;
+  public function drupalGenerateVisualRegressionReferences(array $options = ['yes' => FALSE]) {
+    $this->options = $options;
     if ($this->drupalInstanceHasVisualRegressionTests()) {
       $this->getLocalRunning();
       $this->warnUserAboutContentIssues();
@@ -136,6 +142,9 @@ class DrupalVisualRegressionTestCommands extends DrupalLocalCommands {
   /**
    * Generate visual regression references for this instance.
    *
+   * @param string[] $options
+   *   The array of available CLI options.
+   *
    * @option bool yes
    *   Assume a 'yes' answer for all prompts.
    *
@@ -144,8 +153,8 @@ class DrupalVisualRegressionTestCommands extends DrupalLocalCommands {
    *
    * @usage visreg:test
    */
-  public function drupalVisualRegressionTest($options = ['yes' => FALSE]) {
-    $this->opts = $options;
+  public function drupalVisualRegressionTest(array $options = ['yes' => FALSE]) {
+    $this->options = $options;
     if ($this->drupalInstanceHasVisualRegressionTests()) {
       $this->getLocalRunning();
       $this->warnUserAboutContentIssues();
@@ -180,7 +189,7 @@ class DrupalVisualRegressionTestCommands extends DrupalLocalCommands {
 
   private function checkDeleteExistingVisualRegressionTests() {
     if ($this->drupalInstanceHasVisualRegressionTests()) {
-      if (!$this->opts['yes'] && $this->confirm(self::MESSAGE_WARNING_VISUAL_REGRESSION_TESTS_EXIST)) {
+      if (!$this->options['yes'] && $this->confirm(self::MESSAGE_WARNING_VISUAL_REGRESSION_TESTS_EXIST)) {
         $this->rrmdir($this->backstopPath);
       }
       else {

@@ -72,8 +72,8 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
    *   The deploy environment to synchronize from.
    * @param string $target_env
    *   The deploy environment to synchronize to.
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option bool $no-database
    *   Do not synchronize the drupal database.
@@ -89,10 +89,10 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
    * @github
    * @kubectl
    */
-  public function syncDrupalDatabaseFileSystemFromRemote($source_env, $target_env, $opts = ['no-database' => FALSE, 'no-files' => FALSE]) {
+  public function syncDrupalDatabaseFileSystemFromRemote($source_env, $target_env, array $options = ['no-database' => FALSE, 'no-files' => FALSE]) {
     $this->initSyncPods($source_env, $target_env);
     $this->io()->title("Synchronizing deployed data : {$this->drupalRemoteSyncSourceEnv}[{$this->drupalRemoteSyncSourcePod}] -> {$this->drupalRemoteSyncTargetEnv}[{$this->drupalRemoteSyncTargetPod}]");
-    $this->initSyncOperations($opts);
+    $this->initSyncOperations($options);
     $this->checkDangerousOperation();
 
     if ($this->drupalRemoteSyncDatabase) {
@@ -134,15 +134,15 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
   /**
    * Initializes the operations to perform during the synchronization.
    *
-   * @param string[] $opts
+   * @param string[] $options
    *   An array of options passed to the original command.
    *
    * @throws \Dockworker\DockworkerException
    */
-  private function initSyncOperations($opts) {
+  private function initSyncOperations($options) {
     // Determine operations to perform.
-    $this->drupalRemoteSyncDatabase = !$opts['no-database'];
-    $this->drupalRemoteSyncFiles = !$opts['no-files'];
+    $this->drupalRemoteSyncDatabase = !$options['no-database'];
+    $this->drupalRemoteSyncFiles = !$options['no-files'];
 
     // Dump out no-op users.
     if (!$this->drupalRemoteSyncDatabase && !$this->drupalRemoteSyncFiles) {

@@ -16,8 +16,8 @@ class DrupalPermissionsCommands extends ApplicationPermissionsCommands {
    * @hook post-command dockworker:permissions:fix
    */
   public function fixDrupalPermissions($result, CommandData $commandData) {
-    $opts = $commandData->options();
-    if (empty($opts['path'])) {
+    $options = $commandData->options();
+    if (empty($options['path'])) {
       $paths = [
         'custom',
         'config-yml',
@@ -25,7 +25,7 @@ class DrupalPermissionsCommands extends ApplicationPermissionsCommands {
       ];
     }
     else {
-      $paths = [$opts['path']];
+      $paths = [$options['path']];
     }
 
     foreach ($paths as $path) {

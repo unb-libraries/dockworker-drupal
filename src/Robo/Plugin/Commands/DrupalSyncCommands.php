@@ -173,8 +173,8 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    *
    * @param string $env
    *   The deploy environment to synchronize from.
-   * @param string[] $opts
-   *   An array of options to pass to the builder.
+   * @param string[] $options
+   *   The array of available CLI options.
    *
    * @option bool $no-database
    *   Do not synchronize the drupal database.
@@ -188,7 +188,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * @github
    * @kubectl
    */
-  public function syncDrupalDatabaseFileSystemFromRemote($env, $opts = ['no-database' => FALSE, 'no-files' => FALSE]) {
+  public function syncDrupalDatabaseFileSystemFromRemote($env, array $options = ['no-database' => FALSE, 'no-files' => FALSE]) {
     $this->getLocalRunning();
 
     $this->io()->title('Deployed Data Synchronization');
@@ -200,8 +200,8 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
     $this->drupalRemoteSyncPodName = $this->kubernetesCurPods[0];
 
     // Determine operations to perform.
-    $this->drupalRemoteSyncDatabase = !$opts['no-database'];
-    $this->drupalRemoteSyncFiles = !$opts['no-files'];
+    $this->drupalRemoteSyncDatabase = !$options['no-database'];
+    $this->drupalRemoteSyncFiles = !$options['no-files'];
 
     // Dump out no-op users.
     if (!$this->drupalRemoteSyncDatabase && !$this->drupalRemoteSyncFiles) {
