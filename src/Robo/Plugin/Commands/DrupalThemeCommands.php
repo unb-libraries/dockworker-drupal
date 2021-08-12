@@ -20,7 +20,7 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
    *
    * @var string
    */
-  private $path = NULL;
+  private $path;
 
   /**
    * Compiles Drupal themes.

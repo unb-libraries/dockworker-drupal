@@ -13,8 +13,8 @@ class DrupalKubernetesBackupCommands extends DockworkerApplicationInfoCommands {
 
   use TemporaryDirectoryTrait;
 
-  protected $drupalBackupSourcePath = NULL;
-  protected $drupalBackupDatabaseName = NULL;
+  protected $drupalBackupSourcePath;
+  protected $drupalBackupDatabaseName;
 
   /**
    * Updates the application's backup file.

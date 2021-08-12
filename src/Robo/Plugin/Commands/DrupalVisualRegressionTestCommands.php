@@ -18,9 +18,9 @@ class DrupalVisualRegressionTestCommands extends DrupalLocalCommands {
   const MESSAGE_WARNING_VISUAL_REGRESSION_TESTS_EXIST = 'Warning! visual regression tests already exist. Would you like to delete them?';
   const VISUAL_REGRESSION_TEST_FOLDER = 'backstop';
 
-  protected $backstopFileContents = NULL;
-  protected $backstopFilePath = NULL;
-  protected $backstopPath = NULL;
+  protected $backstopFileContents;
+  protected $backstopFilePath;
+  protected $backstopPath;
   protected $options = [];
 
 

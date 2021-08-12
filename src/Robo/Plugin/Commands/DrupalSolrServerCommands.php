@@ -38,30 +38,30 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
   /**
    * The solr server pod environment.
    *
-   * @var bool
+   * @var string
    */
-  private $drupalSolrServerPodEnv = NULL;
+  private $drupalSolrServerPodEnv;
 
   /**
    * The solr server pod ID.
    *
-   * @var bool
+   * @var string
    */
-  private $drupalSolrServerPodId = NULL;
+  private $drupalSolrServerPodId;
 
   /**
    * The local Drupal solr config directory.
    *
    * @var bool
    */
-  private $drupalLocalSolrConfigDir = NULL;
+  private $drupalLocalSolrConfigDir;
 
   /**
    * The remote Drupal solr config directory.
    *
-   * @var bool
+   * @var string
    */
-  private $drupalRemoteSolrConfigDir = NULL;
+  private $drupalRemoteSolrConfigDir;
 
   /**
    * Clears all Drupal deployment solr indices and re-indexes the data.

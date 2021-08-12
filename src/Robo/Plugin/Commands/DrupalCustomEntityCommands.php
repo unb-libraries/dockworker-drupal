@@ -27,14 +27,14 @@ class DrupalCustomEntityCommands extends DockworkerCommands {
    *
    * @var string
    */
-  protected $drupalChosenEntityClass = NULL;
+  protected $drupalChosenEntityClass;
 
   /**
    * The current chosen custom module.
    *
-   * @var string[]
+   * @var string
    */
-  protected $drupalChosenModule = NULL;
+  protected $drupalChosenModule;
 
   /**
    * Sets the custom entities defined within the the current repository.

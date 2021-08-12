@@ -42,7 +42,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    *
    * @var string
    */
-  private $drupalRemoteSyncPodName = NULL;
+  private $drupalRemoteSyncPodName;
 
   /**
    * Encrypt local Drupal data into dockworker content archive(s).
@@ -98,7 +98,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
       'app/html/sites/default/files/styles'
     ];
 
-    $exclude_string = NULL;
+    $exclude_string = '';
     foreach ($excludes as $exclude) {
       $exclude_string .= "--exclude='$exclude' ";
     }
@@ -474,7 +474,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
 
     $this->say("[Remote] Creating Drupal filesystem archive...");
 
-    $exclude_string = NULL;
+    $exclude_string = '';
     if (!empty($exclude_files)) {
       foreach ($exclude_files as $exclude_path) {
         $exclude_string .= "--exclude='$exclude_path'";

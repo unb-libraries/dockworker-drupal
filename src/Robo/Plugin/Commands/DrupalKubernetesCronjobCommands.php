@@ -13,7 +13,7 @@ class DrupalKubernetesCronjobCommands extends DockworkerApplicationInfoCommands 
 
   use TemporaryDirectoryTrait;
 
-  protected $drupalCronjobSourcePath = NULL;
+  protected $drupalCronjobSourcePath;
 
   /**
    * Updates the application's Drupal cronjob file.
