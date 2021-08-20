@@ -27,10 +27,10 @@ The following packages are required to be globally installed on your development
   deployment:shell            Open a shell into the k8s deployment.
   deployment:status           Checks the application's k8s deployment rollout status.
  dockworker
-  dockworker:docker:cleanup   Clean up unused local docker assets.
+  docker:cleanup   Clean up unused local docker assets.
   dockworker:git:setup-hooks  Set up the required git hooks for dockworker.
   dockworker:permissions:fix  [pfix] Sets the correct repository file permissions. Requires sudo.
-  dockworker:readme:update    [update-readme] Updates the application's README.md.
+  readme:update   [update-readme] Updates the application's README.md.
   dockworker:update           [update] Self-updates the dockworker application.
  image
   image:build                 Builds the application's docker image.

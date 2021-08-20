@@ -47,7 +47,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   /**
    * Encrypt local Drupal data into dockworker content archive(s).
    *
-   * @command repo:test-content:update
+   * @command sample-content:update
    *
    * @throws \Dockworker\DockworkerException
    *
