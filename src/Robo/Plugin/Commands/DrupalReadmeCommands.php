@@ -10,13 +10,12 @@ use Dockworker\Robo\Plugin\Commands\DockworkerReadmeCommands;
 class DrupalReadmeCommands extends DockworkerReadmeCommands {
 
   /**
-   * Updates the Drupal application's README.md.
+   * Provides additional twig templates for README.md.
    *
-   * @hook replace-command readme:update
+   * @hook on-event populate-readme-templates
    */
-  public function setDrupalApplicationReadme() {
-    $this->readMeTemplatePaths[] = $this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/README';
-    parent::setApplicationReadme();
+  public function getAdditionalDrupalApplicationReadmeTemplates() {
+    return [$this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/README'];
   }
 
 }
