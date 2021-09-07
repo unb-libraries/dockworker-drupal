@@ -354,6 +354,11 @@ DEPLOY_BRANCHES
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
         id: setcontext-kubectl
       -
+        name: Install yq
+        run: |
+          sudo wget https://github.com/mikefarah/yq/releases/download/v4.12.2/yq_linux_amd64 -O /usr/bin/yq
+          sudo chmod +x /usr/bin/yq
+      -
         name: Install dockworker
         run: composer install --prefer-dist --no-progress --no-suggest
       -
