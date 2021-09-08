@@ -6,6 +6,7 @@ use Dockworker\DockworkerException;
 use Dockworker\DrupalDrushSqlDumpTrait;
 use Dockworker\DrupalKubernetesPodTrait;
 use Dockworker\DrupalLocalDockerContainerTrait;
+use Dockworker\DockworkerDrupalProjectsTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
@@ -16,6 +17,7 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
   use DrupalKubernetesPodTrait;
   use DrupalLocalDockerContainerTrait;
   use DrupalDrushSqlDumpTrait;
+  use DockworkerDrupalProjectsTrait;
 
   const POD_DATABASE_DUMP_COMPRESSED_FILENAME = 'tmpdb.sql.gz';
   const POD_DATABASE_DUMP_FILENAME = 'tmpdb.sql';
@@ -422,6 +424,10 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
   private function syncDrupalDatabaseFileSystemCleanup() {
     $this->io()->newLine();
     $this->io()->section('Cleaning Up');
+    if ($this->drupalRemoteSyncTargetEnv == 'dev' && $this->getDrupalHasEnabledModule('samlauth', $this->repoRoot)) {
+      $this->say("Resetting SAML Entity ID...");
+      $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, '/scripts/pre-init.d/80_saml_entity_id.sh');
+    }
     $this->say("Generating New ULI Link...");
     $this->setRunOtherCommand("deployment:drupal:uli {$this->drupalRemoteSyncTargetEnv}");
   }
