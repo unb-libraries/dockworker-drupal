@@ -80,4 +80,21 @@ trait DockworkerDrupalProjectsTrait {
     }
   }
 
+  /**
+   * Determines if the current Drupal configuration has a module enabled.
+   *
+   * @param string $repo_root
+   *   The path to the dockworker repository root.
+   *
+   * @return bool
+   *   TRUE if the module is enabled, FALSE otherwise.
+   */
+  protected function getDrupalHasEnabledModule($module_name, $repo_root) {
+    $this->setEnabledProjects($repo_root);
+    if (in_array($module_name, $this->enabledProjects)) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+
 }
