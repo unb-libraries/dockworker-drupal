@@ -149,7 +149,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    */
   public function synchronizeConfig($env = 'prod') {
     $this->kubernetesPodNamespace = $env;
-    $this->kubernetesSetupPods($this->instanceName, "Synchronization");
+    $this->kubernetesSetupPods($this->instanceSlug, "Synchronization");
     $pod_id = array_shift($this->kubernetesCurPods);
 
     $this->say("Exporing live config from $env/$pod_id...");
@@ -194,7 +194,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
     $this->io()->title('Deployed Data Synchronization');
 
     $this->kubernetesPodNamespace = $env;
-    $this->kubernetesSetupPods($this->instanceName, "Synchronization");
+    $this->kubernetesSetupPods($this->instanceSlug, "Synchronization");
 
     // All pods should return the same data, so simply use the first.
     $this->drupalRemoteSyncPodName = $this->kubernetesCurPods[0];
