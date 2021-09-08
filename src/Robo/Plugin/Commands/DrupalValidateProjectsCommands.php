@@ -6,6 +6,8 @@ use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
  * Defines commands to validate Drupal projects in the repository.
+ *
+ * @TODO Rework to use DockworkerDrupalProjectsTrait.
  */
 class DrupalValidateProjectsCommands extends DockworkerLocalCommands {
 
