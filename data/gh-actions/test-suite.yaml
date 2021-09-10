@@ -313,15 +313,6 @@ DEPLOY_BRANCHES
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
         id: setcontext-kubectl
       -
-        name: Retrieve Image Tag
-        uses: actions/download-artifact@v2
-        with:
-          name: build-image-tag
-          path: /tmp
-      -
-        name: Set Image Tag
-        run: cat /tmp/image_tag.env >> $GITHUB_ENV
-      -
         name: Install dockworker
         run: composer install --prefer-dist --no-progress
       -
