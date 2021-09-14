@@ -55,20 +55,27 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
    * @param string[] $files
    *   The files to validate.
    *
+   * @option bool $no-warnings
+   *   Do not output warnings.
+   *
    * @command validate:php:drupal
    *
    * @return \Robo\Result
    *   The result of the command.
    */
-  public function validateDrupalPhpFiles(array $files) {
+  public function validateDrupalPhpFiles(array $files, array $options = ['no-warnings' => FALSE]) {
     return $this->validatePhp(
       self::filterArrayFilesByExtension($files, self::PHPCS_EXTENSIONS),
-      self::PHPCS_STANDARDS
+      self::PHPCS_STANDARDS,
+      $options['no-warnings']
     );
   }
 
   /**
    * Validates all PHP inside the Drupal custom path.
+   *
+   * @option bool $no-warnings
+   *   Do not output warnings.
    *
    * @command validate:drupal:custom:php
    * @aliases validate-custom-php
@@ -77,12 +84,16 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
    * @return int
    *   The return code from the validation command.
    */
-  public function validateCustom() {
+  public function validateCustom(array $options = ['no-warnings' => FALSE]) {
     $this->addRecursivePathFilesFromPath(
       ["{$this->repoRoot}/custom"],
       self::PHPCS_EXTENSIONS
     );
-    return $this->setRunOtherCommand("validate:php:drupal {$this->getRecursivePathStringFileList()}");
+    $cmd = "validate:php:drupal {$this->getRecursivePathStringFileList()}";
+    if ($options['no-warnings']) {
+      $cmd = "$cmd --no-warnings";
+    }
+    return $this->setRunOtherCommand($cmd);
   }
 
 }
