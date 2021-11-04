@@ -48,10 +48,10 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @option bool $all
    *   Display logs from all cron pods, not only the latest.
    *
-   * @command deployment:logs:cron
+   * @command deployment:cron:logs
    * @throws \Exception
    *
-   * @usage deployment:logs:cron dev
+   * @usage deployment:cron:logs dev
    *
    * @kubectl
    */
