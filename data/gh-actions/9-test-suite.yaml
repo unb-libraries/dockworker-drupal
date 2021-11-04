@@ -331,7 +331,7 @@ DEPLOY_BRANCHES
         run: composer install --prefer-dist --no-progress
       -
         name: Execute cron and check for errors
-        run: vendor/bin/dockworker deployment:cron:exec:check $CI_REF_NAME
+        run: vendor/bin/dockworker deployment:cron:exec:check $CI_REF_NAME --write-successful-logs
 
   newrelic-marker:
     name: Set Newrelic Marker
