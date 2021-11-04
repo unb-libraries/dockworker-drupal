@@ -45,6 +45,9 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @param string $env
    *   The environment to obtain the logs from.
    *
+   * @option bool $all
+   *   Display logs from all cron pods, not only the latest.
+   *
    * @command deployment:logs:cron
    * @throws \Exception
    *
@@ -52,23 +55,19 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    *
    * @kubectl
    */
-  public function getDrupalCronLogs($env) {
+  public function getDrupalCronLogs($env, array $options = ['all' => FALSE]) {
     $this->deploymentCommandInit($this->repoRoot, $env);
     $pods = $this->kubernetesGetMatchingCronPods();
 
+    if (!$options['all']) {
+      $pods = array_slice($pods, 0, 1);
+    }
+
     $logs = [];
+
     if (!empty($pods)) {
       foreach ($pods as $pod_id) {
-        $logs[$pod_id] = $this->kubectlExec(
-          'logs',
-          [
-            $pod_id,
-            '--namespace',
-            $env,
-            '--timestamps'
-          ],
-          FALSE
-        );
+        $logs[$pod_id] = $this->getDeploymentCronLogs($pod_id);
       }
     }
     else {
@@ -94,6 +93,29 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
     else {
       $this->io()->title("No cron pods found. No logs!");
     }
+  }
+
+  /**
+   * Gets the application's cron pod(s) logs.
+   *
+   * @param string $env
+   *   The environment to check.
+   *
+   * @throws \Exception
+   *
+   * @return string[]
+   *   An array of logs, keyed by pod IDs.
+   */
+  private function getDeploymentCronLogs($pod_id) {
+    return $this->kubectlExec(
+          'logs',
+          [
+            $pod_id,
+            '--namespace',
+            $this->deploymentK8sNameSpace,
+          ],
+          FALSE
+    );
   }
 
   /**
