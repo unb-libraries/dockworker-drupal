@@ -119,6 +119,48 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
   }
 
   /**
+   * Checks the application's cron pod(s) logs for errors.
+   *
+   * @param string $env
+   *   The environment to check the logs in.
+   *
+   * @command deployment:logs:cron:check
+   * @throws \Exception
+   *
+   * @usage deployment:logs:cron:check prod
+   *
+   * @kubectl
+   */
+  public function checkDeploymentCronLogs($env) {
+    $this->deploymentCommandInit($this->repoRoot, $env);
+    $pods = $this->kubernetesGetMatchingCronPods();
+    $pods = array_slice($pods, 0, 1);
+
+    if (!empty($pods)) {
+      foreach ($pods as $pod_id) {
+        $logs = $this->getDeploymentCronLogs($pod_id);
+      }
+    }
+
+    if (!empty($logs)) {
+      $this->checkLogForErrors($pod_id, $logs);
+    }
+    else {
+      $this->io()->title("No pods found. No logs!");
+    }
+    try {
+      $this->auditStartupLogs(FALSE);
+      $this->say("No errors found in cron.");
+    }
+    catch (DockworkerException $e) {
+      $this->io()->title("Logs for cron pod [$env.$pod_id]");
+      $this->io()->writeln($logs);
+      $this->printStartupLogErrors();
+      throw new DockworkerException("Error(s) found in deployment cron logs!");
+    }
+  }
+
+  /**
    * @param $deployment_name
    * @param $namespace
    *
