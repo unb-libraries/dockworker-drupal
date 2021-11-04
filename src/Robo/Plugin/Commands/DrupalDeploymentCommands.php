@@ -119,6 +119,44 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
   }
 
   /**
+   * Execute application's cron pod.
+   *
+   * @param string $env
+   *   The environment to execute the cron in.
+   *
+   * @command deployment:cron:exec
+   * @throws \Exception
+   *
+   * @usage deployment:cron:exec prod
+   *
+   * @kubectl
+   */
+  public function runDeploymentCronPod($env) {
+    $this->deploymentCommandInit($this->repoRoot, $env);
+    $logs = $this->getRunDeploymentCronPodLogs($env);
+    print_r($logs);
+  }
+
+  /**
+   * Execute application's cron pod and check the output.
+   *
+   * @param string $env
+   *   The environment to execute the cron in.
+   *
+   * @command deployment:cron:exec:check
+   * @throws \Exception
+   *
+   * @usage deployment:cron:exec:check prod
+   *
+   * @kubectl
+   */
+  public function runCheckDeploymentCronPod($env) {
+    $this->deploymentCommandInit($this->repoRoot, $env);
+    $logs = $this->getRunDeploymentCronPodLogs($env);
+    $this->checkOutputLogsForErrors($env, 'cron', $logs);
+  }
+
+  /**
    * Checks the application's cron pod(s) logs for errors.
    *
    * @param string $env
@@ -141,7 +179,71 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
         $logs = $this->getDeploymentCronLogs($pod_id);
       }
     }
+    $this->checkOutputLogsForErrors($env, $pod_id, $logs);
+  }
 
+  /**
+   * Runs a deployment's cron pod and lists the logs.
+   *
+   * @param string $env
+   *   The environment to run the cron pod in.
+   *
+   * @return string
+   *   The logs from the cron run.
+   */
+  protected function getRunDeploymentCronPodLogs($env) {
+    $delete_job_cmd = sprintf(
+      $this->kubeCtlBin . ' delete job/manual-dockworker-cron-%s --ignore-not-found=true --namespace=%s',
+      $this->deploymentK8sName,
+      $this->deploymentK8sNameSpace
+    );
+    $this->say($delete_job_cmd);
+    shell_exec($delete_job_cmd);
+
+    $create_job_cmd = sprintf(
+      $this->kubeCtlBin . ' create job --from=cronjob/cron-%s manual-dockworker-cron-%s --namespace=%s',
+      $this->deploymentK8sName,
+      $this->deploymentK8sName,
+      $this->deploymentK8sNameSpace
+    );
+    $this->say($create_job_cmd);
+    shell_exec($create_job_cmd);
+
+    $wait_job_cmd = sprintf(
+      $this->kubeCtlBin . ' wait --for=condition=complete job/manual-dockworker-cron-%s --namespace=%s',
+      $this->deploymentK8sName,
+      $this->deploymentK8sNameSpace
+    );
+    $this->say($wait_job_cmd);
+    shell_exec($wait_job_cmd);
+
+    $get_logs_cmd = sprintf(
+      $this->kubeCtlBin . ' logs job/manual-dockworker-cron-%s --namespace=%s',
+      $this->deploymentK8sName,
+      $this->deploymentK8sNameSpace
+    );
+    $this->say($get_logs_cmd);
+    $logs = shell_exec($get_logs_cmd);
+
+    $this->say($delete_job_cmd);
+    shell_exec($delete_job_cmd);
+
+    return $logs;
+  }
+
+  /**
+   * Checks the provided output logs for errors.
+   *
+   * @param string $env
+   *   The environment the logs came from.
+   * @param string $pod_id
+   *   The pods the logs came from.
+   * @param string $logs
+   *   The logs to check.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function checkOutputLogsForErrors($env, $pod_id, $logs) {
     if (!empty($logs)) {
       $this->checkLogForErrors($pod_id, $logs);
     }
