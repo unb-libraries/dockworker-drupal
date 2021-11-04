@@ -124,6 +124,9 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @param string $env
    *   The environment to execute the cron in.
    *
+   * @option bool $no-write-logs
+   *   Do not display logs after execution.
+   *
    * @command deployment:cron:exec
    * @throws \Exception
    *
@@ -131,17 +134,22 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    *
    * @kubectl
    */
-  public function runDeploymentCronPod($env) {
+  public function runDeploymentCronPod($env, array $options = ['no-write-logs' => FALSE]) {
     $this->deploymentCommandInit($this->repoRoot, $env);
     $logs = $this->getRunDeploymentCronPodLogs($env);
-    print_r($logs);
+    if (!$options['no-write-logs']) {
+      $this->io()->block($logs);
+    }
   }
 
   /**
-   * Execute application's cron pod and check the output.
+   * Execute application's cron pod and check the output for errors.
    *
    * @param string $env
    *   The environment to execute the cron in.
+   *
+   * @option bool $write-successful-logs
+   *   Display logs even if no errors found.
    *
    * @command deployment:cron:exec:check
    * @throws \Exception
@@ -150,10 +158,14 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    *
    * @kubectl
    */
-  public function runCheckDeploymentCronPod($env) {
+  public function runCheckDeploymentCronPod($env, array $options = ['write-successful-logs' => FALSE]) {
     $this->deploymentCommandInit($this->repoRoot, $env);
     $logs = $this->getRunDeploymentCronPodLogs($env);
     $this->checkOutputLogsForErrors($env, 'cron', $logs);
+    if ($options['write-successful-logs']) {
+      $this->io()->block($logs);
+      $this->say("No errors found in cron.");
+    }
   }
 
   /**
