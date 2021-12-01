@@ -2,6 +2,19 @@ name: Drupal 9 Deployment Workflow
 
 on:
   workflow_call:
+    secrets:
+      GH_CONTAINER_REGISTRY_TOKEN:
+        required: true
+      GH_CONTAINER_REGISTRY_USER:
+        required: true
+      KUBE_CONFIG_DATA:
+        required: true
+      NEW_RELIC_ACCOUNT_ID:
+        required: true
+      NEW_RELIC_API_KEY:
+        required: true
+      SLACK_WEBHOOK_URL:
+        required: true
 
 jobs:
   slack-start:
