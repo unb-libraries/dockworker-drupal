@@ -67,17 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      -
-        name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.4
-          coverage: none
-          tools: composer:v2
-          extensions: curl,dom,gd,mbstring,posix,yaml,zip
-      -
-        name: Install dockworker
-        run: composer install --prefer-dist --no-progress
+      - uses: unb-libraries/install-dockworker-composite-action@v1
       -
         name: Check PHP Coding Standards
         run: vendor/bin/dockworker validate:drupal:custom:php
@@ -102,17 +92,7 @@ jobs:
         name: Get current time
         uses: gerred/actions/current-time@master
         id: current-time
-      -
-        name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.4
-          coverage: none
-          tools: composer:v2
-          extensions: curl,dom,gd,mbstring,posix,yaml,zip
-      -
-        name: Install dockworker
-        run: composer install --prefer-dist --no-progress
+      - uses: unb-libraries/install-dockworker-composite-action@v1
       -
         name: Build Themes
         run: vendor/bin/dockworker theme:build-all
@@ -173,14 +153,7 @@ jobs:
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2.1.0
       - uses: actions/checkout@v2
-      -
-        name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.4
-          coverage: none
-          tools: composer:v2
-          extensions: curl,dom,gd,mbstring,posix,yaml,zip
+      - uses: unb-libraries/install-dockworker-composite-action@v1
       -
         name: Download docker-compose
         uses: actions/download-artifact@v2
@@ -195,9 +168,6 @@ jobs:
       -
         name: Pull Required Docker Images
         run: docker-compose pull --parallel --quiet
-      -
-        name: Install dockworker
-        run: composer install --prefer-dist --no-progress
       -
         name: Start container and check logs for errors
         run: vendor/bin/dockworker local:start --no-tail-logs --only-start --force-recreate
@@ -245,14 +215,7 @@ jobs:
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2.1.0
       - uses: actions/checkout@v2
-      -
-        name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.4
-          coverage: none
-          tools: composer:v2
-          extensions: curl,dom,gd,mbstring,posix,yaml,zip
+      - uses: unb-libraries/install-dockworker-composite-action@v1
       - uses: azure/setup-kubectl@v1
         with:
           version: 'v1.18.0'
@@ -272,9 +235,6 @@ jobs:
         name: Set Image Tag
         run: cat /tmp/image_tag.env >> $GITHUB_ENV
       -
-        name: Install dockworker
-        run: composer install --prefer-dist --no-progress
-      -
         name: Deploy image to cluster
         run: vendor/bin/dockworker image:deploy $CI_REF_NAME --use-tag $BUILD_IMAGE_TAG
         env:
@@ -288,14 +248,7 @@ jobs:
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2.1.0
       - uses: actions/checkout@v2
-      -
-        name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.4
-          coverage: none
-          tools: composer:v2
-          extensions: curl,dom,gd,mbstring,posix,yaml,zip
+      - uses: unb-libraries/install-dockworker-composite-action@v1
       - uses: azure/setup-kubectl@v1
         with:
           version: 'v1.18.0'
@@ -305,9 +258,6 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
         id: setcontext-kubectl
-      -
-        name: Install dockworker
-        run: composer install --prefer-dist --no-progress
       -
         name: Write out deployment logs
         run: vendor/bin/dockworker deployment:logs $CI_REF_NAME
@@ -322,14 +272,7 @@ jobs:
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2.1.0
       - uses: actions/checkout@v2
-      -
-        name: Install PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 7.4
-          coverage: none
-          tools: composer:v2
-          extensions: curl,dom,gd,mbstring,posix,yaml,zip
+      - uses: unb-libraries/install-dockworker-composite-action@v1
       - uses: azure/setup-kubectl@v1
         with:
           version: 'v1.18.0'
@@ -339,9 +282,6 @@ jobs:
           method: kubeconfig
           kubeconfig: ${{ secrets.KUBE_CONFIG_DATA }}
         id: setcontext-kubectl
-      -
-        name: Install dockworker
-        run: composer install --prefer-dist --no-progress
       -
         name: Execute cron and check for errors
         run: vendor/bin/dockworker deployment:cron:exec:check $CI_REF_NAME --write-successful-logs
