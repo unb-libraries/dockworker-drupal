@@ -24,7 +24,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
   const MSG_CONFIRMED_CORE_REMOVED = 'Removed SOLR core %s - %s [%s]';
   const MSG_DONE = 'Done!';
   const MSG_DRUPAL_REINDEXING = 'Reindexing Drupal Instance %s';
-  const MSG_INITIALIZING_PODS = 'Discovering Drupal pods for %s [%s]';
+  const MSG_INITIALIZING_PODS = 'Discovering Solr and Drupal pods for %s [%s]';
   const MSG_REINDEXING_INDEX = 'Clearing and re-indexing SOLR index %s - %s [%s]';
   const MSG_SOLR_UPDATING = 'Updating SOLR server pod %s';
 
@@ -257,6 +257,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    * @throws \Dockworker\DockworkerException
    */
   private function setSolrServerPodId($options) {
+    $this->kubernetesSetupPods($options['solr-deployment-name'], 'SOLR Pod Setup');
     $solr_pods = $this->kubernetesGetMatchingPods($options['solr-deployment-name'], $this->drupalSolrServerPodEnv);
     if (empty($solr_pods[0])) {
       throw new DockworkerException(
