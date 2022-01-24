@@ -1,4 +1,4 @@
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: weekly-backup-INSTANCE_SLUG
@@ -70,7 +70,7 @@ spec:
               persistentVolumeClaim:
                 claimName: backup-INSTANCE_SLUG
 ---
-apiVersion: batch/v1beta1
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: monthly-backup-INSTANCE_SLUG
