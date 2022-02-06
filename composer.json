@@ -6,7 +6,7 @@
     "drupal/coder": "^8",
     "boedah/robo-drush": "^3",
     "unb-libraries/dockworker": "^5",
-    "php": "^8.1"
+    "php": "^8"
   },
   "license": "MIT",
   "authors": [
