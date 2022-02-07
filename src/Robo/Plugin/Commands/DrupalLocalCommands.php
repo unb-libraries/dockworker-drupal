@@ -53,17 +53,6 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Performs any required entity updates in the instance.
-   *
-   * @command local:drupal:entup
-   * @aliases entup
-   * @throws \Dockworker\DockworkerException
-   */
-  public function updateEntities() {
-    $this->runDrush('entup');
-  }
-
-  /**
    * Generates a ULI link for the local Drupal application.
    *
    * @param string $user_name
