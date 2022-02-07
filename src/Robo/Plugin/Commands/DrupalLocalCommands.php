@@ -29,30 +29,6 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Executes a drush command in the local Drupal application.
-   *
-   * @param string $command
-   *   The command to run.
-   *
-   * @command local:drupal:drush
-   * @aliases drush
-   *
-   * @throws \Dockworker\DockworkerException
-   */
-  private function runDrush($command) {
-    $this->getLocalRunning();
-    $this->taskDockerExec($this->instanceName)
-      ->interactive()
-      ->exec(
-        $this->taskDrushStack()
-          ->drupalRootDirectory('/app/html')
-          ->uri('default')
-          ->drush($command)
-      )
-      ->run();
-  }
-
-  /**
    * Generates a ULI link for the local Drupal application.
    *
    * @param string $user_name

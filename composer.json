@@ -4,7 +4,6 @@
   "type": "library",
   "require": {
     "drupal/coder": "^8",
-    "boedah/robo-drush": "^3",
     "unb-libraries/dockworker": "^5",
     "php": "^8"
   },
