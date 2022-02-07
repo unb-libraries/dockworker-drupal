@@ -2,15 +2,12 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Boedah\Robo\Task\Drush\loadTasks;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
  * Defines the commands used to interact with a local Drupal application.
  */
 class DrupalLocalCommands extends DockworkerLocalCommands {
-
-  use loadTasks;
 
   /**
    * Rebuilds the cache in the local Drupal application.
