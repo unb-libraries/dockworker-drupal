@@ -21,10 +21,10 @@ class DrupalCIServicesWorkflowCommands extends DockworkerCIServicesWorkflowComma
   public function setDrupalApplicationCIServicesWorkflowFile() {
     $major = Robo::Config()->get('dockworker.drupal.major');
     if (!empty($major) && $major == '9') {
-      $this->CIServicesWorkflowSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/gh-actions/9-test-suite.yaml';
+      $this->CIServicesWorkflowSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/gh-actions/9-deployment-workflow.yaml';
     }
     else {
-      $this->CIServicesWorkflowSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/gh-actions/test-suite.yaml';
+      $this->CIServicesWorkflowSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/gh-actions/deployment-workflow.yaml';
     }
     $this->writeApplicationCIServicesWorkflowFile();
   }
