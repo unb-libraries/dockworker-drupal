@@ -55,7 +55,7 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
    * @param string[] $files
    *   The files to validate.
    *
-   * @option bool $no-warnings
+   * @option $no-warnings
    *   Do not output warnings.
    *
    * @command validate:php:drupal
@@ -74,7 +74,7 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
   /**
    * Validates all PHP inside the Drupal custom path.
    *
-   * @option bool $no-warnings
+   * @option $no-warnings
    *   Do not output warnings.
    *
    * @command validate:drupal:custom:php

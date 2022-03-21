@@ -45,7 +45,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @param string $env
    *   The environment to obtain the logs from.
    *
-   * @option bool $all
+   * @option $all
    *   Display logs from all cron pods, not only the latest.
    *
    * @command deployment:cron:logs
@@ -124,7 +124,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @param string $env
    *   The environment to execute the cron in.
    *
-   * @option bool $no-write-logs
+   * @option $no-write-logs
    *   Do not display logs after execution.
    *
    * @command deployment:cron:exec
@@ -148,7 +148,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @param string $env
    *   The environment to execute the cron in.
    *
-   * @option bool $write-successful-logs
+   * @option $write-successful-logs
    *   Display logs even if no errors found.
    *
    * @command deployment:cron:exec:check

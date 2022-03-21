@@ -176,9 +176,9 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option bool $no-database
+   * @option $no-database
    *   Do not synchronize the drupal database.
-   * @option bool $no-files
+   * @option $no-files
    *   Do not synchronize the drupal filesystem.
    *
    * @command local:content:remote-sync

@@ -113,17 +113,17 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option string $config-repo-name
+   * @option $config-repo-name
    *   The github repository name that contains the deployment configuration.
-   * @option string $config-repo-owner
+   * @option $config-repo-owner
    *   The github repository owner that contains the deployment configuration.
-   * @option string $config-repo-path
+   * @option $config-repo-path
    *   The github repository path that contains the deployment configuration.
-   * @option string $config-repo-refspec
+   * @option $config-repo-refspec
    *   The github repository refspec that contains the deployment configuration.
-   * @option bool $no-reindex
+   * @option $no-reindex
    *   Do not reindex the drupal instance after updating the configuration.
-   * @option string $solr-deployment-name
+   * @option $solr-deployment-name
    *   The k8s deployment name of the solr server.
    *
    * @command deployment:drupal:solr:update-config

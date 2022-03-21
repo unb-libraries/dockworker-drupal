@@ -77,9 +77,9 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
    * @param string[] $options
    *   The array of available CLI options.
    *
-   * @option bool $no-database
+   * @option $no-database
    *   Do not synchronize the drupal database.
-   * @option bool $no-files
+   * @option $no-files
    *   Do not synchronize the drupal filesystem.
    *
    * @command deployment:content:remote-sync
