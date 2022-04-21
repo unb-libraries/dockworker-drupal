@@ -364,6 +364,9 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
 
     if (!$dump_only) {
       $this->importDatabaseToLocalFromDumpFile($gz_dump_file);
+
+      $this->say("[Docker Host] Deleting Drupal database archive file...");
+      unlink($gz_dump_file);
     }
   }
 
@@ -373,9 +376,6 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
 
     $this->say("[Docker Host] Copying Drupal database archive file to local container...");
     $this->copyLocalFileToContainer($gz_dump_file, $container_db_archive_path);
-
-    $this->say("[Docker Host] Deleting Drupal database archive file...");
-    unlink($gz_dump_file);
 
     $dump_file = str_replace('.gz', '', $container_db_archive_path);
     $this->say("[Container] (optionally) Removing Drupal database archive file...");
@@ -512,6 +512,9 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
 
     if (!$dump_only) {
       $this->importFilesToLocalFromDumpFile($files_dump_name);
+
+      $this->say("[Docker Host] Deleting Drupal filesystem archive...");
+      unlink($files_dump_name);
     }
   }
 
@@ -521,9 +524,6 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
 
     $this->say("[Docker Host] Copying Drupal filesystem archive to local container...");
     $this->copyLocalFileToContainer($files_dump_name, $container_file_archive_path);
-
-    $this->say("[Docker Host] Deleting Drupal filesystem archive...");
-    unlink($files_dump_name);
 
     $this->say("[Container] Deleting container Drupal filesystem...");
     $this->runLocalContainerCommand('rm -rf ' . self::POD_FILES_SOURCE);
