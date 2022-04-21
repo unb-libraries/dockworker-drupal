@@ -304,6 +304,18 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
+   * Gets the string that represents the local Drupal version.
+   *
+   * @return string
+   *
+   * @throws \Exception
+   */
+  protected function getLocalDrupalVersionString() {
+    $local_output = $this->runLocalDrushCommand('status');
+    return $local_output[0];
+  }
+
+  /**
    * Runs a drush command in the local Drupal application.
    *
    * @param string $command
