@@ -363,27 +363,35 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
     $this->runRemoteCommand('rm -f '. $gz_dump_file);
 
     if (!$dump_only) {
-      $this->say("[Docker Host] Copying Drupal database archive file to local container...");
-      $this->copyLocalFileToContainer($gz_dump_file, $gz_dump_file);
-
-      $this->say("[Docker Host] Deleting Drupal database archive file...");
-      unlink($gz_dump_file);
-
-      $this->say("[Container] (optionally) Removing Drupal database archive file...");
-      $this->runLocalContainerCommand("rm -f $dump_file");
-
-      $this->say("[Container] Decompressing Drupal database archive file...");
-      $this->runLocalContainerCommand("gunzip $gz_dump_file");
-
-      $this->say("[Container] Importing Drupal database archive file...");
-      $this->runLocalContainerCommand("sh -c \"drush --root=/app/html sql-cli < $dump_file\"");
-
-      $this->say("[Container] Removing Drupal database archive file...");
-      $this->runLocalContainerCommand("rm -f $dump_file");
-
-      $this->say("[Container] Clearing cache...");
-      $this->runLocalDrushCommand("cr");
+      $this->importDatabaseToLocalFromDumpFile($gz_dump_file);
     }
+  }
+
+  protected function importDatabaseToLocalFromDumpFile($gz_dump_file) {
+    $db_archive_basename = basename($gz_dump_file);
+    $container_db_archive_path = "/tmp/$db_archive_basename";
+
+    $this->say("[Docker Host] Copying Drupal database archive file to local container...");
+    $this->copyLocalFileToContainer($gz_dump_file, $container_db_archive_path);
+
+    $this->say("[Docker Host] Deleting Drupal database archive file...");
+    unlink($gz_dump_file);
+
+    $dump_file = str_replace('.gz', '', $container_db_archive_path);
+    $this->say("[Container] (optionally) Removing Drupal database archive file...");
+    $this->runLocalContainerCommand("rm -f $dump_file");
+
+    $this->say("[Container] Decompressing Drupal database archive file...");
+    $this->runLocalContainerCommand("gunzip $container_db_archive_path");
+
+    $this->say("[Container] Importing Drupal database archive file...");
+    $this->runLocalContainerCommand("sh -c \"drush --root=/app/html sql-cli < $container_db_archive_path\"");
+
+    $this->say("[Container] Removing Drupal database archive file...");
+    $this->runLocalContainerCommand("rm -f $container_db_archive_path");
+
+    $this->say("[Container] Clearing cache...");
+    $this->runLocalDrushCommand("cr");
   }
 
   /**
