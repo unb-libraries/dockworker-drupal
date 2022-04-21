@@ -407,12 +407,14 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
     $this->say("[{$this->drupalRemoteSyncTargetEnv}] Removing Drupal filesystem archive file...");
     $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, 'rm -f '. $files_dump_name);
 
-    $this->say("[{$this->drupalRemoteSyncTargetEnv}] Setting overall Drupal filesystem permissions...");
-    $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, '/scripts/pre-init.d/70_set_drupal_tree_permissions.sh');
     $this->say("[{$this->drupalRemoteSyncTargetEnv}] Setting config sync permissions...");
     $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, '/scripts/pre-init.d/71_set_config_sync_permissions.sh');
-    $this->say("[{$this->drupalRemoteSyncTargetEnv}] Setting public filesystem permissions...");
+    $this->say("[{$this->drupalRemoteSyncTargetEnv}] Setting public file permissions...");
     $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, '/scripts/pre-init.d/71_set_public_file_permissions.sh');
+    $this->say("[{$this->drupalRemoteSyncTargetEnv}] Securing config sync dir...");
+    $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, '/scripts/pre-init.d/72_secure_config_sync_dir.sh');
+    $this->say("[{$this->drupalRemoteSyncTargetEnv}] Securing filesystems...");
+    $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, '/scripts/pre-init.d/72_secure_filesystems.sh');
   }
 
   /**

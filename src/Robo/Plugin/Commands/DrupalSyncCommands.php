@@ -534,12 +534,14 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
     $this->say("[Container] Removing Drupal filesystem archive file...");
     $this->runLocalContainerCommand('rm -f ' . $container_file_archive_path);
 
-    $this->say("[Container] Setting overall Drupal filesystem permissions...");
-    $this->runLocalContainerCommand('/scripts/pre-init.d/70_set_drupal_tree_permissions.sh');
     $this->say("[Container] Setting config sync permissions...");
     $this->runLocalContainerCommand('/scripts/pre-init.d/71_set_config_sync_permissions.sh');
-    $this->say("[Container] Setting public filesystem permissions...");
+    $this->say("[Container] Setting public file permissions...");
     $this->runLocalContainerCommand('/scripts/pre-init.d/71_set_public_file_permissions.sh');
+    $this->say("[Container] Securing config sync dir...");
+    $this->runLocalContainerCommand('/scripts/pre-init.d/72_secure_config_sync_dir.sh');
+    $this->say("[Container] Securing filesystems...");
+    $this->runLocalContainerCommand('/scripts/pre-init.d/72_secure_filesystems.sh');
   }
 
   /**
