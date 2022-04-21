@@ -385,7 +385,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
     $this->runLocalContainerCommand("gunzip $container_db_archive_path");
 
     $this->say("[Container] Importing Drupal database archive file...");
-    $this->runLocalContainerCommand("sh -c \"drush --root=/app/html sql-cli < $container_db_archive_path\"");
+    $this->runLocalContainerCommand("sh -c \"drush --root=/app/html sql-cli < $dump_file\"");
 
     $this->say("[Container] Removing Drupal database archive file...");
     $this->runLocalContainerCommand("rm -f $container_db_archive_path");
