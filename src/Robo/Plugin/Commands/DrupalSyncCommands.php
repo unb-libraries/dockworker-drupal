@@ -550,7 +550,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * @see syncDrupalFileSystemFromRemote()
    * @throws \Dockworker\DockworkerException
    */
-  private function syncDrupalDatabaseFileSystemCleanup() {
+  protected function syncDrupalDatabaseFileSystemCleanup() {
     $this->io()->newLine();
     $this->io()->section('Cleaning Up');
     $this->say("Generating New ULI Link...");

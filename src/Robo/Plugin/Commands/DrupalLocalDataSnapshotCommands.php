@@ -67,6 +67,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
       if ($this->confirm("Warning! Are you sure you want to restore snapshot $desired_restore_id? This will delete all local content in your instance.")) {
         $this->drupalCurLocalSnapshotDir = $this->drupalLocalAvailableSnapshots[$modified_restore_id]['path'];
         $this->restoreSelectedSnapshotToLocal();
+        $this->syncDrupalDatabaseFileSystemCleanup();
       }
     }
     else {
@@ -81,6 +82,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
    * @return void
    */
   protected function restoreSelectedSnapshotToLocal() {
+    $this->io()->title("Restoring snapshot from $this->drupalCurLocalSnapshotDir");
     $this->importDatabaseToLocalFromDumpFile(
       implode(
         '/',
@@ -107,10 +109,10 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
    * @return void
    */
   protected function listAvailableDrupalSnapshots() {
-    $this->io()->title('Available Snapshots:');
+    $this->io()->title("[$this->instanceName] Available Snapshots:");
     $table = new Table($this->io());
     $table
-      ->setHeaders(['ID', 'Name', 'Snapshot Date', 'Info', 'Path'])
+      ->setHeaders(['ID', 'Snapshot Date', 'Label', 'Info', 'Path'])
       ->setRows($this->drupalLocalAvailableSnapshots);
     $table->render();
   }
@@ -131,6 +133,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
       $yaml_data['path'] = dirname($snapshot_metadata_file);
       $yaml_data['timestamp'] = date("F j, Y, g:i a", $yaml_data['timestamp']);
       $yaml_data_id['id'] = $snapshot_id + 1;
+      unset($yaml_data['instance']);
       $yaml_data = array_merge($yaml_data_id, $yaml_data);
       $this->drupalLocalAvailableSnapshots[] = $yaml_data;
     };
@@ -149,6 +152,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
     $this->setCreateDrupalCurSnapshotDir();
     $this->dumpDrupalDatabaseFileSystemFromLocal();
     $this->copyTemporaryDumpFilesToSnapshotDir();
+    $this->io()->newLine();
     $this->writeCurSnapshotMetadataFile();
     $this->io()->newLine();
     $this->io()->note("Local snapshot written to $this->drupalCurLocalSnapshotDir");
@@ -234,6 +238,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
         [
           'instance' => $this->instanceName,
           'timestamp' => $this->commandStartTime,
+          'label' => $this->ask('Data written. Please enter a label for the snapshot:'),
           'info' => trim($this->getLocalDrupalVersionString()),
         ]
       )
