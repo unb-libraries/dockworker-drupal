@@ -510,29 +510,36 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
     $this->say("[Remote] Removing Drupal filesystem archive file...");
     $this->runRemoteCommand('rm -f '. $files_dump_name);
 
-    $this->say("[Docker Host] Copying Drupal filesystem archive to local container...");
-    $this->copyLocalFileToContainer($files_dump_name, $files_dump_name);
-
     if (!$dump_only) {
-      $this->say("[Docker Host] Deleting Drupal filesystem archive...");
-      unlink($files_dump_name);
-
-      $this->say("[Container] Deleting container Drupal filesystem...");
-      $this->runLocalContainerCommand('rm -rf ' . self::POD_FILES_SOURCE);
-
-      $this->say("[Container] Extracting remote Drupal filesystem...");
-      $this->runLocalContainerCommand("tar -xzf $files_dump_name --directory /");
-
-      $this->say("[Container] Removing Drupal filesystem archive file...");
-      $this->runLocalContainerCommand('rm -f ' . $files_dump_name);
-
-      $this->say("[Container] Setting overall Drupal filesystem permissions...");
-      $this->runLocalContainerCommand('/scripts/pre-init.d/70_set_drupal_tree_permissions.sh');
-      $this->say("[Container] Setting config sync permissions...");
-      $this->runLocalContainerCommand('/scripts/pre-init.d/71_set_config_sync_permissions.sh');
-      $this->say("[Container] Setting public filesystem permissions...");
-      $this->runLocalContainerCommand('/scripts/pre-init.d/71_set_public_file_permissions.sh');
+      $this->importFilesToLocalFromDumpFile($files_dump_name);
     }
+  }
+
+  protected function importFilesToLocalFromDumpFile($files_dump_name) {
+    $file_archive_basename = basename($files_dump_name);
+    $container_file_archive_path = "/tmp/$file_archive_basename";
+
+    $this->say("[Docker Host] Copying Drupal filesystem archive to local container...");
+    $this->copyLocalFileToContainer($files_dump_name, $container_file_archive_path);
+
+    $this->say("[Docker Host] Deleting Drupal filesystem archive...");
+    unlink($files_dump_name);
+
+    $this->say("[Container] Deleting container Drupal filesystem...");
+    $this->runLocalContainerCommand('rm -rf ' . self::POD_FILES_SOURCE);
+
+    $this->say("[Container] Extracting remote Drupal filesystem...");
+    $this->runLocalContainerCommand("tar -xzf $container_file_archive_path --directory /");
+
+    $this->say("[Container] Removing Drupal filesystem archive file...");
+    $this->runLocalContainerCommand('rm -f ' . $container_file_archive_path);
+
+    $this->say("[Container] Setting overall Drupal filesystem permissions...");
+    $this->runLocalContainerCommand('/scripts/pre-init.d/70_set_drupal_tree_permissions.sh');
+    $this->say("[Container] Setting config sync permissions...");
+    $this->runLocalContainerCommand('/scripts/pre-init.d/71_set_config_sync_permissions.sh');
+    $this->say("[Container] Setting public filesystem permissions...");
+    $this->runLocalContainerCommand('/scripts/pre-init.d/71_set_public_file_permissions.sh');
   }
 
   /**
