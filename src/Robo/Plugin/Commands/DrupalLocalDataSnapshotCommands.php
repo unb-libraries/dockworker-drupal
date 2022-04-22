@@ -112,7 +112,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
     $this->io()->title("[$this->instanceName] Available Snapshots:");
     $table = new Table($this->io());
     $table
-      ->setHeaders(['ID', 'Snapshot Date', 'Label', 'Info', 'Path'])
+      ->setHeaders(['ID', 'Snapshot Date', 'Label', 'Info', 'DB Size', 'Files Size', 'Path'])
       ->setRows($this->drupalLocalAvailableSnapshots);
     $table->render();
   }
@@ -129,8 +129,17 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
       ['yaml']
     );
     foreach ($this->getRecursivePathFiles() as $snapshot_id => $snapshot_metadata_file) {
+      $snapshot_dir = dirname($snapshot_metadata_file);
       $yaml_data = Yaml::parse(file_get_contents($snapshot_metadata_file));
-      $yaml_data['path'] = dirname($snapshot_metadata_file);
+      $yaml_data['db_size'] = $this->getHumanFileSize(
+        implode('/', [$snapshot_dir, self::LOCAL_SNAPSHOT_DATABASE_FILENAME]),
+        1
+      );
+      $yaml_data['file_size'] = $this->getHumanFileSize(
+        implode('/', [$snapshot_dir, self::LOCAL_SNAPSHOT_FILES_FILENAME]),
+        1
+      );
+      $yaml_data['path'] = $snapshot_dir;
       $yaml_data['timestamp'] = date("F j, Y, g:i a", $yaml_data['timestamp']);
       $yaml_data_id['id'] = $snapshot_id + 1;
       unset($yaml_data['instance']);
@@ -243,6 +252,13 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
         ]
       )
     );
+  }
+
+  private function getHumanFileSize($path, $decimals = 2) {
+    $bytes = filesize($path);
+    $sz = 'BKMGTP';
+    $factor = floor((strlen($bytes) - 1) / 3);
+    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
   }
 
 }
