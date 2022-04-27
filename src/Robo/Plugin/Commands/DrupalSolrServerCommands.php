@@ -26,6 +26,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
   const MSG_DRUPAL_REINDEXING = 'Reindexing Drupal Instance %s';
   const MSG_INITIALIZING_PODS = 'Discovering Solr and Drupal pods for %s [%s]';
   const MSG_REINDEXING_INDEX = 'Clearing and re-indexing SOLR index %s - %s [%s]';
+  const MSG_SOLR_TUNNELING = 'Opening tunnel to pod %s';
   const MSG_SOLR_UPDATING = 'Updating SOLR server pod %s';
 
   /**
@@ -99,6 +100,54 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
           $this->deploymentK8sNameSpace
         )
       );
+    }
+  }
+
+  /**
+   * Provides a gateway to the solr admin endpoint.
+   *
+   * This allows local use of the solr admin interface, which would not be
+   * accessible otherwise.
+   *
+   * @param string $env
+   *   The environment to update.
+   * @param string[] $options
+   *   The array of available CLI options.
+   *
+   * @option $solr-deployment-name
+   *   The k8s deploy name of solr. Defaults to drupal-solr-lib-unb-ca.
+   *
+   * @command deployment:drupal:solr:admin
+   * @throws \Exception
+   *
+   * @usage deployment:drupal:solr:admin prod
+   *
+   * @kubectl
+   */
+  public function openTunnelToSolrDeployment($env, array $options = ['solr-deployment-name' => 'drupal-solr-lib-unb-ca']) {
+    $this->initDrupalPodInstances($env);
+    $first_drupal_pod_id = reset($this->kubernetesCurPods);
+    $this->setUpInstanceIndices($first_drupal_pod_id);
+
+    if (!empty($this->drupalSolrServerIndices)) {
+      foreach ($this->drupalSolrServerIndices as $sapi_index) {
+        $this->say("Found sapi index for $this->instanceName: $sapi_index");
+      }
+      $this->setSolrServerPodId($options);
+      $this->solrServerInit();
+      $this->io()->title(sprintf(
+        self::MSG_SOLR_TUNNELING,
+        $this->drupalSolrServerPodId
+      ));
+      $this->say('Opening tunnel with kubectl...');
+      $this->say('Click to launch the solr admin panel : http://localhost:18983/solr');
+      $this->say('When finished, press CTRL-C to exit.');
+      $this->io()->newLine();
+      $command_string = "{$this->kubeCtlBin} port-forward $this->drupalSolrServerPodId 18983:8983 --namespace=$this->deploymentK8sNameSpace";
+      passthru($command_string);
+    }
+    else {
+      $this->say("No solr indices found in Drupal configuration for $this->deploymentK8sNameSpace. Doing nothing.");
     }
   }
 
