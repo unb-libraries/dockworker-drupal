@@ -43,7 +43,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
   /**
    * Restores content from a local snapshot into the running container.
    *
-   * @command local-content:snapshot:restore
+   * @command local:content:snapshot:restore
    *
    * @throws \Dockworker\DockworkerException
    */
@@ -151,7 +151,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
   /**
    * Snapshots the local instance content into file archive(s).
    *
-   * @command local-content:snapshot:write
+   * @command local:content:snapshot:write
    *
    * @throws \Dockworker\DockworkerException
    */
