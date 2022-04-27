@@ -65,7 +65,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
   private $drupalRemoteSolrConfigDir;
 
   /**
-   * Clears all Drupal deployment solr indices and re-indexes the data.
+   * Clears the data from this instance's solr indices and re-indexes all data.
    *
    * @param string $env
    *   The environment to clear and reindex.
@@ -104,7 +104,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
   }
 
   /**
-   * Provides a gateway to the solr admin endpoint.
+   * Provides a clickable URL to this instance's solr server admin panel.
    *
    * This allows local use of the solr admin interface, which would not be
    * accessible otherwise.
@@ -152,7 +152,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
   }
 
   /**
-   * Updates the associated solr server conf with the latest available version.
+   * Updates this instance's deployed solr core config to the latest available.
    *
    * This command pulls config from unb-libraries/docker-solr-drupal:8.x-4.x.
    * Beware : This command removes the solr data and re-builds it.
