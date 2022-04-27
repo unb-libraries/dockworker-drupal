@@ -73,13 +73,11 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   /**
    * Dumps deployed Drupal data into local archive(s).
    *
-   * @command local:content:dump
-   *
    * @throws \Dockworker\DockworkerException
    *
    * @github
    */
-  public function dumpDrupalDatabaseFileSystemFromLocal() {
+  protected function dumpDrupalDatabaseFileSystemFromLocal() {
     $this->io()->newLine();
     $this->io()->section("Dumping Drupal filesystem from local...");
     $files_dump_name = self::POD_TEMPORARY_FILE_LOCATION . '/' . self::POD_FILES_DUMP_FILENAME;
@@ -143,7 +141,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * @param string $env
    *   The deploy environment to synchronize from. Defaults to 'prod'.
    *
-   * @command local:config:remote-sync
+   * @command local:config:sync:deployment
    *
    * @kubectl
    */
@@ -181,7 +179,8 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * @option $no-files
    *   Do not synchronize the drupal filesystem.
    *
-   * @command local:content:remote-sync
+   * @command local:data:sync:deployment
+   * @aliases sync-from-deployment
    *
    * @throws \Dockworker\DockworkerException
    *

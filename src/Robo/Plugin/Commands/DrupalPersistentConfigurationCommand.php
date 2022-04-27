@@ -41,7 +41,7 @@ class DrupalPersistentConfigurationCommand extends DockworkerDeploymentCommands 
    */
   public function synchronizeCommitPersistentConfigElementsFromLive($env = 'prod') {
     if (!empty($this->drupalPersistentConfigElements)) {
-      $this->setRunOtherCommand("local:config:remote-sync $env");
+      $this->setRunOtherCommand("local:config:sync:deployment $env");
       foreach($this->drupalPersistentConfigElements as $persistent_config_mask => $persistent_config_description) {
         $this->commitPersistentConfigChanges($persistent_config_mask, $persistent_config_description);
       }
