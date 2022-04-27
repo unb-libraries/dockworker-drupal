@@ -254,6 +254,17 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
     );
   }
 
+  /**
+   * Determines the human readable size of a file.
+   *
+   * @param string $path
+   *   The path to the file.
+   * @param $decimals
+   *   The number of decimals to display.
+   *
+   * @return string
+   *   The human readable file size.
+   */
   private function getHumanFileSize($path, $decimals = 2) {
     $bytes = filesize($path);
     $sz = 'BKMGTP';
