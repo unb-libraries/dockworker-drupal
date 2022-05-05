@@ -45,32 +45,6 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   private $drupalRemoteSyncPodName;
 
   /**
-   * Encrypt local Drupal data into dockworker content archive(s).
-   *
-   * @command sample-content:update
-   *
-   * @throws \Dockworker\DockworkerException
-   *
-   * @github
-   */
-  public function encryptDrupalDatabaseFileSystemFromLocal() {
-    $passphrase = $this->ask('Passphrase to encrypt content with?');
-    $this->dumpDrupalDatabaseFileSystemFromLocal();
-
-    exec("mkdir -p {$this->repoRoot}/data/content/");
-
-    $tmp_db_path = self::POD_TEMPORARY_FILE_LOCATION  . '/' . self::POD_DATABASE_DUMP_COMPRESSED_FILENAME;
-    $repo_db_path = "{$this->repoRoot}/data/content/db.sql.gz.gpg";
-    exec("gpg --symmetric --batch --cipher-algo AES256 --passphrase='$passphrase' $tmp_db_path");
-    exec("mv $tmp_db_path.gpg $repo_db_path");
-
-    $tmp_file_path = self::POD_TEMPORARY_FILE_LOCATION  . '/' . self::POD_FILES_DUMP_FILENAME;
-    $repo_file_path = "{$this->repoRoot}/data/content/files.tar.gz.gpg";
-    exec("gpg --symmetric --batch --cipher-algo AES256 --passphrase='$passphrase' $tmp_file_path");
-    exec("mv $tmp_file_path.gpg $repo_file_path");
-  }
-
-  /**
    * Dumps deployed Drupal data into local archive(s).
    *
    * @throws \Dockworker\DockworkerException
