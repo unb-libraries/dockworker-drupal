@@ -56,7 +56,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Writes a snapshot of the current application's local deployment Drupal configuration to its repository.
+   * Writes a snapshot of the current application's local deployment Drupal configuration to this repository.
    *
    * @command local:drupal:write-config
    * @aliases write-config

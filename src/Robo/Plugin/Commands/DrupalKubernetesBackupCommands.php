@@ -17,7 +17,7 @@ class DrupalKubernetesBackupCommands extends DockworkerApplicationInfoCommands {
   protected $drupalBackupDatabaseName;
 
   /**
-   * Writes a standardized k8s deployment file defining this application's recurring database backup to its repository.
+   * Writes a standardized k8s deployment file defining this application's recurring database backup to this repository.
    *
    * @command drupal:backup:update
    * @aliases update-drupal-backup

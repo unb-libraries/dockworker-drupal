@@ -16,7 +16,7 @@ class DrupalKubernetesCronjobCommands extends DockworkerApplicationInfoCommands 
   protected $drupalCronjobSourcePath;
 
   /**
-   * Writes a standardized k8s deployment file defining this application's recurring cronjob to its repository.
+   * Writes a standardized k8s deployment file defining this application's recurring cronjob to this repository.
    *
    * @command drupal:cronjob:update
    * @aliases update-drupal-cronjob
