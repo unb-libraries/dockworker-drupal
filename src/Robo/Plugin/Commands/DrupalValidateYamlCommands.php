@@ -20,7 +20,7 @@ class DrupalValidateYamlCommands extends DockworkerLocalCommands {
   ];
 
   /**
-   * Validates YAML files against Drupal coding standards.
+   * Validates one or more YAML files within this repository against Drupal coding standards.
    *
    * @param string[] $files
    *   The files to validate.
@@ -37,7 +37,7 @@ class DrupalValidateYamlCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Validates all YAML inside the Drupal custom path.
+   * Validates all YAML files within this repository's 'custom' path against Drupal coding standards.
    *
    * @command validate:drupal:custom:yaml
    * @aliases validate-custom-yaml

@@ -14,7 +14,7 @@ class DrupalDeploymentDrushCommands extends DockworkerDeploymentCommands {
   use DrupalKubernetesPodTrait;
 
   /**
-   * Executes a drush command in the application's k8s pod(s).
+   * Executes a drush command within this application's k8s deployment.
    *
    * @param string $cmd
    *   The drush command to run.

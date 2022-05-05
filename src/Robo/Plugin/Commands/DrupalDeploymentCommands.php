@@ -40,7 +40,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
   }
 
   /**
-   * Gets the cron logs for the drupal pod.
+   * Retrieves this application's k8s deployment cron logs.
    *
    * @param string $env
    *   The environment to obtain the logs from.
@@ -119,7 +119,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
   }
 
   /**
-   * Execute application's cron pod.
+   * Executes this application's k8s deployment cron.
    *
    * @param string $env
    *   The environment to execute the cron in.
@@ -143,7 +143,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
   }
 
   /**
-   * Execute application's cron pod and check the output for errors.
+   * Executes this application's k8s deployment cron, and determines if its logs contain errors.
    *
    * @param string $env
    *   The environment to execute the cron in.
@@ -169,7 +169,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
   }
 
   /**
-   * Checks the application's cron pod(s) logs for errors.
+   * Determines if this application's k8s deployment cron logs contain errors.
    *
    * @param string $env
    *   The environment to check the logs in.
@@ -295,7 +295,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
   }
 
   /**
-   * Clears the cache(s) in a remote drupal Deployment.
+   * Rebuilds all caches within this application's k8s deployment.
    *
    * @param string $env
    *   The environment to obtain the logs from.
@@ -318,7 +318,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
   }
 
   /**
-   * Generates a ULI link for a remote drupal deployment.
+   * Generates a administrative login link to this application's k8s deployment.
    *
    * @param string $env
    *   The environment to obtain the login link from.
@@ -344,7 +344,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
   }
 
   /**
-   * Generates a list of installed packages for remote drupal deployment.
+   * Displays all composer packages installed within this application's k8s deployment.
    *
    * @param string $env
    *   The environment to obtain the list from.

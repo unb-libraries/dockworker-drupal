@@ -23,7 +23,7 @@ class DrupalValidateProjectsCommands extends DockworkerLocalCommands {
   protected $extraneousProjects = [];
 
   /**
-   * Validate the drupal projects in ./build/composer.json for extraneous.
+   * Validate Drupal projects listed in this repository's './build/composer.json' file against those defined in core.extension.
    *
    * @command validate:projects:enabled
    *
@@ -40,7 +40,7 @@ class DrupalValidateProjectsCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Validate the dockworker projects against build projects.
+   * Validate projects listed in this repository's './build/composer.json' file against those listed in './composer.json'.
    *
    * @command validate:projects:base-build
    */

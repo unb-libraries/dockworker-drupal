@@ -27,7 +27,7 @@ class DrupalPersistentConfigurationCommand extends DockworkerDeploymentCommands 
   }
 
   /**
-   * Synchronize persistent configurations elements from live instances.
+   * Retrieves this application's persistent configuration elements from its k8s deployment and commits it to this repository.
    *
    * @param string $env
    *   The environment to obtain the logs from. Defaults to 'prod'.

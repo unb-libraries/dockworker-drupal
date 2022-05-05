@@ -19,7 +19,7 @@ class DrupalValidateTwigCommands extends DockworkerLocalCommands {
   ];
 
   /**
-   * Validates twig files against standards.
+   * Validates one or more Twig files within this repository against Drupal coding standards.
    *
    * @param string[] $files
    *   The files to validate.
@@ -34,7 +34,7 @@ class DrupalValidateTwigCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Validates all twig inside the Drupal custom path.
+   * Validates all twig files within this repository's 'custom' path against Drupal coding standards.
    *
    * @command validate:drupal:custom:twig
    * @aliases validate-custom-twig

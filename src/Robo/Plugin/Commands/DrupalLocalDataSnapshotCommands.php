@@ -41,7 +41,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
   private string $drupalCurLocalSnapshotDir;
 
   /**
-   * Restores content from a local snapshot into the running container.
+   * Restores a previously written local content 'snapshot' to this application's local deployment.
    *
    * @command local:data:snapshot:restore
    * @aliases restore-snapshot
@@ -150,7 +150,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
   }
 
   /**
-   * Snapshots the local instance content into file archive(s).
+   * Writes a content 'snapshot' of this application's local deployment into this local development system's persistent storage.
    *
    * @command local:data:snapshot:write
    * @aliases write-snapshot

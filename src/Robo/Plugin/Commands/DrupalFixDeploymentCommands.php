@@ -14,14 +14,14 @@ class DrupalFixDeploymentCommands extends DockworkerDeploymentCommands {
   use DrupalKubernetesPodTrait;
 
   /**
-   * Removes any references to a missing module in the application's k8s pod(s).
+   * Removes orphaned references to an uninstalled module within this application's k8s deployment.
    *
    * Beware : This command has the potential to destroy your instance.
    *
    * @param string $module
-   *   The environment to obtain the logs from.
+   *   The module to remove all references from.
    * @param string $env
-   *   The environment to obtain the logs from.
+   *   The environment to operate in.
    *
    * @command deployment:drupal:fix-missing-module
    * @throws \Exception

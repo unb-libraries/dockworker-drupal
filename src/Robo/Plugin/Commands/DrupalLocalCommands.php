@@ -10,7 +10,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 class DrupalLocalCommands extends DockworkerLocalCommands {
 
   /**
-   * Rebuilds the cache in the local Drupal application.
+   * Rebuilds all caches within this application's local deployment.
    *
    * @command local:drupal:cr
    * @aliases cr
@@ -26,7 +26,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Generates a ULI link for the local Drupal application.
+   * Generates a administrative login link to this application's local deployment.
    *
    * @param string $user_name
    *   The user account name to generate the ULI for. Defaults to user 0.
@@ -56,7 +56,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Exports the configuration local Drupal application.
+   * Writes a snapshot of the current application's local deployment Drupal configuration to its repository.
    *
    * @command local:drupal:write-config
    * @aliases write-config
@@ -96,7 +96,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Generates a list of installed composer packages for the local application.
+   * Displays all composer packages installed within this application's local deployment.
    *
    * @command local:drupal:composer-packages
    * @aliases ldcp

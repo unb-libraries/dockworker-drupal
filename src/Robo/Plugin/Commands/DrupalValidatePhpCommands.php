@@ -50,7 +50,7 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Validates PHP files against Drupal coding standards.
+   * Validates one or more PHP files within this repository against Drupal coding standards.
    *
    * @param string[] $files
    *   The files to validate.
@@ -72,7 +72,7 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Validates all PHP inside the Drupal custom path.
+   * Validates all PHP files within this repository's 'custom' path against Drupal coding standards.
    *
    * @option $no-warnings
    *   Do not output warnings.

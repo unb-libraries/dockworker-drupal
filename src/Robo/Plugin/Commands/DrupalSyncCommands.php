@@ -141,7 +141,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Synchronizes deployed Drupal data into the local Drupal application.
+   * Synchronizes all data within this application's k8s deployment to this local deployment.
    *
    * @param string $env
    *   The deploy environment to synchronize from.

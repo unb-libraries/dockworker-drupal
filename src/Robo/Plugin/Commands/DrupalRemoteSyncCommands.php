@@ -68,7 +68,7 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
   private $drupalRemoteSyncTargetPod;
 
   /**
-   * Synchronizes deployed Drupal data into another container environment.
+   * Synchronizes all data within this application's k8s deployment from one environment to another.
    *
    * @param string $source_env
    *   The deploy environment to synchronize from.
