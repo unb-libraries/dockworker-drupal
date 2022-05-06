@@ -42,7 +42,7 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
    * @hook pre-command theme:build-all
    */
   public function setValidateThemeInherits() {
-    $this->setRunOtherCommand('validate:projects:base-build');
+    $this->setRunOtherCommand('validate:composer:base-build');
   }
 
   /**

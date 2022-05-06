@@ -21,10 +21,10 @@ class DrupalDeploymentDrushCommands extends DockworkerDeploymentCommands {
    * @param string $env
    *   The environment to run the command in.
    *
-   * @command deployment:drupal:drush
+   * @command drupal:drush:deployed
    * @throws \Exception
    *
-   * @usage deployment:drupal:drush 'sql-cli' dev
+   * @usage drupal:drush:deployed 'sql-cli' dev
    *
    * @kubectl
    */

@@ -14,7 +14,7 @@ class DrupalCIServicesWorkflowCommands extends DockworkerCIServicesWorkflowComma
   /**
    * Updates the application's CI Services workflow file.
    *
-   * @hook replace-command ci:update-workflow-file
+   * @hook replace-command ci:workflow:file:write
    *
    * @actionsworkflowcommand
    */

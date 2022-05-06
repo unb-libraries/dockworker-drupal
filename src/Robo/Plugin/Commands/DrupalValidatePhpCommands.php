@@ -33,7 +33,7 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
   /**
    * Sets the Drupal coding symlink for phpcs.
    *
-   * @hook pre-command validate:php:drupal
+   * @hook pre-command validate:drupal:php
    */
   public function setPhpCsCoderSymlink() {
     foreach (self::PHPCS_STANDARDS as $standard) {
@@ -58,7 +58,7 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
    * @option $no-warnings
    *   Do not output warnings.
    *
-   * @command validate:php:drupal
+   * @command validate:drupal:php
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -77,7 +77,7 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
    * @option $no-warnings
    *   Do not output warnings.
    *
-   * @command validate:drupal:custom:php
+   * @command validate:drupal:php:custom
    * @aliases validate-custom-php
    * @throws \Dockworker\DockworkerException
    *
@@ -89,7 +89,7 @@ class DrupalValidatePhpCommands extends DockworkerLocalCommands {
       ["{$this->repoRoot}/custom"],
       self::PHPCS_EXTENSIONS
     );
-    $cmd = "validate:php:drupal {$this->getRecursivePathStringFileList()}";
+    $cmd = "validate:drupal:php {$this->getRecursivePathStringFileList()}";
     if ($options['no-warnings']) {
       $cmd = "$cmd --no-warnings";
     }

@@ -110,12 +110,12 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Synchronizes deployed Drupal config data into the local config-yml path.
+   * Exports Drupal config from this application's k8s deployment and writes it to this repository.
    *
    * @param string $env
    *   The deploy environment to synchronize from. Defaults to 'prod'.
    *
-   * @command local:config:sync:deployment
+   * @command drupal:config:write:deployed
    *
    * @kubectl
    */
@@ -141,7 +141,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Synchronizes all data within this application's k8s deployment to this local deployment.
+   * Synchronizes all Drupal data within this application's k8s deployment to this local deployment.
    *
    * @param string $env
    *   The deploy environment to synchronize from.
@@ -153,8 +153,8 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * @option $no-files
    *   Do not synchronize the drupal filesystem.
    *
-   * @command local:data:sync:deployment
-   * @aliases sync-from-deployment
+   * @command sync:all:deployed:local
+   * @aliases sync-from-deployed
    *
    * @throws \Dockworker\DockworkerException
    *

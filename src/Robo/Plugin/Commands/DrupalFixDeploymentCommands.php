@@ -23,10 +23,10 @@ class DrupalFixDeploymentCommands extends DockworkerDeploymentCommands {
    * @param string $env
    *   The environment to operate in.
    *
-   * @command deployment:drupal:fix-missing-module
+   * @command drupal:module:fix-missing:deployed
    * @throws \Exception
    *
-   * @usage deployment:drupal:fix-missing-module devel dev
+   * @usage drupal:module:fix-missing:deployed devel dev
    *
    * @kubectl
    */

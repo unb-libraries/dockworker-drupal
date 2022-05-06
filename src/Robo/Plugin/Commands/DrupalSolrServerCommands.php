@@ -70,10 +70,10 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    * @param string $env
    *   The environment to clear and reindex.
    *
-   * @command deployment:drupal:solr:clear-reindex-all
+   * @command solr:reindex:deployed
    * @throws \Exception
    *
-   * @usage deployment:drupal:solr:clear-reindex-all dev
+   * @usage solr:reindex:deployed dev
    *
    * @kubectl
    */
@@ -104,7 +104,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
   }
 
   /**
-   * Generates a clickable URL to this application's deployment solr instance admin panel.
+   * Generates a clickable URL to this application's k8s deployment solr admin panel.
    *
    * This allows local use of the solr admin interface, which would not be
    * accessible otherwise.
@@ -117,10 +117,10 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    * @option $solr-deployment-name
    *   The k8s deploy name of solr. Defaults to drupal-solr-lib-unb-ca.
    *
-   * @command deployment:drupal:solr:admin
+   * @command solr:uli:deployed
    * @throws \Exception
    *
-   * @usage deployment:drupal:solr:admin prod
+   * @usage solr:uli:deployed prod
    *
    * @kubectl
    */
@@ -175,10 +175,10 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    * @option $solr-deployment-name
    *   The k8s deployment name of the solr server.
    *
-   * @command deployment:drupal:solr:update-config
+   * @command solr:config:update:deployed
    * @throws \Exception
    *
-   * @usage deployment:drupal:solr:update-config dev
+   * @usage solr:config:update:deployed dev
    *
    * @kubectl
    */
@@ -209,7 +209,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
           self::MSG_DRUPAL_REINDEXING,
           $first_drupal_pod_id
         ));
-        $this->setRunOtherCommand("deployment:drupal:solr:clear-reindex-all $env");
+        $this->setRunOtherCommand("solr:reindex:deployed $env");
       }
     }
     else {

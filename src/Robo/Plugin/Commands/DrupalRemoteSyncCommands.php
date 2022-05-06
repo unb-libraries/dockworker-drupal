@@ -68,7 +68,7 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
   private $drupalRemoteSyncTargetPod;
 
   /**
-   * Synchronizes all data within this application's k8s deployment from one environment to another.
+   * Synchronizes all Drupal data within this application's k8s deployment from one environment to another.
    *
    * @param string $source_env
    *   The deploy environment to synchronize from.
@@ -82,11 +82,11 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
    * @option $no-files
    *   Do not synchronize the drupal filesystem.
    *
-   * @command deployment:content:remote-sync
+   * @command sync:all:deployed:deployed
    *
    * @throws \Dockworker\DockworkerException
    *
-   * @usage deployment:content:remote-sync prod dev
+   * @usage sync:all:deployed:deployed prod dev
    *
    * @github
    * @kubectl
@@ -431,7 +431,7 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
       $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, '/scripts/pre-init.d/80_saml_entity_id.sh');
     }
     $this->say("Generating New ULI Link...");
-    $this->setRunOtherCommand("deployment:drupal:uli {$this->drupalRemoteSyncTargetEnv}");
+    $this->setRunOtherCommand("drupal:uli:deployed {$this->drupalRemoteSyncTargetEnv}");
   }
 
 }

@@ -25,7 +25,7 @@ class DrupalValidateProjectsCommands extends DockworkerLocalCommands {
   /**
    * Validate Drupal projects listed in this repository's './build/composer.json' file against those defined in core.extension.
    *
-   * @command validate:projects:enabled
+   * @command validate:composer:enabled
    *
    * @return \Robo\Result
    *   The result of the command.
@@ -42,7 +42,7 @@ class DrupalValidateProjectsCommands extends DockworkerLocalCommands {
   /**
    * Validate projects listed in this repository's './build/composer.json' file against those listed in './composer.json'.
    *
-   * @command validate:projects:base-build
+   * @command validate:composer:base-build
    */
   public function validateBaseBuildProjectFiles() {
     $this->buildFilePath = $this->repoRoot . '/build/composer.json';

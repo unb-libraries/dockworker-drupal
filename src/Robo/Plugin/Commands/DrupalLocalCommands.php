@@ -12,7 +12,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   /**
    * Rebuilds all caches within this application's local deployment.
    *
-   * @command local:drupal:cr
+   * @command drupal:cr:local
    * @aliases cr
    */
   public function rebuildCache() {
@@ -26,12 +26,12 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Generates a administrative login link to this application's local deployment.
+   * Generates a clickable URL to this application's local deployment Drupal admin panel.
    *
    * @param string $user_name
    *   The user account name to generate the ULI for. Defaults to user 0.
    *
-   * @command local:drupal:uli
+   * @command drupal:uli:local
    * @aliases uli
    * @throws \Dockworker\DockworkerException
    */
@@ -56,9 +56,9 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Writes a snapshot of the current application's local deployment Drupal configuration to this repository.
+   * Exports Drupal config from this application's local deployment and writes it to this repository.
    *
-   * @command local:drupal:write-config
+   * @command drupal:config:write:local
    * @aliases write-config
    * @throws \Dockworker\DockworkerException
    */
@@ -98,7 +98,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   /**
    * Displays all composer packages installed within this application's local deployment.
    *
-   * @command local:drupal:composer-packages
+   * @command composer:list:local
    * @aliases ldcp
    * @throws \Dockworker\DockworkerException
    */

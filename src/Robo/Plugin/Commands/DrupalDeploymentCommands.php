@@ -48,10 +48,10 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @option $all
    *   Display logs from all cron pods, not only the latest.
    *
-   * @command deployment:cron:logs
+   * @command cron:logs:deployed
    * @throws \Exception
    *
-   * @usage deployment:cron:logs dev
+   * @usage cron:logs:deployed dev
    *
    * @kubectl
    */
@@ -127,10 +127,10 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @option $no-write-logs
    *   Do not display logs after execution.
    *
-   * @command deployment:cron:exec
+   * @command cron:exec:deployed
    * @throws \Exception
    *
-   * @usage deployment:cron:exec prod
+   * @usage cron:exec:deployed prod
    *
    * @kubectl
    */
@@ -151,10 +151,10 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @option $write-successful-logs
    *   Display logs even if no errors found.
    *
-   * @command deployment:cron:exec:check
+   * @command cron:exec-check:deployed
    * @throws \Exception
    *
-   * @usage deployment:cron:exec:check prod
+   * @usage cron:exec-check:deployed prod
    *
    * @kubectl
    */
@@ -174,10 +174,10 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @param string $env
    *   The environment to check the logs in.
    *
-   * @command deployment:logs:cron:check
+   * @command cron:logs:check:deployed
    * @throws \Exception
    *
-   * @usage deployment:logs:cron:check prod
+   * @usage cron:logs:check:deployed prod
    *
    * @kubectl
    */
@@ -300,10 +300,10 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @param string $env
    *   The environment to obtain the logs from.
    *
-   * @command deployment:drupal:cr
+   * @command drupal:cr:deployed
    * @throws \Exception
    *
-   * @usage deployment:drupal:cr dev
+   * @usage drupal:cr:deployed dev
    *
    * @kubectl
    */
@@ -318,16 +318,16 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
   }
 
   /**
-   * Generates a administrative login link to this application's k8s deployment.
+   * Generates a clickable URL to this application's k8s deployment Drupal admin panel.
    *
    * @param string $env
    *   The environment to obtain the login link from.
    *
-   * @command deployment:drupal:uli
+   * @command drupal:uli:deployed
    * @aliases ruli
    * @throws \Exception
    *
-   * @usage deployment:drupal:uli prod
+   * @usage drupal:uli:deployed prod
    *
    * @kubectl
    */
@@ -349,7 +349,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @param string $env
    *   The environment to obtain the list from.
    *
-   * @command deployment:drupal:composer-packages
+   * @command composer:list:deployed
    * @aliases ddcp
    * @throws \Dockworker\DockworkerException
    *

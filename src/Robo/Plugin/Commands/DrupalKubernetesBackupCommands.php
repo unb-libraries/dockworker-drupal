@@ -19,10 +19,10 @@ class DrupalKubernetesBackupCommands extends DockworkerApplicationInfoCommands {
   /**
    * Writes a standardized k8s deployment file defining this application's recurring database backup to this repository.
    *
-   * @command drupal:backup:update
+   * @command backup:deployment:file:write
    * @aliases update-drupal-backup
    *
-   * @usage drupal:backup:update
+   * @usage backup:deployment:file:write
    */
   public function setApplicationBackupFiles() {
     $drupalBackupSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/drupal-backup';

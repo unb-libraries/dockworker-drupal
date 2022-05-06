@@ -24,7 +24,7 @@ class DrupalValidateTwigCommands extends DockworkerLocalCommands {
    * @param string[] $files
    *   The files to validate.
    *
-   * @command validate:twig:drupal
+   * @command validate:drupal:twig
    * @throws \Dockworker\DockworkerException
    */
   public function validateDrupalTwigFiles(array $files) {
@@ -36,7 +36,7 @@ class DrupalValidateTwigCommands extends DockworkerLocalCommands {
   /**
    * Validates all twig files within this repository's 'custom' path against Drupal coding standards.
    *
-   * @command validate:drupal:custom:twig
+   * @command validate:drupal:twig:custom
    * @aliases validate-custom-twig
    *
    * @throws \Dockworker\DockworkerException
@@ -49,7 +49,7 @@ class DrupalValidateTwigCommands extends DockworkerLocalCommands {
       ["{$this->repoRoot}/custom"],
       self::TWIG_EXTENSIONS
     );
-    return $this->setRunOtherCommand("validate:twig:drupal {$this->getRecursivePathStringFileList()}");
+    return $this->setRunOtherCommand("validate:drupal:twig {$this->getRecursivePathStringFileList()}");
   }
 
 }

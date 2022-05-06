@@ -27,13 +27,13 @@ class DrupalPersistentConfigurationCommand extends DockworkerDeploymentCommands 
   }
 
   /**
-   * Retrieves this application's persistent configuration elements from its k8s deployment and commits it to this repository.
+   * Exports Drupal config from this application's k8s deployment and commits any new 'persistent' elements to this repository.
    *
    * @param string $env
    *   The environment to obtain the logs from. Defaults to 'prod'.
    *
-   * @command deployment:drupal:sync-persistent-config
-   * @usage deployment:drupal:sync-persistent-config
+   * @command drupal:config:commit:persistent:deployed
+   * @usage drupal:config:commit:persistent:deployed
    *
    * @throws \Exception
    *
@@ -41,7 +41,7 @@ class DrupalPersistentConfigurationCommand extends DockworkerDeploymentCommands 
    */
   public function synchronizeCommitPersistentConfigElementsFromLive($env = 'prod') {
     if (!empty($this->drupalPersistentConfigElements)) {
-      $this->setRunOtherCommand("local:config:sync:deployment $env");
+      $this->setRunOtherCommand("drupal:config:write:deployed $env");
       foreach($this->drupalPersistentConfigElements as $persistent_config_mask => $persistent_config_description) {
         $this->commitPersistentConfigChanges($persistent_config_mask, $persistent_config_description);
       }

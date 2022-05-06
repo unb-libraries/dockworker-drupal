@@ -25,7 +25,7 @@ class DrupalValidateYamlCommands extends DockworkerLocalCommands {
    * @param string[] $files
    *   The files to validate.
    *
-   * @command validate:yaml:drupal
+   * @command validate:drupal:yaml
    *
    * @return int
    *   The return value of the command.
@@ -39,7 +39,7 @@ class DrupalValidateYamlCommands extends DockworkerLocalCommands {
   /**
    * Validates all YAML files within this repository's 'custom' path against Drupal coding standards.
    *
-   * @command validate:drupal:custom:yaml
+   * @command validate:drupal:yaml:custom
    * @aliases validate-custom-yaml
    * @throws \Dockworker\DockworkerException
    *
@@ -51,7 +51,7 @@ class DrupalValidateYamlCommands extends DockworkerLocalCommands {
       ["{$this->repoRoot}/custom"],
       self::YAML_EXTENSIONS
     );
-    return $this->setRunOtherCommand("validate:yaml:drupal {$this->getRecursivePathStringFileList()}");
+    return $this->setRunOtherCommand("validate:drupal:yaml {$this->getRecursivePathStringFileList()}");
   }
 
 }
