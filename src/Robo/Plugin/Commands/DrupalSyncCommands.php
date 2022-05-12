@@ -120,9 +120,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    * @kubectl
    */
   public function synchronizeConfig($env = 'prod') {
-    $this->kubernetesPodNamespace = $env;
-    $this->kubernetesSetupPods($this->instanceSlug, "Synchronization");
-    $pod_id = array_shift($this->kubernetesCurPods);
+    $pod_id = $this->k8sGetLatestPod($env, 'deployment', 'synchronization');
 
     $this->say("Exporing live config from $env/$pod_id...");
     $this->kubernetesPodExecCommand(
@@ -163,14 +161,10 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    */
   public function syncDrupalDatabaseFileSystemFromRemote($env, array $options = ['no-database' => FALSE, 'no-files' => FALSE]) {
     $this->getLocalRunning();
-
     $this->io()->title('Deployed Data Synchronization');
 
-    $this->kubernetesPodNamespace = $env;
-    $this->kubernetesSetupPods($this->instanceSlug, "Synchronization");
-
     // All pods should return the same data, so simply use the first.
-    $this->drupalRemoteSyncPodName = $this->kubernetesCurPods[0];
+    $this->drupalRemoteSyncPodName = $this->k8sGetLatestPod($env, 'deployment', 'Synchronization');
 
     // Determine operations to perform.
     $this->drupalRemoteSyncDatabase = !$options['no-database'];
@@ -224,7 +218,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   private function runRemoteDrushCommand($command) {
     return $this->kubernetesPodDrushCommand(
       $this->drupalRemoteSyncPodName,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       $command
     );
   }
@@ -381,7 +375,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
   private function runRemoteCommand($command) {
     return $this->kubernetesPodExecCommand(
       $this->drupalRemoteSyncPodName,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       $command
     );
   }
@@ -401,7 +395,7 @@ class DrupalSyncCommands extends DockworkerLocalCommands {
    */
   private function copyRemoteFileToLocal($remote_filename, $local_filename) {
     return $this->kubernetesPodFileCopyCommand(
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       $this->drupalRemoteSyncPodName . ':' . $remote_filename,
       $local_filename
     );

@@ -86,8 +86,8 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
         $this->io()->title(sprintf(
           self::MSG_REINDEXING_INDEX,
           $index_name,
-          $this->deploymentK8sName,
-          $this->deploymentK8sNameSpace
+          $this->deployedK8sResourceName,
+          $this->deployedK8sResourceNameSpace
         ));
         $this->reindexSolrIndex($first_drupal_pod_id, $index_name);
       }
@@ -96,8 +96,8 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
       throw new DockworkerException(
         sprintf(
           self::ERROR_NO_PODS_IN_DEPLOYMENT,
-          $this->deploymentK8sName,
-          $this->deploymentK8sNameSpace
+          $this->deployedK8sResourceName,
+          $this->deployedK8sResourceNameSpace
         )
       );
     }
@@ -143,11 +143,11 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
       $this->say('Click to launch the solr admin panel : http://localhost:18983/solr');
       $this->say('When finished, press CTRL-C to exit.');
       $this->io()->newLine();
-      $command_string = "{$this->kubeCtlBin} port-forward $this->drupalSolrServerPodId 18983:8983 --namespace=$this->deploymentK8sNameSpace";
+      $command_string = "{$this->kubeCtlBin} port-forward $this->drupalSolrServerPodId 18983:8983 --namespace=$this->deployedK8sResourceNameSpace";
       passthru($command_string);
     }
     else {
-      $this->say("No solr indices found in Drupal configuration for $this->deploymentK8sNameSpace. Doing nothing.");
+      $this->say("No solr indices found in Drupal configuration for $this->deployedK8sResourceNameSpace. Doing nothing.");
     }
   }
 
@@ -216,8 +216,8 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
       throw new DockworkerException(
         sprintf(
           self::ERROR_NO_PODS_IN_DEPLOYMENT,
-          $this->deploymentK8sName,
-          $this->deploymentK8sNameSpace
+          $this->deployedK8sResourceName,
+          $this->deployedK8sResourceNameSpace
         )
       );
     }
@@ -233,15 +233,12 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    */
   private function initDrupalPodInstances($env) {
     $this->drupalSolrServerPodEnv = $env;
-    $this->deploymentCommandInit($this->repoRoot, $this->drupalSolrServerPodEnv);
-    $this->kubernetesPodNamespace = $this->deploymentK8sNameSpace;
-
     $this->io()->title(sprintf(
       self::MSG_INITIALIZING_PODS,
-      $this->deploymentK8sName,
-      $this->deploymentK8sNameSpace
+      $this->deployedK8sResourceName,
+      $this->deployedK8sResourceNameSpace
     ));
-    $this->kubernetesSetupPods($this->deploymentK8sName, "Reindex");
+    $this->k8sInitSetupPods($env, 'deployment', 'Reindex');
     $this->io()->text(self::MSG_DONE);
   }
 
@@ -256,7 +253,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
   private function setUpInstanceIndices($pod_id) {
     $this->drupalSolrServerIndices = $this->kubernetesPodDrushCommand(
       $pod_id,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       'sapi-l --field=name'
     );
 
@@ -264,8 +261,8 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
       throw new DockworkerException(
         sprintf(
           self::ERROR_NO_INDICES_IN_INSTANCE,
-          $this->deploymentK8sName,
-          $this->deploymentK8sNameSpace
+          $this->deployedK8sResourceName,
+          $this->deployedK8sResourceNameSpace
         )
       );
     }
@@ -280,17 +277,17 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
   private function reindexSolrIndex($pod_id, $core_name) {
     $this->drupalSolrServerIndices = $this->kubernetesPodDrushCommand(
       $pod_id,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       'search-api:clear'
     );
     $this->drupalSolrServerIndices = $this->kubernetesPodDrushCommand(
       $pod_id,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       'search-api:reset-tracker'
     );
     $this->drupalSolrServerIndices = $this->kubernetesPodDrushCommand(
       $pod_id,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       'search-api:index'
     );
   }
@@ -306,7 +303,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    * @throws \Dockworker\DockworkerException
    */
   private function setSolrServerPodId($options) {
-    $this->kubernetesSetupPods($options['solr-deployment-name'], 'SOLR Pod Setup');
+    $this->kubernetesSetupPods($options['solr-deployment-name'], 'deployment', $this->deployedK8sResourceNameSpace, 'SOLR Pod Setup');
     $solr_pods = $this->kubernetesGetMatchingPods($options['solr-deployment-name'], $this->drupalSolrServerPodEnv);
     if (empty($solr_pods[0])) {
       throw new DockworkerException(

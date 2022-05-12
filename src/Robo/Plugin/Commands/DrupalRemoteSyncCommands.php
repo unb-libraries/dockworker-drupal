@@ -122,14 +122,11 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
    */
   private function initSyncPods($source_env, $target_env) {
     $this->drupalRemoteSyncSourceEnv = $source_env;
-    $this->kubernetesPodNamespace = $this->drupalRemoteSyncSourceEnv;
-    $this->kubernetesSetupPods($this->instanceSlug, "Synchronization");
-    $this->drupalRemoteSyncSourcePod = $this->kubernetesCurPods[0];
-
-    $this->kubernetesCurPods = [];
     $this->drupalRemoteSyncTargetEnv = $target_env;
-    $this->kubernetesPodNamespace = $this->drupalRemoteSyncTargetEnv;
-    $this->kubernetesSetupPods($this->instanceSlug, "Synchronization");
+
+    $this->kubernetesSetupPods($this->instanceSlug, 'deployment', $this->drupalRemoteSyncSourceEnv, "Synchronization");
+    $this->drupalRemoteSyncSourcePod = $this->kubernetesCurPods[0];
+    $this->kubernetesSetupPods($this->instanceSlug, 'deployment', $this->drupalRemoteSyncTargetEnv, "Synchronization");
     $this->drupalRemoteSyncTargetPod = $this->kubernetesCurPods[0];
   }
 

@@ -29,11 +29,10 @@ class DrupalDeploymentDrushCommands extends DockworkerDeploymentCommands {
    * @kubectl
    */
   public function setRunDrushCommand($cmd, $env) {
-    $pods = $this->getDeploymentExecPodIds($env);
-    $pod_id = array_shift($pods);
+    $pod_id = $this->k8sGetLatestPod($env, 'deployment', 'Open Shell');
     $response = $this->kubernetesPodDrushCommand(
       $pod_id,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       $cmd
     );
     $this->io()->block(implode("\n", $response));

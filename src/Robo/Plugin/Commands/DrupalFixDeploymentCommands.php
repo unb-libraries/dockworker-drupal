@@ -31,52 +31,51 @@ class DrupalFixDeploymentCommands extends DockworkerDeploymentCommands {
    * @kubectl
    */
   public function fixDeploymentMissingModules($module, $env) {
-    $pods = $this->getDeploymentExecPodIds($env);
-    $pod_id = array_shift($pods);
+    $pod_id = $this->k8sGetLatestPod($env, 'deployment', 'Open Shell');
 
     $this->kubernetesPodComposerCommand(
       $pod_id,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       "require drupal/$module"
     );
 
     $this->kubernetesPodDrushCommand(
       $pod_id,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       "en $module"
     );
 
     $this->kubernetesPodDrushClearCache(
       $pod_id,
-      $this->kubernetesPodNamespace
+      $this->kubernetesPodParentResourceNamespace
     );
 
     $this->kubernetesPodDrushCommand(
       $pod_id,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       'updb'
     );
 
     $this->kubernetesPodDrushClearCache(
       $pod_id,
-      $this->kubernetesPodNamespace
+      $this->kubernetesPodParentResourceNamespace
     );
 
     $this->kubernetesPodDrushCommand(
       $pod_id,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       "pmu $module"
     );
 
     $this->kubernetesPodComposerCommand(
       $pod_id,
-      $this->kubernetesPodNamespace,
+      $this->kubernetesPodParentResourceNamespace,
       "remove drupal/$module --update-with-dependencies"
     );
 
     $this->kubernetesPodDrushClearCache(
       $pod_id,
-      $this->kubernetesPodNamespace
+      $this->kubernetesPodParentResourceNamespace
     );
   }
 
