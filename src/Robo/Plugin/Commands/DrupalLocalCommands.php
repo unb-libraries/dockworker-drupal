@@ -89,8 +89,9 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
    */
   public function getErrorLogExceptions() {
     return [
-        '[notice] Synchronized extensions' => 'Modules that have "error" in their names are not errors',
         'Config language.entity.en does not exist' => 'Language entity may not exist before config import',
+        'Operation CREATE USER failed' => 'Creating a local user failing is expected in deployment',
+        '[notice] Synchronized extensions' => 'Modules that have "error" in their names are not errors',
         'error_level' => 'Drupal console development mode reports are not errors',
     ];
   }
