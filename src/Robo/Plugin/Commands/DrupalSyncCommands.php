@@ -270,35 +270,6 @@ class DrupalSyncCommands extends DockworkerDeploymentCommands {
     }
   }
 
-  /**
-   * Gets the string that represents the local Drupal version.
-   *
-   * @return string
-   *
-   * @throws \Exception
-   */
-  protected function getLocalDrupalVersionString() {
-    $local_output = $this->runLocalDrushCommand('status');
-    return $local_output[0];
-  }
-
-  /**
-   * Runs a drush command in the local Drupal application.
-   *
-   * @param string $command
-   *   The command string to execute.
-   *
-   * @throws \Exception
-   *
-   * @return mixed
-   *   The command result.
-   */
-  private function runLocalDrushCommand($command) {
-    return $this->localDockerContainerDrushCommand(
-      $this->instanceName,
-      $command
-    );
-  }
 
   /**
    * Synchronizes a deployed database into the local Drupal application.

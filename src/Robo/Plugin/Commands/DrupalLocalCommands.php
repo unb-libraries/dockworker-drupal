@@ -2,12 +2,15 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\DrupalLocalDockerContainerTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 
 /**
  * Defines the commands used to interact with a local Drupal application.
  */
 class DrupalLocalCommands extends DockworkerLocalCommands {
+
+  use DrupalLocalDockerContainerTrait;
 
   /**
    * Rebuilds all caches within this application's local deployment.
