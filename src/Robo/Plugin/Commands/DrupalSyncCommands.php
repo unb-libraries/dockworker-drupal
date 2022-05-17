@@ -11,7 +11,7 @@ use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 /**
  * Defines commands used to sync deployed data to the local Drupal application.
  */
-class DrupalSyncCommands extends DockworkerLocalCommands {
+class DrupalSyncCommands extends DockworkerDeploymentCommands {
 
   use DrupalKubernetesPodTrait;
   use DrupalLocalDockerContainerTrait;
