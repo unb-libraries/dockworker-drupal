@@ -29,6 +29,18 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
+   * Resets a local database/filesystem to a bootable state before rebuilding.
+   *
+   * @hook pre-command local:rebuild
+   */
+  public function undoDevelSettingsBeforeRebuild() {
+    $this->setInstanceName();
+    $this->say('Disabling devel...');
+    $this->runLocalDrushCommand('pmu devel');
+    $this->rebuildCache();
+  }
+
+  /**
    * Generates a clickable URL to this application's local deployment Drupal admin panel.
    *
    * @param string $user_name
