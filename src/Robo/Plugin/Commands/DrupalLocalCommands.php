@@ -29,13 +29,25 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   }
 
   /**
-   * Resets a local database/filesystem to a bootable state before rebuilding.
+   * Prepares a local database/filesystem before rebuilding.
+   *
+   * Local development startup involves several post-configuration-import
+   * changes that conflict with a clean container restart. This hook reverts
+   * those as necessary.
    *
    * @hook pre-command local:rebuild
    */
-  public function undoDevelSettingsBeforeRebuild() {
+  public function prepareDrupalForRestart() {
+    $this->io()->title('Reverting local development settings');
+    $this->revertDevelSettings();
+  }
+
+  /**
+   * Reverts devel-related settings necessary for a clean container restart.
+   */
+  protected function revertDevelSettings() {
     $this->setInstanceName();
-    $this->say('Disabling devel...');
+    $this->say('Removing devel-related configuration...');
     $this->runLocalDrushCommand('pmu devel');
     $this->rebuildCache();
   }
