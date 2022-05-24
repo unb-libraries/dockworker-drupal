@@ -91,11 +91,13 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
    */
   public function writeConfig() {
     $this->getLocalRunning();
+    $this->io()->title('Exporting Local Drupal Configuration');
     $this->taskDockerExec($this->instanceName)
       ->interactive()
       ->exec('/scripts/configExport.sh')
       ->run();
     $this->setRunOtherCommand('dockworker:permissions:fix');
+    $this->say('Done!');
   }
 
   /**
