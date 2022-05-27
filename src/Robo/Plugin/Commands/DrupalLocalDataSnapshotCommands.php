@@ -52,6 +52,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
    * @throws \Dockworker\DockworkerException
    */
   public function restoreLocalDrupalContentSnapshot(ConsoleIO $io) {
+    $this->enableCommandRunTimeDisplay();
     $this->getLocalRunning();
     $this->setLocalDrupalSnapshotDir();
     $this->populateAvailableDrupalSnapshots();
@@ -65,10 +66,11 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
           ['Snapshot Date', 'Label', 'Info', 'DB Size', 'Files Size', 'Path'],
       );
       if (!empty($snapshot_path)) {
+        $io->warning('Destructive, Irreversible Actions Ahead!');
         if (
           $this->confirm(
             sprintf(
-              "Warning! Are you sure you want to restore the [%s] snapshot? This WILL delete all content in your %s local instance.",
+              "Are you sure you want to restore the [%s] snapshot? This WILL delete all content in your %s local instance.",
               $snapshot_path,
               $this->instanceName
             )
