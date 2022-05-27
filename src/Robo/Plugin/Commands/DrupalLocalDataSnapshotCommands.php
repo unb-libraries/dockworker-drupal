@@ -51,11 +51,9 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
    *
    * @throws \Dockworker\DockworkerException
    */
-  public function restoreLocalDrupalContentSnapshot(ConsoleIO $io) {
+  public function restoreLocalDrupalContentSnapshot(ConsoleIO $io) : void {
     $this->enableCommandRunTimeDisplay();
-    $this->getLocalRunning();
-    $this->setLocalDrupalSnapshotDir();
-    $this->populateAvailableDrupalSnapshots();
+    $this->initContentSnapshotOperation();
     if (!empty($this->drupalLocalAvailableSnapshots)) {
       $snapshot_path = $this->selectValueFromTable(
           $io,
@@ -84,16 +82,47 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
     }
     else {
       $this->io()->note('No local snapshots found for this instance!');
-      return 0;
+    }
+  }
+
+  /**
+   * Initializes local content snapshots for further operations.
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  protected function initContentSnapshotOperation() : void {
+    $this->getLocalRunning();
+    $this->setLocalDrupalSnapshotDir();
+    $this->populateAvailableDrupalSnapshots();
+  }
+
+  /**
+   * Restores a previously written local content 'snapshot' to this application's local deployment.
+   *
+   * @command snapshot:list
+   * @aliases list-snapshots
+   *
+   * @throws \Dockworker\DockworkerException
+   */
+  public function listLocalDrupalContentSnapshots(ConsoleIO $io) : void {
+    $this->initContentSnapshotOperation();
+    if (!empty($this->drupalLocalAvailableSnapshots)) {
+      $this->setDisplayConsoleTable(
+        $io,
+        ['Snapshot Date', 'Label', 'Info', 'DB Size', 'Files Size', 'Path'],
+        $this->drupalLocalAvailableSnapshots,
+        "Available $this->instanceName Snapshots:"
+      );
+    }
+    else {
+      $this->io()->note('No local snapshots found for this instance!');
     }
   }
 
   /**
    * Restores the currently selected snapshot to the local instance.
-   *
-   * @return void
    */
-  protected function restoreSelectedSnapshotToLocal() {
+  protected function restoreSelectedSnapshotToLocal() : void {
     $this->io()->title("Restoring snapshot from $this->drupalCurLocalSnapshotDir");
     $this->importDatabaseToLocalFromDumpFile(
       implode(
@@ -117,10 +146,8 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
 
   /**
    * Populates the list of available Drupal snapshots.
-   *
-   * @return void
    */
-  protected function populateAvailableDrupalSnapshots() {
+  protected function populateAvailableDrupalSnapshots() : void {
     $this->drupalLocalAvailableSnapshots = [];
     $this->addRecursivePathFilesFromPath(
       [$this->drupalLocalSnapshotDir],
@@ -152,9 +179,9 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
    *
    * @throws \Dockworker\DockworkerException
    */
-  public function snapshotLocalDrupalContent() {
-    $this->getLocalRunning();
-    $this->setLocalDrupalSnapshotDir();
+  public function snapshotLocalDrupalContent() : void {
+    $this->enableCommandRunTimeDisplay();
+    $this->initContentSnapshotOperation();
     $this->setCreateDrupalCurSnapshotDir();
     $this->dumpDrupalDatabaseFileSystemFromLocal();
     $this->copyTemporaryDumpFilesToSnapshotDir();
@@ -166,10 +193,8 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
 
   /**
    * Copies the temporary files (from upstream methods) to the snapshot dir.
-   *
-   * @return void
    */
-  protected function copyTemporaryDumpFilesToSnapshotDir() {
+  protected function copyTemporaryDumpFilesToSnapshotDir() : void {
     $files_dump_name = self::POD_TEMPORARY_FILE_LOCATION . '/' . self::POD_FILES_DUMP_FILENAME;
     $db_dump_name = self::POD_TEMPORARY_FILE_LOCATION . '/' . self::POD_DATABASE_DUMP_COMPRESSED_FILENAME;
     copy(
@@ -196,19 +221,15 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
 
   /**
    * Sets up the local snapshot dir for this instance.
-   *
-   * @return void
    */
-  public function setLocalDrupalSnapshotDir() {
+  public function setLocalDrupalSnapshotDir() : void {
     $this->drupalLocalSnapshotDir = implode('/', [$this->dockworkerApplicationDataDir, self::LOCAL_SNAPSHOT_BASE_DIR]);
   }
 
   /**
    * Creates the local snapshot dir for this specific command run.
-   *
-   * @return void
    */
-  protected function setCreateDrupalCurSnapshotDir() {
+  protected function setCreateDrupalCurSnapshotDir() : void {
     $this->drupalCurLocalSnapshotDir = implode('/', [$this->drupalLocalSnapshotDir, $this->commandStartTime]);
     if (!file_exists($this->drupalCurLocalSnapshotDir)) {
       mkdir($this->drupalCurLocalSnapshotDir, 0755, TRUE);
@@ -217,10 +238,8 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
 
   /**
    * Writes the snapshot metadata file.
-   *
-   * @return void
    */
-  protected function writeCurSnapshotMetadataFile() {
+  protected function writeCurSnapshotMetadataFile() : void {
     $this->writeSnapshotMetadataFile($this->drupalCurLocalSnapshotDir);
   }
 
@@ -228,10 +247,8 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
    * Writes the snapshot metadata file.
    *
    * @param $snapshot_path
-   *
-   * @return void
    */
-  protected function writeSnapshotMetadataFile($snapshot_path) {
+  protected function writeSnapshotMetadataFile($snapshot_path) : void {
     file_put_contents(
       implode(
         '/',
@@ -262,7 +279,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
    * @return string
    *   The human readable file size.
    */
-  private function getHumanFileSize($path, $decimals = 2) {
+  private function getHumanFileSize($path, $decimals = 2) : string {
     $bytes = filesize($path);
     $sz = 'BKMGTP';
     $factor = floor((strlen($bytes) - 1) / 3);
