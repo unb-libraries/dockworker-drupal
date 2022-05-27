@@ -66,7 +66,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
           ['Snapshot Date', 'Label', 'Info', 'DB Size', 'Files Size', 'Path'],
       );
       if (!empty($snapshot_path)) {
-        $io->warning('Destructive, Irreversible Actions Ahead!');
+        $this->warnDestructiveAction($io);
         if (
           $this->confirm(
             sprintf(
