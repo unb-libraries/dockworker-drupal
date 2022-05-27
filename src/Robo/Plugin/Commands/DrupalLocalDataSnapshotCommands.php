@@ -2,8 +2,10 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\ItemListSelectorTrait;
 use Dockworker\RecursivePathFileOperatorTrait;
 use Dockworker\Robo\Plugin\Commands\DrupalSyncCommands;
+use Robo\Symfony\ConsoleIO;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Yaml\Yaml;
 
@@ -12,6 +14,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
 
+  use ItemListSelectorTrait;
   use RecursivePathFileOperatorTrait;
 
   const LOCAL_SNAPSHOT_BASE_DIR = 'snapshots';
@@ -48,27 +51,33 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
    *
    * @throws \Dockworker\DockworkerException
    */
-  public function restoreLocalDrupalContentSnapshot() {
+  public function restoreLocalDrupalContentSnapshot(ConsoleIO $io) {
     $this->getLocalRunning();
     $this->setLocalDrupalSnapshotDir();
     $this->populateAvailableDrupalSnapshots();
     if (!empty($this->drupalLocalAvailableSnapshots)) {
-      $this->listAvailableDrupalSnapshots();
-      $desired_restore_id = $this->ask("Which snapshot would you like to restore? (enter c to cancel)");
-      if (empty($desired_restore_id) || $desired_restore_id == 'c') {
-        $this->io()->note('No snapshot chosen for restore. No changes made.');
-        return 0;
-      }
-      // This nonsense is to avoid PHP typing a 0 response as empty.
-      $modified_restore_id = $desired_restore_id - 1;
-      if (empty($this->drupalLocalAvailableSnapshots[$modified_restore_id]['path'])) {
-        $this->io()->warning("Invalid ID ($desired_restore_id) chosen for restore. No changes made.");
-        return 0;
-      }
-      if ($this->confirm("Warning! Are you sure you want to restore snapshot $desired_restore_id? This will delete all local content in your instance.")) {
-        $this->drupalCurLocalSnapshotDir = $this->drupalLocalAvailableSnapshots[$modified_restore_id]['path'];
-        $this->restoreSelectedSnapshotToLocal();
-        $this->syncDrupalDatabaseFileSystemCleanup();
+      $snapshot_path = $this->selectValueFromTable(
+          $io,
+          $this->drupalLocalAvailableSnapshots,
+          'path',
+          "Available $this->instanceName Snapshots:",
+          "Which snapshot would you like to restore from?",
+          ['Snapshot Date', 'Label', 'Info', 'DB Size', 'Files Size', 'Path'],
+      );
+      if (!empty($snapshot_path)) {
+        if (
+          $this->confirm(
+            sprintf(
+              "Warning! Are you sure you want to restore the [%s] snapshot? This WILL delete all content in your %s local instance.",
+              $snapshot_path,
+              $this->instanceName
+            )
+          )
+        ) {
+          $this->drupalCurLocalSnapshotDir = $snapshot_path;
+          $this->restoreSelectedSnapshotToLocal();
+          $this->syncDrupalDatabaseFileSystemCleanup();
+        }
       }
     }
     else {
@@ -105,20 +114,6 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
   }
 
   /**
-   * Lists the snapshots that are available for restore to the local container.
-   *
-   * @return void
-   */
-  protected function listAvailableDrupalSnapshots() {
-    $this->io()->title("[$this->instanceName] Available Snapshots:");
-    $table = new Table($this->io());
-    $table
-      ->setHeaders(['ID', 'Snapshot Date', 'Label', 'Info', 'DB Size', 'Files Size', 'Path'])
-      ->setRows($this->drupalLocalAvailableSnapshots);
-    $table->render();
-  }
-
-  /**
    * Populates the list of available Drupal snapshots.
    *
    * @return void
@@ -142,9 +137,7 @@ class DrupalLocalDataSnapshotCommands extends DrupalSyncCommands {
       );
       $yaml_data['path'] = $snapshot_dir;
       $yaml_data['timestamp'] = date("F j, Y, g:i a", $yaml_data['timestamp']);
-      $yaml_data_id['id'] = $snapshot_id + 1;
       unset($yaml_data['instance']);
-      $yaml_data = array_merge($yaml_data_id, $yaml_data);
       $this->drupalLocalAvailableSnapshots[] = $yaml_data;
     };
   }
