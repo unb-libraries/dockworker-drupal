@@ -37,6 +37,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
       'Operation CREATE USER failed' => 'Creating a local user failing is expected in deployment',
       '[notice] Synchronized extensions' => 'Ignore installation of modules that have "error" in their names',
       'config_importer is already importing' => 'Ignore errors when only one pod imports config',
+      'Use symfony/error-handler instead' => 'Symfony component names are not errors',
     ];
   }
 
