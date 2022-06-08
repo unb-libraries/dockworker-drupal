@@ -6,6 +6,7 @@ use Dockworker\DockworkerException;
 use Dockworker\DrupalKubernetesPodTrait;
 use Dockworker\GitHubPackageDownloadTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerDeploymentCommands;
+use Robo\Symfony\ConsoleIO;
 
 /**
  * Defines the commands used to interact with a deployed Drupal application.
@@ -303,18 +304,13 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    * @throws \Dockworker\DockworkerException
    */
   private function setSolrServerPodId($options) {
-    $this->kubernetesSetupPods($options['solr-deployment-name'], 'deployment', $this->deployedK8sResourceNameSpace, 'SOLR Pod Setup');
-    $solr_pods = $this->kubernetesGetMatchingPods($options['solr-deployment-name'], $this->drupalSolrServerPodEnv);
-    if (empty($solr_pods[0])) {
-      throw new DockworkerException(
-        sprintf(
-          self::ERROR_NO_SOLR_SERVER_PODS,
-          $options['solr-deployment-name'],
-          $this->drupalSolrServerPodEnv
-        )
-      );
-    }
-    $this->drupalSolrServerPodId = reset($solr_pods);
+    $this->kubernetesSetupPods(
+      $options['solr-deployment-name'],
+      'deployment',
+      $this->deployedK8sResourceNameSpace,
+      'SOLR Pod Setup'
+    );
+    $this->drupalSolrServerPodId = $this->kubernetesGetLatestPod();
   }
 
   /**
@@ -463,5 +459,35 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
       )
     );
   }
+
+  /**
+   * Clears all data within this application's deployment solr instance.
+   *
+   * @param string $env
+   *   The environment to update.
+   *
+   * @command solr:data:clear
+   * @throws \Exception
+   *
+   * @usage solr:data:clear dev
+   *
+   * @kubectl
+   */
+  public function deleteAllDrupalSolrIndexData(ConsoleIO $io, string $env) {
+    $pod_id = $this->k8sGetLatestPod($env, 'deployment', 'Delete Data');
+    $this->setUpInstanceIndices($pod_id);
+    $io->title('Clearing All Indices');
+    $this->kubernetesPodDrushCommand(
+      $pod_id,
+      $this->kubernetesPodParentResourceNamespace,
+      'search-api:clear'
+    );
+    $this->kubernetesPodDrushCommand(
+      $pod_id,
+      $this->kubernetesPodParentResourceNamespace,
+      'search-api:reset-tracker'
+    );
+    $io->say('Done!');
+    }
 
 }
