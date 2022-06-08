@@ -39,12 +39,22 @@ class DrupalDeploymentAdminCommands extends DockworkerDeploymentCommands {
         $this->repoRoot
       )
     ) {
+      $io->title('Removing solr Data');
       $this->setRunOtherCommand("solr:data:clear $env");
     }
-    $this->setRunOtherCommand("drupal:cr:deployed $env");
+    $io->title('Clearing Drupal Cache');
+    try {
+      $this->setRunOtherCommand("drupal:cr:deployed $env");
+    }
+    catch (\Exception $e) {
+      // Pass.
+    }
+    $io->title('Dropping Tables');
     $this->setRunOtherCommand("drupal:drush:deployed sql:drop $env");
-    $this->deleteEntireDrupalFileSystem($env);
+    $this->deleteEntireDrupalFileSystem($env, $io);
+    $io->title('Deleting k8s Deployment');
     $this->setRunOtherCommand("k8s:deployment:delete:default $env");
+    $io->title('Creating k8s Deployment');
     $this->setRunOtherCommand("k8s:deployment:create:default $env");
   }
 
@@ -53,20 +63,22 @@ class DrupalDeploymentAdminCommands extends DockworkerDeploymentCommands {
    *
    * @param string $env
    *   The environment to obtain the login link from.
+   * @param \Robo\Symfony\ConsoleIO $io
+   *   The IO to output with.
    *
    * @throws \Exception
    *
    * @kubectl
    */
-  protected function deleteEntireDrupalFileSystem($env) {
+  protected function deleteEntireDrupalFileSystem($env, ConsoleIO $io) {
     $pod_id = $this->k8sGetLatestPod($env, 'deployment', 'Open Shell');
-    $this->io()->text(
-      $this->kubernetesPodExecCommand(
-        $pod_id,
-        $env,
-        'rm -rf "$DRUPAL_ROOT/sites/default/*"'
-      )
+    $io->title('Removing Drupal Filesystem');
+    $this->kubernetesPodExecCommand(
+      $pod_id,
+      $env,
+      'rm -rf $DRUPAL_ROOT/sites/default/*'
     );
+    $io->say('Done!');
   }
 
 }
