@@ -6,6 +6,7 @@ use Dockworker\DockworkerException;
 use Dockworker\DrupalKubernetesPodTrait;
 use Dockworker\KubernetesDeploymentTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerDeploymentCommands;
+use Robo\Symfony\ConsoleIO;
 
 /**
  * Defines the commands used to interact with a deployed Drupal application.
@@ -110,6 +111,27 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
         $pod_id,
         $env,
         'composer show --working-dir=/app/html'
+      )
+    );
+  }
+
+  /**
+   * Deletes all files from a Drupal filesystem.
+   *
+   * @param string $env
+   *   The environment to obtain the login link from.
+   *
+   * @throws \Exception
+   *
+   * @kubectl
+   */
+  protected function deleteEntireDrupalFileSystem($env) {
+    $pod_id = $this->k8sGetLatestPod($env, 'deployment', 'Open Shell');
+    $this->io()->text(
+      $this->kubernetesPodExecCommand(
+        $pod_id,
+        $env,
+        'rm -rf "$DRUPAL_ROOT/sites/default"'
       )
     );
   }
