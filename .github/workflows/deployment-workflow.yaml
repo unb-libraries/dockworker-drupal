@@ -3,6 +3,10 @@ name: Drupal 9 Deployment Workflow
 on:
   workflow_call:
     secrets:
+      DOCKER_CLOUD_ACCESS_TOKEN:
+        required: true
+      DOCKER_CLOUD_USER_NAME:
+        required: true
       GH_CONTAINER_REGISTRY_TOKEN:
         required: true
       GH_CONTAINER_REGISTRY_USER:
