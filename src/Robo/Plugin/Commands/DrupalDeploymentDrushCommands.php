@@ -24,7 +24,7 @@ class DrupalDeploymentDrushCommands extends DockworkerDeploymentCommands {
    * @command drupal:drush:deployed
    * @throws \Exception
    *
-   * @usage drupal:drush:deployed 'sql-cli' dev
+   * @usage 'sql-cli' dev
    *
    * @kubectl
    */

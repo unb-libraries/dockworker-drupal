@@ -86,7 +86,7 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
    *
    * @throws \Dockworker\DockworkerException
    *
-   * @usage sync:all:deployed:deployed prod dev
+   * @usage prod dev
    *
    * @github
    * @kubectl

@@ -20,8 +20,6 @@ class DrupalKubernetesCronjobCommands extends DockworkerApplicationInfoCommands 
    *
    * @command drupal:cronjob:file:write
    * @aliases update-drupal-cronjob
-   *
-   * @usage drupal:cronjob:file:write
    */
   public function setApplicationDrupalCronFiles() {
     $drupalCronjobSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/drupal-cron/cron.yaml';

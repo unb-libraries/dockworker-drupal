@@ -26,7 +26,7 @@ class DrupalFixDeploymentCommands extends DockworkerDeploymentCommands {
    * @command drupal:module:fix-missing:deployed
    * @throws \Exception
    *
-   * @usage drupal:module:fix-missing:deployed devel dev
+   * @usage devel dev
    *
    * @kubectl
    */

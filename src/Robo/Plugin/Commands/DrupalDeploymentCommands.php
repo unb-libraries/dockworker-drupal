@@ -53,7 +53,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @command drupal:cr:deployed
    * @throws \Exception
    *
-   * @usage drupal:cr:deployed dev
+   * @usage dev
    *
    * @kubectl
    */
@@ -76,7 +76,7 @@ class DrupalDeploymentCommands extends DockworkerDeploymentCommands {
    * @aliases ruli
    * @throws \Exception
    *
-   * @usage drupal:uli:deployed prod
+   * @usage prod
    *
    * @kubectl
    */

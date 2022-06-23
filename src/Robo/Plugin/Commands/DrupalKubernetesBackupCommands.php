@@ -21,8 +21,6 @@ class DrupalKubernetesBackupCommands extends DockworkerApplicationInfoCommands {
    *
    * @command backup:deployment:file:write
    * @aliases update-drupal-backup
-   *
-   * @usage backup:deployment:file:write
    */
   public function setApplicationBackupFiles() {
     $drupalBackupSourcePath = $this->repoRoot . '/vendor/unb-libraries/dockworker-drupal/data/drupal-backup';

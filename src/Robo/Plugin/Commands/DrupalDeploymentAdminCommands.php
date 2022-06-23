@@ -23,7 +23,7 @@ class DrupalDeploymentAdminCommands extends DockworkerDeploymentCommands {
    * @throws \Dockworker\DockworkerException
    * @throws \Exception
    *
-   * @usage deployment:reset:all dev
+   * @usage dev
    * @hidden
    *
    * @kubectl

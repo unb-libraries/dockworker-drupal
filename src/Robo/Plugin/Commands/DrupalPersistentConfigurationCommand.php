@@ -33,8 +33,6 @@ class DrupalPersistentConfigurationCommand extends DockworkerDeploymentCommands 
    *   The environment to obtain the logs from. Defaults to 'prod'.
    *
    * @command drupal:config:commit:persistent:deployed
-   * @usage drupal:config:commit:persistent:deployed
-   *
    * @throws \Exception
    *
    * @kubectl

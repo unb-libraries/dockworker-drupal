@@ -74,7 +74,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    * @command solr:reindex:deployed
    * @throws \Exception
    *
-   * @usage solr:reindex:deployed dev
+   * @usage dev
    *
    * @kubectl
    */
@@ -121,7 +121,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    * @command solr:uli:deployed
    * @throws \Exception
    *
-   * @usage solr:uli:deployed prod
+   * @usage prod
    *
    * @kubectl
    */
@@ -179,7 +179,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    * @command solr:config:update:deployed
    * @throws \Exception
    *
-   * @usage solr:config:update:deployed dev
+   * @usage dev
    *
    * @kubectl
    */
@@ -469,7 +469,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    * @command solr:data:clear
    * @throws \Exception
    *
-   * @usage solr:data:clear dev
+   * @usage dev
    *
    * @kubectl
    */
