@@ -57,12 +57,6 @@ if [ $SNIFF_STATUS -ne 0 ]; then
   fi
 fi
 
-if [[ $LIST == *".twig"* ]];
-then
-  echo "Linting custom twig files..."
-  ${ROOT_DIR}/vendor/bin/dockworker validate:drupal:twig $LIST || exit 1;
-fi
-
 if [[ $LIST == *"composer."* ]];
 then
   printf "\nValidating /build/composer.json..."
