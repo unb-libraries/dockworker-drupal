@@ -26,7 +26,8 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
   const MSG_DONE = 'Done!';
   const MSG_DRUPAL_REINDEXING = 'Reindexing Drupal Instance %s';
   const MSG_INITIALIZING_PODS = 'Discovering Solr and Drupal pods for %s [%s]';
-  const MSG_REINDEXING_INDEX = 'Clearing and re-indexing SOLR index %s - %s [%s]';
+  const MSG_REINDEXING_INDEX = 'Indexing all unindexed items in all SOLR indices on %s - %s [%s]';
+  const MSG_CLEARING_REINDEXING_INDEX = 'Clearing and re-indexing all SOLR indices on %s - %s [%s]';
   const MSG_SOLR_TUNNELING = 'Opening tunnel to pod %s';
   const MSG_SOLR_UPDATING = 'Updating SOLR server pod %s';
 
@@ -83,14 +84,53 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
     if (!empty($this->kubernetesCurPods)) {
       $first_drupal_pod_id = reset($this->kubernetesCurPods);
       $this->setUpInstanceIndices($first_drupal_pod_id);
-      foreach ($this->drupalSolrServerIndices as $index_name) {
+      if (!empty($this->drupalSolrServerIndices)) {
+        $this->io()->title(sprintf(
+          self::MSG_CLEARING_REINDEXING_INDEX,
+          $index_name,
+          $this->deployedK8sResourceName,
+          $this->deployedK8sResourceNameSpace
+        ));
+        $this->reindexSolrIndex($first_drupal_pod_id);
+      }
+    }
+    else {
+      throw new DockworkerException(
+        sprintf(
+          self::ERROR_NO_PODS_IN_DEPLOYMENT,
+          $this->deployedK8sResourceName,
+          $this->deployedK8sResourceNameSpace
+        )
+      );
+    }
+  }
+
+  /**
+   * Indexes all unindexed content on the application's k8s deployment.
+   *
+   * @param string $env
+   *   The environment to index.
+   *
+   * @command solr:index:deployed
+   * @throws \Exception
+   *
+   * @usage dev
+   *
+   * @kubectl
+   */
+  public function indexAllIndices($env) {
+    $this->initDrupalPodInstances($env);
+    if (!empty($this->kubernetesCurPods)) {
+      $first_drupal_pod_id = reset($this->kubernetesCurPods);
+      $this->setUpInstanceIndices($first_drupal_pod_id);
+      if (!empty($this->drupalSolrServerIndices)) {
         $this->io()->title(sprintf(
           self::MSG_REINDEXING_INDEX,
           $index_name,
           $this->deployedK8sResourceName,
           $this->deployedK8sResourceNameSpace
         ));
-        $this->reindexSolrIndex($first_drupal_pod_id, $index_name);
+        $this->indexAllUnindexedItems($first_drupal_pod_id);
       }
     }
     else {
@@ -275,7 +315,7 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
    * @param string $pod_id
    *   The Drupal k8s pod ID to target.
    */
-  private function reindexSolrIndex($pod_id, $core_name) {
+  private function reindexSolrIndex($pod_id) {
     $this->drupalSolrServerIndices = $this->kubernetesPodDrushCommand(
       $pod_id,
       $this->kubernetesPodParentResourceNamespace,
@@ -286,10 +326,20 @@ class DrupalSolrServerCommands extends DockworkerDeploymentCommands {
       $this->kubernetesPodParentResourceNamespace,
       'search-api:reset-tracker'
     );
+    $this->indexAllUnindexedItems($pod_id);
+  }
+
+  /**
+   * Indexes all unindexed items in solr indices defined in the Drupal instance.
+   *
+   * @param string $pod_id
+   *   The Drupal k8s pod ID to target.
+   */
+  private function indexAllUnindexedItems($pod_id) {
     $this->drupalSolrServerIndices = $this->kubernetesPodDrushCommand(
       $pod_id,
       $this->kubernetesPodParentResourceNamespace,
-      'search-api:index'
+      "search-api:index"
     );
   }
 
