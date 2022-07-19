@@ -59,6 +59,7 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
       $this->buildThemeScss();
       $this->buildImageAssets();
       $this->buildJsAssets();
+      $this->buildFontAssets();
     }
   }
 
@@ -120,6 +121,13 @@ class DrupalThemeCommands extends DockworkerLocalCommands {
    */
   private function buildJsAssets() {
     $this->copyThemeAssets('js', 'Javascript');
+  }
+
+  /*
+   * Builds the current theme's Javascript assets.
+   */
+  private function buildFontAssets() {
+    $this->copyThemeAssets('fonts', 'Font');
   }
 
   /*
