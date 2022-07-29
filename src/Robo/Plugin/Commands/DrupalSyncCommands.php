@@ -24,6 +24,13 @@ class DrupalSyncCommands extends DockworkerDeploymentCommands {
   const POD_TEMPORARY_FILE_LOCATION = '/tmp';
 
   /**
+   * Sets if the remote database should be compressed before transfer.
+   *
+   * @var bool
+   */
+  private $drupalRemoteCompressDatabase = TRUE;
+
+  /**
    * Sets if the remote database be synchronized.
    *
    * @var bool
@@ -146,6 +153,8 @@ class DrupalSyncCommands extends DockworkerDeploymentCommands {
    * @param string[] $options
    *   The array of available CLI options.
    *
+   * @option $no-compress-database
+   *   Do not compress the drupal database.
    * @option $no-database
    *   Do not synchronize the drupal database.
    * @option $no-files
@@ -153,13 +162,14 @@ class DrupalSyncCommands extends DockworkerDeploymentCommands {
    *
    * @command sync:all:deployed:local
    * @aliases sync-from-deployed
+   * @aliases sync
    *
    * @throws \Dockworker\DockworkerException
    *
    * @github
    * @kubectl
    */
-  public function syncDrupalDatabaseFileSystemFromRemote($env, array $options = ['no-database' => FALSE, 'no-files' => FALSE]) {
+  public function syncDrupalDatabaseFileSystemFromRemote($env, array $options = ['no-compress-database' => FALSE, 'no-database' => FALSE, 'no-files' => FALSE]) {
     $this->getLocalRunning();
     $this->io()->title('Deployed Data Synchronization');
 
@@ -168,6 +178,7 @@ class DrupalSyncCommands extends DockworkerDeploymentCommands {
 
     // Determine operations to perform.
     $this->drupalRemoteSyncDatabase = !$options['no-database'];
+    $this->drupalRemoteCompressDatabase = !$options['no-compress-database'];
     $this->drupalRemoteSyncFiles = !$options['no-files'];
 
     // Dump out no-op users.
@@ -282,6 +293,8 @@ class DrupalSyncCommands extends DockworkerDeploymentCommands {
     $dump_file = self::POD_TEMPORARY_FILE_LOCATION . '/' . self::POD_DATABASE_DUMP_FILENAME;
     $gz_dump_file = $dump_file . '.gz';
 
+    $this->say("[Remote] (optionally) Removing Previous Drupal database archive file...");
+    $this->runRemoteCommand('rm -f '. $dump_file);
     $this->say("[Remote] (optionally) Removing Drupal database archive file...");
     $this->runRemoteCommand('rm -f '. $gz_dump_file);
 
@@ -291,36 +304,46 @@ class DrupalSyncCommands extends DockworkerDeploymentCommands {
     $this->say("[Remote] Dumping Drupal database from {$this->drupalRemoteSyncPodName}...");
     $this->runRemoteDrushCommand($this->getDrushDumpCommand() . ' --result-file=' . $dump_file);
 
-    $this->say("[Remote] Compressing Drupal database archive file...");
-    $this->runRemoteCommand('gzip '. $dump_file);
+    if ($this->drupalRemoteCompressDatabase) {
+      $this->say("[Remote] Compressing Drupal database archive file...");
+      $this->runRemoteCommand('gzip '. $dump_file);
+      $copy_filename = $gz_dump_file;
+    }
+    else {
+      $copy_filename = $dump_file;
+    }
 
-    $this->say("[Remote] Copying Drupal database archive file to Docker Host's temporary directory...");
-    $this->copyRemoteFileToLocal($gz_dump_file, $gz_dump_file);
+    $this->say("[Remote] Copying Drupal database file to Docker Host's temporary directory...");
+    $this->copyRemoteFileToLocal($copy_filename, $copy_filename);
 
     $this->say("[Remote] Removing Drupal database archive file...");
-    $this->runRemoteCommand('rm -f '. $gz_dump_file);
+    $this->runRemoteCommand('rm -f '. $copy_filename);
 
     if (!$dump_only) {
-      $this->importDatabaseToLocalFromDumpFile($gz_dump_file);
+      $this->importDatabaseToLocalFromDumpFile($copy_filename, $this->drupalRemoteCompressDatabase);
 
       $this->say("[Docker Host] Deleting Drupal database archive file...");
       unlink($gz_dump_file);
     }
   }
 
-  protected function importDatabaseToLocalFromDumpFile($gz_dump_file) {
-    $db_archive_basename = basename($gz_dump_file);
-    $container_db_archive_path = "/tmp/$db_archive_basename";
+  protected function importDatabaseToLocalFromDumpFile($archive_file, $is_gzip = TRUE) {
+    $archive_file_basename = basename($archive_file);
+    $container_db_archive_path = "/tmp/$archive_file_basename";
 
     $this->say("[Docker Host] Copying Drupal database archive file to local container...");
-    $this->copyLocalFileToContainer($gz_dump_file, $container_db_archive_path);
+    $this->copyLocalFileToContainer($archive_file, $container_db_archive_path);
 
+    // With no gzip, this will be the same!
     $dump_file = str_replace('.gz', '', $container_db_archive_path);
-    $this->say("[Container] (optionally) Removing Drupal database archive file...");
-    $this->runLocalContainerCommand("rm -f $dump_file");
 
-    $this->say("[Container] Decompressing Drupal database archive file...");
-    $this->runLocalContainerCommand("gunzip $container_db_archive_path");
+    if ($is_gzip) {
+      $this->say("[Container] (optionally) Removing previous uncompressed database archive file...");
+      $this->runLocalContainerCommand("rm -f $dump_file");
+
+      $this->say("[Container] Decompressing Drupal database archive file...");
+      $this->runLocalContainerCommand("gunzip $container_db_archive_path");
+    }
 
     $this->say("[Container] Importing Drupal database archive file...");
     $this->runLocalContainerCommand("sh -c \"drush --root=/app/html sql-cli < $dump_file\"");

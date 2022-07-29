@@ -26,6 +26,13 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
   const POD_TEMPORARY_FILE_LOCATION = '/tmp';
 
   /**
+   * Sets if the remote database should be compressed before transfer.
+   *
+   * @var bool
+   */
+  private $drupalRemoteCompressDatabase = TRUE;
+
+  /**
    * Sets if the remote database be synchronized.
    *
    * @var bool
@@ -77,6 +84,8 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
    * @param string[] $options
    *   The array of available CLI options.
    *
+   * @option $no-compress-database
+ *   Do not compress the drupal database.
    * @option $no-database
    *   Do not synchronize the drupal database.
    * @option $no-files
@@ -91,11 +100,12 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
    * @github
    * @kubectl
    */
-  public function syncDrupalDatabaseFileSystemFromRemote($source_env, $target_env, array $options = ['no-database' => FALSE, 'no-files' => FALSE]) {
+  public function syncDrupalDatabaseFileSystemFromRemote($source_env, $target_env, array $options = ['no-compress-database' => FALSE, 'no-database' => FALSE, 'no-files' => FALSE]) {
     $this->initSyncPods($source_env, $target_env);
     $this->io()->title("Synchronizing deployed data : {$this->drupalRemoteSyncSourceEnv}[{$this->drupalRemoteSyncSourcePod}] -> {$this->drupalRemoteSyncTargetEnv}[{$this->drupalRemoteSyncTargetPod}]");
     $this->initSyncOperations($options);
     $this->checkDangerousOperation();
+    $this->drupalRemoteCompressDatabase = !$options['no-compress-database'];
 
     if ($this->drupalRemoteSyncDatabase) {
       $this->syncDrupalRemoteDrupalDatabases();
@@ -258,6 +268,8 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
     $dump_file = self::POD_TEMPORARY_FILE_LOCATION . '/' . self::POD_DATABASE_DUMP_FILENAME;
     $gz_dump_file = $dump_file . '.gz';
 
+    $this->say("[{$this->drupalRemoteSyncSourceEnv}] (optionally) Removing Drupal database file...");
+    $this->runRemoteCommand($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, 'rm -f '. $dump_file);
     $this->say("[{$this->drupalRemoteSyncSourceEnv}] (optionally) Removing Drupal database archive file...");
     $this->runRemoteCommand($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, 'rm -f '. $gz_dump_file);
 
@@ -267,26 +279,34 @@ class DrupalRemoteSyncCommands extends DockworkerDeploymentCommands {
     $this->say("[{$this->drupalRemoteSyncSourceEnv}] Dumping Drupal database...");
     $this->runRemoteDrushCommand($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, $this->getDrushDumpCommand() . ' --result-file=' . $dump_file);
 
-    $this->say("[{$this->drupalRemoteSyncSourceEnv}] Compressing Drupal database archive file...");
-    $this->runRemoteCommand($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, 'gzip '. $dump_file);
+    if ($this->drupalRemoteCompressDatabase) {
+      $this->say("[{$this->drupalRemoteSyncSourceEnv}] Compressing Drupal database archive file...");
+      $this->runRemoteCommand($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, 'gzip '. $dump_file);
+      $transfer_file = $gz_dump_file;
+    }
+    else {
+      $transfer_file = $dump_file;
+    }
 
     $this->say("[{$this->drupalRemoteSyncSourceEnv}] Copying Drupal database archive file to a LOCAL temporary directory... Wish you could copy directly between pods? See https://github.com/kubernetes/kubectl/issues/551?");
-    $this->copyRemoteFileToLocal($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, $gz_dump_file, $gz_dump_file);
+    $this->copyRemoteFileToLocal($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, $transfer_file, $transfer_file);
 
     $this->say("[{$this->drupalRemoteSyncSourceEnv}] Removing Drupal database archive file...");
-    $this->runRemoteCommand($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, 'rm -f '. $gz_dump_file);
+    $this->runRemoteCommand($this->drupalRemoteSyncSourcePod, $this->drupalRemoteSyncSourceEnv, 'rm -f '. $transfer_file);
 
     $this->say("[{$this->drupalRemoteSyncTargetEnv}] Copying Drupal database archive file from LOCAL to pod...");
-    $this->copyLocalFileToRemote($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, $gz_dump_file, $gz_dump_file);
+    $this->copyLocalFileToRemote($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, $transfer_file, $transfer_file);
 
     $this->say("[LOCAL] Deleting Drupal database archive file...");
-    unlink($gz_dump_file);
+    unlink($transfer_file);
 
-    $this->say("[{$this->drupalRemoteSyncTargetEnv}] (optionally) Removing Drupal database archive file...");
-    $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, "rm -f $dump_file");
+    if ($this->drupalRemoteCompressDatabase) {
+      $this->say("[{$this->drupalRemoteSyncTargetEnv}] (optionally) Removing Drupal database archive file...");
+      $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, "rm -f $dump_file");
 
-    $this->say("[{$this->drupalRemoteSyncTargetEnv}] Decompressing Drupal database archive file...");
-    $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, "gunzip $gz_dump_file");
+      $this->say("[{$this->drupalRemoteSyncTargetEnv}] Decompressing Drupal database archive file...");
+      $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, "gunzip $gz_dump_file");
+    }
 
     $this->say("[{$this->drupalRemoteSyncTargetEnv}] Importing Drupal database archive file...");
     $this->runRemoteCommand($this->drupalRemoteSyncTargetPod, $this->drupalRemoteSyncTargetEnv, "sh -c \"drush --root=/app/html sql-cli < $dump_file\"");
