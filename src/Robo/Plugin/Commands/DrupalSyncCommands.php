@@ -171,6 +171,7 @@ class DrupalSyncCommands extends DockworkerDeploymentCommands {
    */
   public function syncDrupalDatabaseFileSystemFromRemote($env, array $options = ['no-compress-database' => FALSE, 'no-database' => FALSE, 'no-files' => FALSE]) {
     $this->getLocalRunning();
+    $this->enableCommandRunTimeDisplay();
     $this->io()->title('Deployed Data Synchronization');
 
     // All pods should return the same data, so simply use the first.
@@ -323,7 +324,7 @@ class DrupalSyncCommands extends DockworkerDeploymentCommands {
       $this->importDatabaseToLocalFromDumpFile($copy_filename, $this->drupalRemoteCompressDatabase);
 
       $this->say("[Docker Host] Deleting Drupal database archive file...");
-      unlink($gz_dump_file);
+      unlink($copy_filename);
     }
   }
 
