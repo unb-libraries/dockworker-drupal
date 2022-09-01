@@ -37,6 +37,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
       $options['tags'] ? "--tag={$options['tags']}" : '',
       !($options['tags'] || $migration) ? '--all' : '',
       !$options['no-dependencies'] ? '--execute-dependencies' : '',
+      '--no-progress',
     ]));
 
     $this->io()->writeln(
@@ -57,6 +58,7 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
     $options = implode(' ', array_filter([
       $options['tags'] ? "--tag={$options['tags']}" : '',
       !($options['tags'] || $migration) ? '--all' : '',
+      '--no-progress',
     ]));
 
     $this->io()->writeln(
