@@ -25,30 +25,42 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
 
   /**
    * @command drupal:migrate:import
-   * @param string $migration ID of the migration to import
+   * @param string $migration ID of a single migration
+   * @param array $options An array of additional command options.
+   * @option tags If provided only migrations with given tag(s) will be imported.
    * @aliases migrate-import
    * @throws \Dockworker\DockworkerException
    */
-  public function migrateImport(string $migration = '') {
+  public function migrateImport(string $migration = '', array $options = ['tags' => '']) {
+    $options = implode(' ', array_filter([
+      $options['tags'] ? "--tag={$options['tags']}" : '',
+      !($options['tags'] || $migration) ? '--all' : '',
+    ]));
+
     $this->io()->writeln(
-      $this->runLocalDrushCommand(sprintf('migrate:import %s',
-        $migration ?: '--all'
-      ))
-    );
+      $this->runLocalDrushCommand(str_replace('  ', ' ', rtrim(
+        "migrate:import $migration $options")
+    )));
   }
 
   /**
    * @command drupal:migrate:rollback
    * @param string $migration ID of the migration to rollback
+   * @param array $options An array of additional command options.
+   * @option tags If provided only migrations with given tag(s) will be reverted.
    * @aliases migrate-rollback
    * @throws \Dockworker\DockworkerException
    */
-  public function migrateRollback(string $migration = '') {
+  public function migrateRollback(string $migration = '', array $options = ['tags' => '']) {
+    $options = implode(' ', array_filter([
+      $options['tags'] ? "--tag={$options['tags']}" : '',
+      !($options['tags'] || $migration) ? '--all' : '',
+    ]));
+
     $this->io()->writeln(
-      $this->runLocalDrushCommand(sprintf('migrate:rollback %s',
-        $migration ?: '--all'
-      ))
-    );
+      $this->runLocalDrushCommand(str_replace('  ', ' ', rtrim(
+          "migrate:rollback $migration $options")
+      )));
   }
 
   /**
