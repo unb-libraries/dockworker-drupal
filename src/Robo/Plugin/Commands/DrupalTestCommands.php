@@ -37,4 +37,25 @@ class DrupalTestCommands extends DockworkerLocalCommands {
       ->run();
   }
 
+  /**
+   * Prepares the environment for end-to-end testing.
+   *
+   * @hook pre-command @e2e
+   */
+  public function setupE2eTestEnvironment() {
+    $this->io()->title("Preparing Test Environment");
+    $this->setRunOtherCommand('drupal:migrate:import --tags=e2e');
+
+  }
+
+  /**
+   * Cleans the environment after end-to-end testing.
+   *
+   * @hook post-command @e2e
+   */
+  public function cleanupE2eTestEnvironment() {
+    $this->io()->title("Cleaning Test Environment");
+    $this->setRunOtherCommand('drupal:migrate:rollback --tags=e2e');
+  }
+
 }
