@@ -13,6 +13,45 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
   use DrupalLocalDockerContainerTrait;
 
   /**
+   * @command drupal:migrate:status
+   * @aliases migrate-status
+   * @throws \Dockworker\DockworkerException
+   */
+  public function migrateStatus() {
+    $this->io()->writeln(
+      $this->runLocalDrushCommand('migrate:status')
+    );
+  }
+
+  /**
+   * @command drupal:migrate:import
+   * @param string $migration ID of the migration to import
+   * @aliases migrate-import
+   * @throws \Dockworker\DockworkerException
+   */
+  public function migrateImport(string $migration = '') {
+    $this->io()->writeln(
+      $this->runLocalDrushCommand(sprintf('migrate:import %s',
+        $migration ?: '--all'
+      ))
+    );
+  }
+
+  /**
+   * @command drupal:migrate:rollback
+   * @param string $migration ID of the migration to rollback
+   * @aliases migrate-rollback
+   * @throws \Dockworker\DockworkerException
+   */
+  public function migrateRollback(string $migration = '') {
+    $this->io()->writeln(
+      $this->runLocalDrushCommand(sprintf('migrate:rollback %s',
+        $migration ?: '--all'
+      ))
+    );
+  }
+
+  /**
    * Rebuilds all caches within this application's local deployment.
    *
    * @command drupal:cr:local
