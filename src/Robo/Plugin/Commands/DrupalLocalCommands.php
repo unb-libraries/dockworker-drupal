@@ -28,13 +28,15 @@ class DrupalLocalCommands extends DockworkerLocalCommands {
    * @param string $migration ID of a single migration
    * @param array $options An array of additional command options.
    * @option tags If provided only migrations with given tag(s) will be imported.
+   * @option no-dependencies Execute migration(s) regardless of their dependencies.
    * @aliases migrate-import
    * @throws \Dockworker\DockworkerException
    */
-  public function migrateImport(string $migration = '', array $options = ['tags' => '']) {
+  public function migrateImport(string $migration = '', array $options = ['tags' => '', 'no-dependencies' => FALSE]) {
     $options = implode(' ', array_filter([
       $options['tags'] ? "--tag={$options['tags']}" : '',
       !($options['tags'] || $migration) ? '--all' : '',
+      !$options['no-dependencies'] ? '--execute-dependencies' : '',
     ]));
 
     $this->io()->writeln(
