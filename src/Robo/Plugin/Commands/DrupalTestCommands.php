@@ -2,12 +2,12 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalDaemonCommands;
 
 /**
  * Defines commands used to test the local Drupal application.
  */
-class DrupalTestCommands extends DockworkerLocalCommands {
+class DrupalTestCommands extends DockworkerLocalDaemonCommands {
 
   /**
    * Runs all tests defined for the local Drupal application.

@@ -2,14 +2,14 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalDaemonCommands;
 
 /**
  * Defines commands to validate Drupal projects in the repository.
  *
  * @TODO Rework to use DockworkerDrupalProjectsTrait.
  */
-class DrupalValidateProjectsCommands extends DockworkerLocalCommands {
+class DrupalValidateProjectsCommands extends DockworkerLocalDaemonCommands {
 
   protected $buildFile;
   protected $buildFilePath;

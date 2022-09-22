@@ -3,12 +3,12 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DrupalLocalDockerContainerTrait;
-use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalDaemonCommands;
 
 /**
  * Defines the commands used to interact with a local Drupal application.
  */
-class DrupalLocalCommands extends DockworkerLocalCommands {
+class DrupalLocalCommands extends DockworkerLocalDaemonCommands {
 
   use DrupalLocalDockerContainerTrait;
 

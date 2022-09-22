@@ -2,12 +2,12 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerLocalDaemonCommands;
 
 /**
  * Defines the commands used to update dockworker-drupal.
  */
-class DrupalDockworkerUpdateCommands extends DockworkerLocalCommands {
+class DrupalDockworkerUpdateCommands extends DockworkerLocalDaemonCommands {
 
   /**
    * Self-updates dockworker-drupal.
