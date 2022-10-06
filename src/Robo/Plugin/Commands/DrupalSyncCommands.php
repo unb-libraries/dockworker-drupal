@@ -6,12 +6,12 @@ use Dockworker\DockworkerException;
 use Dockworker\DrupalDrushSqlDumpTrait;
 use Dockworker\DrupalKubernetesPodTrait;
 use Dockworker\DrupalLocalDockerContainerTrait;
-use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
+use Dockworker\Robo\Plugin\Commands\DockworkerDeploymentDaemonCommands;
 
 /**
  * Defines commands used to sync deployed data to the local Drupal application.
  */
-class DrupalSyncCommands extends DockworkerDeploymentCommands {
+class DrupalSyncCommands extends DockworkerDeploymentDaemonCommands {
 
   use DrupalKubernetesPodTrait;
   use DrupalLocalDockerContainerTrait;
