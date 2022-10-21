@@ -2,6 +2,10 @@ name: Drupal 9 Deployment Workflow
 
 on:
   workflow_call:
+    inputs:
+      deploy-branches:
+        required: true
+        type: string
     secrets:
       DOCKER_CLOUD_ACCESS_TOKEN:
         required: true
@@ -183,10 +187,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [start-install-application]
     if:
-      contains('
-      refs/heads/dev
-      refs/heads/prod
-      ', github.ref)
+      contains(fromJSON(${{ inputs.deploy-branches }}), github.ref)
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2
       -
