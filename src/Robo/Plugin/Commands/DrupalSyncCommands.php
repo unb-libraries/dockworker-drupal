@@ -155,21 +155,30 @@ class DrupalSyncCommands extends DockworkerDeploymentDaemonCommands {
    *
    * @kubectl
    */
-  public function checkDeployedConfig($env = 'prod') {
+  public function checkDeployedConfig(string $env = 'prod') {
     $pod_id = $this->k8sGetLatestPod($env, 'deployment', 'synchronization');
-    $output =implode(
-      "\n",
-      $this->kubernetesPodExecCommand(
-        $pod_id,
-        $env,
-        '/scripts/check_config_diff.sh',
-        FALSE
-      )
+    $delta_configs =$this->kubernetesPodExecCommand(
+      $pod_id,
+      $env,
+      '/scripts/check_config_diff.sh',
+      FALSE
     );
-    if (str_contains($output, 'State')) {
-      $this->say("Differences were found when comparing deployed active configuration and the deployed config sync directory:");
-      $this->io()->block($output);
-      $this->say("This may indicate that hook_update() functions have modified configuration objects after deployment.");
+
+    if ($env == 'dev') {
+      $delta_configs = array_values(
+        array_diff(
+          $delta_configs,
+          [
+            'samlauth.authentication'
+          ]
+        )
+      );
+    }
+
+    if (!empty($delta_configs)) {
+      $this->say("When comparing deployed active configuration and the deployed config sync directory, differences were found in the following objects:");
+      $this->io()->block(print_r($delta_configs, TRUE));
+      $this->say("This may indicate, amongst many things that hook_update() functions have modified configuration objects after deployment.");
       $this->say("To examine the changes, synchronize the deployed active configuration to your local lean repository via:");
       $this->io()->block("dockworker drupal:config:write:deployed $env");
       $this->say("Then, review the differences and commit them as necessary.");
