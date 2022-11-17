@@ -157,21 +157,27 @@ class DrupalSyncCommands extends DockworkerDeploymentDaemonCommands {
    */
   public function checkDeployedConfig($env = 'prod') {
     $pod_id = $this->k8sGetLatestPod($env, 'deployment', 'synchronization');
-    try {
-      $this->say("Checking live config in $env/$pod_id...");
+    $output =implode(
+      "\n",
       $this->kubernetesPodExecCommand(
         $pod_id,
         $env,
-        '/scripts/check_config_diff.sh'
-      );
-      $this->say("No differences between DB and sync directory");
-    } catch (DockworkerException $e) {
-      $this->say("Differences were found between DB and sync directory");
-      $this->say("This may indicate that hook_update() functions have modified configuration.");
-      $this->say( "You can synchronize your local repository with live config via 'dockworker drupal:config:write:deployed $env'. After that, review any changes and commit them as necessary.");
+        '/scripts/check_config_diff.sh',
+        FALSE
+      )
+    );
+    if (str_contains($output, 'State')) {
+      $this->say("Differences were found when comparing deployed active configuration and the deployed config sync directory:");
+      $this->io()->block($output);
+      $this->say("This may indicate that hook_update() functions have modified configuration objects after deployment.");
+      $this->say("To examine the changes, synchronize the deployed active configuration to your local lean repository via:");
+      $this->io()->block("dockworker drupal:config:write:deployed $env");
+      $this->say("Then, review the differences and commit them as necessary.");
       throw new DockworkerException("Config Mismatch!");
     }
-
+    else {
+      $this->say("No differences found when comparing deployed active configuration and the deployed config sync directory");
+    }
   }
 
   /**
