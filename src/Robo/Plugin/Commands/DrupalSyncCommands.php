@@ -141,7 +141,7 @@ class DrupalSyncCommands extends DockworkerDeploymentDaemonCommands {
       $pod_id,
       $env,
       '/app/configuration',
-      './config-yml'
+      $this->repoRoot .'/config-yml'
     );
   }
 
