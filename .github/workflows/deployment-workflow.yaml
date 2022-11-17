@@ -336,7 +336,7 @@ jobs:
         run: echo "DOCKWORKER_KUBECTL_CONF=$KUBECONFIG" >> $GITHUB_ENV
       -
         name: Check configuration for differences
-        run: vendor/bin/dockworker drupal:config:check:deployed $CI_REF_NAME --write-successful-logs
+        run: vendor/bin/dockworker drupal:config:check:deployed $CI_REF_NAME
 
   newrelic-marker:
     name: Set Newrelic Marker
