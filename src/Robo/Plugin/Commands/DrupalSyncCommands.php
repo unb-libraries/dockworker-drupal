@@ -160,7 +160,7 @@ class DrupalSyncCommands extends DockworkerDeploymentDaemonCommands {
     $delta_configs =$this->kubernetesPodExecCommand(
       $pod_id,
       $env,
-      '/scripts/check_config_diff.sh',
+      '/scripts/list_active_delta_stored_config_objects.sh',
       FALSE
     );
 
