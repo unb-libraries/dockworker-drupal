@@ -146,6 +146,35 @@ class DrupalSyncCommands extends DockworkerDeploymentDaemonCommands {
   }
 
   /**
+   * Checks if deployed in-memory configuration matches that on disk.
+   *
+   * @param string $env
+   *   The deploy environment to check. Defaults to 'prod'.
+   *
+   * @command drupal:config:check:deployed
+   *
+   * @kubectl
+   */
+  public function checkDeployedConfig($env = 'prod') {
+    $pod_id = $this->k8sGetLatestPod($env, 'deployment', 'synchronization');
+    try {
+      $this->say("Checking live config in $env/$pod_id...");
+      $this->kubernetesPodExecCommand(
+        $pod_id,
+        $env,
+        '/scripts/check_config_diff.sh'
+      );
+      $this->say("No differences between DB and sync directory");
+    } catch (DockworkerException $e) {
+      $this->say("Differences were found between DB and sync directory");
+      $this->say("This may indicate that hook_update() functions have modified configuration.");
+      $this->say( "You can synchronize your local repository with live config via 'dockworker drupal:config:write:deployed $env'. After that, review any changes and commit them as necessary.");
+      throw new DockworkerException("Config Mismatch!");
+    }
+
+  }
+
+  /**
    * Synchronizes all Drupal data within this application's k8s deployment to this local deployment.
    *
    * @param string $env
