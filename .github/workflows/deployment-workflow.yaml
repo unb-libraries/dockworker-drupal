@@ -364,7 +364,7 @@ jobs:
   slack-results:
     name: Notify Slack of Build Results
     runs-on: ubuntu-latest
-    needs: [execute-check-cron]
+    needs: [execute-check-cron, check-config-for-changes]
     if: always()
     steps:
       - uses: FranzDiebold/github-env-vars-action@v2
