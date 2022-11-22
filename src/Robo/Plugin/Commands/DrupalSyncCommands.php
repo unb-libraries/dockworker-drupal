@@ -180,7 +180,7 @@ class DrupalSyncCommands extends DockworkerDeploymentDaemonCommands {
       $this->io()->block(print_r($delta_configs, TRUE));
       $this->say("This may indicate, amongst many things that hook_update() functions have modified configuration objects after deployment.");
       $this->say("To examine the changes, synchronize the deployed active configuration to your local lean repository via:");
-      $this->io()->block("dockworker drupal:config:write:deployed $env");
+      $this->io()->block("dockworker drupal:config:write:deployed prod");
       $this->say("Then, review the differences and commit them as necessary.");
       throw new DockworkerException("Config Mismatch!");
     }
