@@ -2,12 +2,18 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\DrupalCodeTrait;
+use Dockworker\DrupalLocalDockerContainerTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalDaemonCommands;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Defines commands used to test the local Drupal application.
  */
 class DrupalTestCommands extends DockworkerLocalDaemonCommands {
+
+  use DrupalCodeTrait;
+  use DrupalLocalDockerContainerTrait;
 
   /**
    * Runs all tests defined for the local Drupal application.
@@ -46,6 +52,32 @@ class DrupalTestCommands extends DockworkerLocalDaemonCommands {
     $this->io()->title("Preparing Test Environment");
     $this->setRunOtherCommand('drupal:migrate:import --tags=e2e');
 
+  }
+
+  /**
+   * Installs each custom module's declared test_dependencies.
+   *
+   * @command tests:install-dependencies
+   * @aliases install-test-dependencies
+   */
+  public function installTestDependencies() {
+    $this->getCustomModulesThemes();
+    $test_dependencies = [];
+    foreach ($this->drupalModules as $drupal_module) {
+      $module_info = Yaml::parseFile($drupal_module);
+      if (array_key_exists('test_dependencies', $module_info)) {
+        array_push($test_dependencies, ...$module_info['test_dependencies']);
+      }
+    }
+
+    $test_dependencies = array_unique($test_dependencies);
+    if (!empty($test_dependencies)) {
+      $this->io()->text(
+        $this->runLocalDrushCommand('en -y ' . implode(',', $test_dependencies)));
+    }
+    else {
+      $this->io()->say("Nothing to install");
+    }
   }
 
   /**
