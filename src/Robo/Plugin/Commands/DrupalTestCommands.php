@@ -50,14 +50,14 @@ class DrupalTestCommands extends DockworkerLocalDaemonCommands {
    */
   public function setupE2eTestEnvironment() {
     $this->io()->title("Preparing Test Environment");
-    $this->setRunOtherCommand('tests:install-dependencies');
+    $this->setRunOtherCommand('local:install-test-dependencies');
     $this->setRunOtherCommand('drupal:migrate:import --tags=e2e');
   }
 
   /**
    * Installs each custom module's declared test_dependencies.
    *
-   * @command tests:install-dependencies
+   * @command local:install-test-dependencies
    * @aliases install-test-dependencies
    */
   public function installTestDependencies() {
