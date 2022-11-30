@@ -62,7 +62,7 @@ class DrupalTestCommands extends DockworkerLocalDaemonCommands {
    */
   public function installTestDependencies() {
     $this->getCustomModulesThemes();
-    $test_dependencies = [];
+    $test_dependencies = ['migrate'];
     foreach ($this->drupalModules as $drupal_module) {
       $module_info = Yaml::parseFile($drupal_module);
       if (array_key_exists('test_dependencies', $module_info)) {
