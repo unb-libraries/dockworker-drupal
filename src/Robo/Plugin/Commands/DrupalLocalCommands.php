@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\DockworkerException;
 use Dockworker\DrupalLocalDockerContainerTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerLocalDaemonCommands;
 
@@ -52,7 +53,19 @@ class DrupalLocalCommands extends DockworkerLocalDaemonCommands {
       $cmd .= ' --all';
     }
 
-    $this->io()->writeln($this->runLocalDrushCommand($cmd));
+    try {
+      $cmd_output = $this->runLocalDrushCommand($cmd);
+    }
+    catch (DockworkerException $e) {
+      if (strstr($e->getMessage(), "No migrations found.")) {
+        $cmd_output = "No migrations found.";
+      }
+      else {
+        $cmd_output = $e->getMessage();
+      }
+    }
+    $this->writeln($cmd_output);
+    return 0;
   }
 
   /**
@@ -79,7 +92,12 @@ class DrupalLocalCommands extends DockworkerLocalDaemonCommands {
       $cmd .= ' --all';
     }
 
-    $this->io()->writeln($this->runLocalDrushCommand($cmd));
+    $cmd_output = implode("\n",
+      $this->runLocalDrushCommand($cmd));
+    if (strstr($cmd_output, "No migrations found.")) {
+      $cmd_output = "No migrations found.";
+    }
+    $this->writeln($cmd_output);
   }
 
   /**
