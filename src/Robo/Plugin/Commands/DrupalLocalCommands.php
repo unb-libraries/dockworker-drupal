@@ -33,17 +33,26 @@ class DrupalLocalCommands extends DockworkerLocalDaemonCommands {
    * @throws \Dockworker\DockworkerException
    */
   public function migrateImport(string $migration = '', array $options = ['tags' => '', 'no-dependencies' => FALSE]) {
-    $options = implode(' ', array_filter([
-      $options['tags'] ? "--tag={$options['tags']}" : '',
-      !($options['tags'] || $migration) ? '--all' : '',
-      !$options['no-dependencies'] ? '--execute-dependencies' : '',
-      '--no-progress',
-    ]));
+    $cmd = 'migrate:import';
 
-    $this->io()->writeln(
-      $this->runLocalDrushCommand(str_replace('  ', ' ', rtrim(
-        "migrate:import $migration $options")
-    )));
+    if (!$options['no-dependencies']) {
+      $cmd .= ' --execute-dependencies';
+    }
+
+    if ($migration) {
+      $cmd .= " $migration";
+    }
+    elseif (array_key_exists('tags', $options) && !empty($options['tags'])) {
+      $tags = is_array($options['tags'])
+        ? implode(',', $options['tags'])
+        : $options['tags'];
+      $cmd .= " --tag=$tags";
+    }
+    else {
+      $cmd .= ' --all';
+    }
+
+    $this->io()->writeln($this->runLocalDrushCommand($cmd));
   }
 
   /**
