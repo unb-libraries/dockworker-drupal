@@ -64,16 +64,22 @@ class DrupalLocalCommands extends DockworkerLocalDaemonCommands {
    * @throws \Dockworker\DockworkerException
    */
   public function migrateRollback(string $migration = '', array $options = ['tags' => '']) {
-    $options = implode(' ', array_filter([
-      $options['tags'] ? "--tag={$options['tags']}" : '',
-      !($options['tags'] || $migration) ? '--all' : '',
-      '--no-progress',
-    ]));
+    $cmd = 'migrate:rollback --no-progress';
 
-    $this->io()->writeln(
-      $this->runLocalDrushCommand(str_replace('  ', ' ', rtrim(
-          "migrate:rollback $migration $options")
-      )));
+    if ($migration) {
+      $cmd .= " $migration";
+    }
+    elseif (array_key_exists('tags', $options) && !empty($options['tags'])) {
+      $tags = is_array($options['tags'])
+        ? implode(',', $options['tags'])
+        : $options['tags'];
+      $cmd .= " --tag=$tags";
+    }
+    else {
+      $cmd .= ' --all';
+    }
+
+    $this->io()->writeln($this->runLocalDrushCommand($cmd));
   }
 
   /**
