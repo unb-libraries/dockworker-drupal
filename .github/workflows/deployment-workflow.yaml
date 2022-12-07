@@ -150,8 +150,8 @@ jobs:
           name: docker-compose
           path: ./docker-compose.yml
 
-  start-install-application:
-    name: Start-Up Application
+  start-install-test-application:
+    name: Start-Up & Test Application
     runs-on: ubuntu-latest
     needs: [build-image, update-docker-compose]
     steps:
@@ -180,7 +180,10 @@ jobs:
         run: docker-compose pull --parallel --quiet
       -
         name: Start container and check logs for errors
-        run: vendor/bin/dockworker local:start --no-tail-logs --only-start --force-recreate
+        run: vendor/bin/dockworker local:start --no-tail-logs --only-start --force-recreate --only-primary
+      -
+        name: Run tests
+        run: vendor/bin/dockworker tests:all
 
   push-branch-tag-image-repository:
     name: Push Branch Tag to Repository
