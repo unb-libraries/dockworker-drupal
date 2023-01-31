@@ -4,8 +4,7 @@
   "type": "library",
   "require": {
     "drupal/coder": "^8",
-    "unb-libraries/dockworker": "^5",
-    "php": "^8"
+    "unb-libraries/dockworker-daemon": "6.x-dev"
   },
   "license": "MIT",
   "authors": [
