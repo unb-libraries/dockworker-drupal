@@ -1,6 +1,6 @@
 {
   "name": "unb-libraries/dockworker-drupal",
-  "description": "Services for wiring up drupal containers for development",
+  "description": "Extends the dockworker application to deploy and develop Drupal applications via a consistent and unified workflow.",
   "type": "library",
   "require": {
     "drupal/coder": "^8",
