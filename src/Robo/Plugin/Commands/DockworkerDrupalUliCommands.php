@@ -24,27 +24,24 @@ class DockworkerDrupalUliCommands extends DockworkerShellCommands
     public function generateDrupalUli(
       array $options = [
         'env' => 'local',
-        'name' => '',
+        'name' => 'admin',
       ]
     ): void
     {
-        $this->initShellCommand($options['env']);
-        $container = $this->getDeployedContainer($options['env']);
-        $this->dockworkerIO->title('Generating ULI');
-        $this->dockworkerIO->info(
-          sprintf(
-            'Generating ULI in %s/%s',
-            $options['env'],
-            $container->getContainerName()
-          )
-        );
-        $cmd = ['/scripts/drupalUli.sh'];
-        if (!empty($options['name'])) {
-          $cmd[] = "--name={$options['name']}";
-        }
-        $container->run(
+        $cmd = $options['name'] == 'admin' ?
+          ['/scripts/drupalUli.sh'] :
+          ['/scripts/drupalUli.sh', '--name=' . $options['name']];
+
+        $this->executeContainerCommand(
+          $options['env'],
           $cmd,
-          $this->dockworkerIO
+          $this->dockworkerIO,
+          'Generating ULI',
+          sprintf(
+            'Generating ULI in %s for %s',
+            $options['env'],
+            $options['name']
+          )
         );
     }
 }
