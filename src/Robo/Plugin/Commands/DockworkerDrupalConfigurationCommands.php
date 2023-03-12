@@ -41,7 +41,16 @@ class DockworkerDrupalConfigurationCommands extends DockworkerShellCommands
                         $this->userGid,
                         '/app/configuration',
                     ],
-                  'message' => 'Setting configuration permissions for local user write access'
+                  'message' => 'Assigning ownership to local user group'
+                ],
+                [
+                  'command' => [
+                    'chmod',
+                    '-R',
+                    'g+w',
+                    '/app/configuration',
+                  ],
+                  'message' => 'Adding group write permissions'
                 ],
               ],
               $this->dockworkerIO,
@@ -49,7 +58,7 @@ class DockworkerDrupalConfigurationCommands extends DockworkerShellCommands
             );
         } else {
             // @TODO Add deployed support.
-            $this->dockworkerIO->say('Configuration export is only supported for local environments.');
+            $this->dockworkerIO->say('Configuration export is currently only supported for local environments.');
             exit(1);
         }
     }
