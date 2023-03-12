@@ -7,6 +7,8 @@
     "unb-libraries/dockworker-daemon": "6.x-dev"
   },
   "license": "MIT",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
   "authors": [
     {
       "name": "UNB Libraries",
@@ -18,9 +20,10 @@
       "Dockworker\\": "src"
     }
   },
-  "scripts": {
-    "post-update-cmd": [
-      "vendor/bin/dockworker git:setup-hooks"
-    ]
+  "config": {
+    "allow-plugins": {
+      "php-http/discovery": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   }
 }

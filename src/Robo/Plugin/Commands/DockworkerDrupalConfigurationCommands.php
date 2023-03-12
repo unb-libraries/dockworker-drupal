@@ -3,7 +3,6 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Robo\Plugin\Commands\DockworkerShellCommands;
-use Robo\Robo;
 
 /**
  * Provides commands for manipulating configuration in a Drupal application.
@@ -21,11 +20,10 @@ class DockworkerDrupalConfigurationCommands extends DockworkerShellCommands
      * @usage --env=prod
      */
     public function exportDrupalConfiguration(
-      array $options = [
-        'env' => 'local',
-      ]
-    ): void
-    {
+        array $options = [
+            'env' => 'local',
+        ]
+    ): void {
         if ($options['env'] === 'local') {
             $gid = posix_getgid();
             $this->executeContainerCommandSet(

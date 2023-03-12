@@ -15,7 +15,7 @@ class DockworkerDrupalUliCommands extends DockworkerShellCommands
      * @option string $env
      *   The environment to generate the ULI link in.
      * @option string $name
-     *   The user name of the account to generate the ULI for. Defaults to uid0
+     *   The username of the account to generate the ULI for. Defaults to uid0
      *
      * @command drupal:uli
      * @aliases uli
