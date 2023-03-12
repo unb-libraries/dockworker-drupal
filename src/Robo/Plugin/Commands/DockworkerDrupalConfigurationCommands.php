@@ -25,7 +25,6 @@ class DockworkerDrupalConfigurationCommands extends DockworkerShellCommands
         ]
     ): void {
         if ($options['env'] === 'local') {
-            $gid = posix_getgid();
             $this->executeContainerCommandSet(
               'local',
               [
@@ -39,10 +38,10 @@ class DockworkerDrupalConfigurationCommands extends DockworkerShellCommands
                     'command' => [
                         'chgrp',
                         '-R',
-                        $gid,
+                        $this->userGid,
                         '/app/configuration',
                     ],
-                  'message' => 'Setting configuration permissions for local'
+                  'message' => 'Setting configuration permissions for local user write access'
                 ],
               ],
               $this->dockworkerIO,
