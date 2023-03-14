@@ -14,8 +14,8 @@ class DockworkerDrupalUliCommands extends DockworkerShellCommands
      *
      * @option string $env
      *   The environment to generate the ULI link in.
-     * @option string $name
-     *   The username of the account to generate the ULI for. Defaults to uid0
+     * @option string $uid
+     *   The uid of the account to generate the ULI for. Defaults to uid 1
      *
      * @command drupal:uli
      * @aliases uli
@@ -24,23 +24,20 @@ class DockworkerDrupalUliCommands extends DockworkerShellCommands
     public function generateDrupalUli(
       array $options = [
         'env' => 'local',
-        'name' => 'admin',
+        'uid' => '1',
       ]
     ): void
     {
-        $cmd = $options['name'] == 'admin' ?
-          ['/scripts/drupalUli.sh'] :
-          ['/scripts/drupalUli.sh', '--name=' . $options['name']];
-
+        $cmd = ['/scripts/drupalUli.sh', $options['uid']];
         $this->executeContainerCommand(
           $options['env'],
           $cmd,
           $this->dockworkerIO,
           'Generating ULI',
           sprintf(
-            'Generating ULI in %s for %s',
+            'Generating ULI in %s for UID %s',
             $options['env'],
-            $options['name']
+            $options['uid']
           )
         );
     }
