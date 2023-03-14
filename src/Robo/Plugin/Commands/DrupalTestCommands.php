@@ -79,14 +79,4 @@ class DrupalTestCommands extends DockworkerLocalDaemonCommands {
     }
   }
 
-  /**
-   * Cleans the environment after end-to-end testing.
-   *
-   * @hook post-command @e2e
-   */
-  public function cleanupE2eTestEnvironment() {
-    $this->io()->title("Cleaning Test Environment");
-    $this->setRunOtherCommand('drupal:migrate:rollback --tags=e2e');
-  }
-
 }
