@@ -2,8 +2,6 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Robo\Plugin\Commands\DockworkerShellCommands;
-
 /**
  * Provides commands for generating an admin ULI link within a Drupal application.
  */
@@ -22,23 +20,22 @@ class DockworkerDrupalUliCommands extends DockworkerShellCommands
      * @usage --env=prod
      */
     public function generateDrupalUli(
-      array $options = [
-        'env' => 'local',
-        'uid' => '1',
-      ]
-    ): void
-    {
+        array $options = [
+            'env' => 'local',
+            'uid' => '1',
+        ]
+    ): void {
         $cmd = ['/scripts/drupalUli.sh', $options['uid']];
         $this->executeContainerCommand(
-          $options['env'],
-          $cmd,
-          $this->dockworkerIO,
-          'Generating ULI',
-          sprintf(
-            'Generating ULI in %s for UID %s',
             $options['env'],
-            $options['uid']
-          )
+            $cmd,
+            $this->dockworkerIO,
+            'Generating ULI',
+            sprintf(
+                'Generating ULI in %s for UID %s',
+                $options['env'],
+                $options['uid']
+            )
         );
     }
 }

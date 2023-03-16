@@ -3,7 +3,6 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\IO\DockworkerIO;
-use Dockworker\Robo\Plugin\Commands\DockworkerShellCommands;
 
 /**
  * Provides commands for running drush in the application's deployed resources.

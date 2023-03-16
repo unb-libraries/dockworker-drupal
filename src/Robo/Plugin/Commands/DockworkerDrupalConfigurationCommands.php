@@ -26,39 +26,41 @@ class DockworkerDrupalConfigurationCommands extends DockworkerShellCommands
     ): void {
         if ($options['env'] === 'local') {
             $this->executeContainerCommandSet(
-              'local',
-              [
+                'local',
                 [
-                  'command' => [
-                    '/scripts/configExport.sh'
-                  ],
-                  'message' => 'Exporting configuration from local'
-                ],
-                [
-                    'command' => [
-                        'chgrp',
-                        '-R',
-                        $this->userGid,
-                        '/app/configuration',
+                    [
+                        'command' => [
+                            '/scripts/configExport.sh'
+                        ],
+                        'message' => 'Exporting configuration from local',
                     ],
-                  'message' => 'Assigning ownership to local user group'
+                    [
+                        'command' => [
+                            'chgrp',
+                            '-R',
+                            $this->userGid,
+                            '/app/configuration',
+                        ],
+                        'message' => 'Assigning ownership to local user group',
+                    ],
+                    [
+                        'command' => [
+                            'chmod',
+                            '-R',
+                            'g+w',
+                            '/app/configuration',
+                        ],
+                        'message' => 'Adding group write permissions',
+                    ],
                 ],
-                [
-                  'command' => [
-                    'chmod',
-                    '-R',
-                    'g+w',
-                    '/app/configuration',
-                  ],
-                  'message' => 'Adding group write permissions'
-                ],
-              ],
-              $this->dockworkerIO,
-              'Exporting Configuration',
+                $this->dockworkerIO,
+                'Exporting Configuration',
             );
         } else {
             // @TODO Add deployed support.
-            $this->dockworkerIO->say('Configuration export is currently only supported for local environments.');
+            $this->dockworkerIO->say(
+                'Configuration export is currently only supported for local environments.'
+            );
             exit(1);
         }
     }
