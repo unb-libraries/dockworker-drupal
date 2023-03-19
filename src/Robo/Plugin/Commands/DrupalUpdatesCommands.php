@@ -28,13 +28,17 @@ class DrupalUpdatesCommands extends DockworkerUpdateCommands
      */
     public function updateDrupalModulesAndDependencies(): void {
         $this->registerDockerCliTool($this->dockworkerIO);
+        $this->checkPreflightChecks($this->dockworkerIO);
         $this->enableLocalResourceDiscovery();
         $this->discoverDeployedResources(
             $this->dockworkerIO,
             Robo::config(),
             'local'
         );
-        $container = $this->getDeployedContainer('local');
+        $container = $this->getDeployedContainer(
+            $this->dockworkerIO,
+            'local'
+        );
         $this->dockworkerIO->title("Checking for Updates");
         $container->run(
             [

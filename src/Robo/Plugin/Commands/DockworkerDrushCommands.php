@@ -31,32 +31,35 @@ class DockworkerDrushCommands extends DockworkerShellCommands
         ]
     ): void {
         $this->executeDrushCommand(
+            $this->dockworkerIO,
             $options['env'],
-            $args,
-            $this->dockworkerIO
+            $args
         );
     }
 
     /**
      * Executes a drush command in the application.
      *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
      * @param string $env
      *   The environment to run the command in.
      * @param string $command
      *   The command to run.
-     * @param \Dockworker\IO\DockworkerIO $io
-     *   The IO to use for input and output.
      *
      * @option string $env
      *   The environment to run the command in.
      */
     protected function executeDrushCommand(
+        DockworkerIO $io,
         string $env,
-        string $command,
-        DockworkerIO $io
+        string $command
     ): void {
         $this->initShellCommand($env);
-        $container = $this->getDeployedContainer($env);
+        $container = $this->getDeployedContainer(
+            $io,
+            $env
+        );
         $io->title('Drush');
         $io->say("[$env] Running 'drush $command'...");
         $cmd_base = [
