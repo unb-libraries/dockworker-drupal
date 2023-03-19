@@ -2,8 +2,11 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\DockworkerCommands;
+use Dockworker\Cli\CliCommandTrait;
+use Dockworker\IO\DockworkerIO;
+use Dockworker\Robo\Plugin\Commands\DockworkerThemeCommands;
 use Dockworker\Drupal\DrupalCodeTrait;
+use Dockworker\IO\DockworkerIOTrait;
 use Dockworker\Scss\ScssCompileTrait;
 use Symfony\Component\Finder\Finder;
 
@@ -12,7 +15,9 @@ use Symfony\Component\Finder\Finder;
  *
  * @TODO: Needs review, was migrated from Dockworker 5.x.
  */
-class DrupalThemeCommands extends DockworkerCommands {
+class DrupalThemeCommands extends DockworkerThemeCommands {
+    use CliCommandTrait;
+    use DockworkerIOTrait;
     use DrupalCodeTrait;
     use ScssCompileTrait;
 
@@ -28,61 +33,98 @@ class DrupalThemeCommands extends DockworkerCommands {
      *
      * @hook post-command theme:build-all
      */
-    public function setBuildAllDrupalThemes() {
+    public function setBuildAllDrupalThemes(): void {
         $this->getCustomModulesThemes();
+        if (!empty($this->drupalThemes)) {
+            $this->dockworkerIO->title('Building Drupal Themes');
+        }
         foreach ($this->drupalThemes as $theme) {
-            $this->buildDrupalThemeAssets($theme->getPath());
+            $this->buildDrupalTheme(
+                $this->dockworkerIO,
+                $theme->getPath()
+            );
         }
     }
 
     /**
      * Builds a Drupal theme's assets.
      *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
      * @param string $path
      *   The absolute path of the theme to build.
      */
-    private function buildDrupalThemeAssets($path) {
+    private function buildDrupalTheme(
+        DockworkerIO $io,
+        string $path
+    ): void {
         if (file_exists($path)) {
+            $io->section("Building $path");
             $this->path = $path;
-            $this->setPermissionsThemeDist();
-            $this->setScssCompiler($this->applicationRoot . '/vendor/bin/pscss');
-            $this->buildThemeScss();
-            $this->buildImageAssets();
-            $this->buildJsAssets();
-            $this->buildFontAssets();
+            $this->setPermissionsThemeDist($io);
+            $this->setScssCompiler(
+                $this->applicationRoot . '/vendor/bin/pscss'
+            );
+            $this->buildThemeScss($io);
+            $this->buildImageAssets($io);
+            $this->buildJsAssets($io);
+            $this->buildFontAssets($io);
         }
     }
 
-    /*
+    /**
      * Ensures the current theme's dist directory exists, and is writable.
      *
-     * @throws \Robo\Exception\TaskException
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
      */
-    private function setPermissionsThemeDist() {
-        $this->say("Setting Permissions of dist in $this->path");
-        $this->taskExecStack()
-            ->stopOnFail()
-            ->dir($this->path)
-            ->exec("mkdir -p dist/css")
-            ->run();
-
-        $gid = posix_getgid();
-        $this->taskExec('sudo chgrp')
-            ->arg($gid)
-            ->arg('-R')
-            ->arg($this->path)
-            ->run();
-        $this->taskExecStack()
-            ->stopOnFail()
-            ->dir($this->path)
-            ->exec("sudo chmod -R g+w dist")
-            ->run();
+    private function setPermissionsThemeDist(DockworkerIO $io): void {
+        $this->executeCliCommandSet(
+            [
+                [
+                    'command' => [
+                        'mkdir',
+                        '-p',
+                        'dist/css'
+                    ],
+                    'message' => 'Creating dist directory',
+                    'tty' => false
+                ],
+                [
+                    'command' => [
+                        'sudo',
+                        'chgrp',
+                        '-R',
+                        $this->userGid,
+                        $this->path
+                    ],
+                    'message' => 'Setting group ownership of theme',
+                    'tty' => false
+                ],
+                [
+                    'command' => [
+                        'sudo',
+                        'chmod',
+                        '-R',
+                        'g+w',
+                        'dist'
+                    ],
+                    'message' => 'Setting group write of dist directory',
+                    'tty' => false
+                ],
+            ],
+            $io,
+            ''
+        );
     }
 
-    /*
+    /**
      * Compiles the current theme's SCSS files into CSS.
+     *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
      */
-    private function buildThemeScss() {
+    private function buildThemeScss(DockworkerIO $io): void {
         $finder = new Finder();
         $finder->in($this->path)
             ->files()
@@ -90,39 +132,54 @@ class DrupalThemeCommands extends DockworkerCommands {
         foreach ($finder as $file) {
             $source_file = $file->getRealPath();
             $target_file = str_replace(['/src/scss/', '.scss'], ['/dist/css/', '.css'], $source_file);
-            $this->say("Compiling $source_file to $target_file...");
-            $this->compileScss($source_file, $target_file);
+            $this->compileScss(
+                $source_file,
+                $target_file,
+                $io,
+                $this->path
+            );
         }
     }
 
-    /*
+    /**
      * Builds the current theme's image assets.
+     *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
      *
      * @TODO Optimize images into a standard instead of just copying them.
      */
-    private function buildImageAssets() {
-        $this->copyThemeAssets('img', 'Image');
+    private function buildImageAssets(DockworkerIO $io): void {
+        $this->copyThemeAssets($io, 'img', 'Image');
     }
 
-    /*
+    /**
      * Builds the current theme's Javascript assets.
+     *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
      *
      * @TODO Minify javascript files instead of just copying them.
      */
-    private function buildJsAssets() {
-        $this->copyThemeAssets('js', 'Javascript');
+    private function buildJsAssets(DockworkerIO $io): void {
+        $this->copyThemeAssets($io, 'js', 'Javascript');
     }
 
-    /*
-     * Builds the current theme's Javascript assets.
+    /**
+     * Builds the current theme's font assets.
+     *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
      */
-    private function buildFontAssets() {
-        $this->copyThemeAssets('fonts', 'Font');
+    private function buildFontAssets(DockworkerIO $io): void {
+        $this->copyThemeAssets($io, 'fonts', 'Font');
     }
 
-    /*
+    /**
      * Copies asset files unmodified from src to dist.
      *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
      * @param string $asset_dir
      *   The directory to copy.
      * @param string $type
@@ -130,15 +187,26 @@ class DrupalThemeCommands extends DockworkerCommands {
      *
      * @throws \Robo\Exception\TaskException
      */
-    private function copyThemeAssets($asset_dir, $type) {
+    private function copyThemeAssets(
+        DockworkerIO $io,
+        string $asset_dir,
+        string $type
+    ): void {
         $src_path = "$this->path/src/$asset_dir";
         if (file_exists($src_path)) {
-            $this->say("Deploying $type Assets in $src_path");
-            $this->taskExecStack()
-                ->stopOnFail()
-                ->dir($this->path)
-                ->exec("cp -r src/$asset_dir dist/ || true")
-                ->run();
+            $this->executeCliCommand(
+                [
+                    'cp',
+                    '-r',
+                "src/$asset_dir",
+                    'dist/',
+                ],
+                $io,
+                $this->path,
+                '',
+                "Deploying $type Assets in $src_path",
+                false
+            );
         }
     }
 }
