@@ -46,6 +46,7 @@ class DockworkerDrupalConfigurationCommands extends DockworkerCommands
                             '/app/configuration',
                         ],
                         'message' => 'Assigning ownership to local user group',
+                        'use_tty' => false,
                     ],
                     [
                         'command' => [
@@ -55,6 +56,7 @@ class DockworkerDrupalConfigurationCommands extends DockworkerCommands
                             '/app/configuration',
                         ],
                         'message' => 'Adding group write permissions',
+                        'use_tty' => false,
                     ],
                 ],
                 $this->dockworkerIO,
