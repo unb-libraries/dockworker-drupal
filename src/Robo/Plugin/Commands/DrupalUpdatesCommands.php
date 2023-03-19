@@ -2,13 +2,10 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Cli\DockerCliTrait;
 use Dockworker\Core\CommandLauncherTrait;
-use Dockworker\Docker\DeployedLocalResourcesTrait;
+use Dockworker\Docker\DockerContainerExecTrait;
 use Dockworker\Git\GitRepoTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerUpdateCommands;
-use Dockworker\IO\DockworkerIOTrait;
-use Robo\Robo;
 
 /**
  * Provides commands for updating a Drupal application.
@@ -16,9 +13,7 @@ use Robo\Robo;
 class DrupalUpdatesCommands extends DockworkerUpdateCommands
 {
     use CommandLauncherTrait;
-    use DeployedLocalResourcesTrait;
-    use DockerCliTrait;
-    use DockworkerIOTrait;
+    use DockerContainerExecTrait;
     use GitRepoTrait;
 
     /**
@@ -27,26 +22,16 @@ class DrupalUpdatesCommands extends DockworkerUpdateCommands
      * @hook post-command dockworker:update
      */
     public function updateDrupalModulesAndDependencies(): void {
-        $this->registerDockerCliTool($this->dockworkerIO);
-        $this->checkPreflightChecks($this->dockworkerIO);
-        $this->enableLocalResourceDiscovery();
-        $this->discoverDeployedResources(
-            $this->dockworkerIO,
-            Robo::config(),
-            'local'
-        );
-        $container = $this->getDeployedContainer(
-            $this->dockworkerIO,
-            'local'
-        );
-        $this->dockworkerIO->title("Checking for Updates");
-        $container->run(
+        $this->executeContainerCommand(
+            'local',
             [
                 'composer',
                 '--working-dir=/app/html',
                 'update',
             ],
-            $this->dockworkerIO
+            $this->dockworkerIO,
+            'Updating Application',
+            'Checking for Updates'
         );
         $this->setRunOtherCommand(
             $this->dockworkerIO,

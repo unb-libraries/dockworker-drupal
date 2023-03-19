@@ -2,13 +2,18 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Dockworker\Docker\DockerContainerExecTrait;
+use Dockworker\DockworkerCommands;
 use Dockworker\IO\DockworkerIO;
+use Dockworker\IO\DockworkerIOTrait;
 
 /**
  * Provides commands for running drush in the application's deployed resources.
  */
-class DockworkerDrushCommands extends DockworkerShellCommands
+class DockworkerDrushCommands extends DockworkerCommands
 {
+    use DockerContainerExecTrait;
+
     /**
      * Runs a generic drush command passed as arguments.
      *
@@ -30,10 +35,11 @@ class DockworkerDrushCommands extends DockworkerShellCommands
             'env' => 'local',
         ]
     ): void {
+        $args_array = explode(' ', $args);
         $this->executeDrushCommand(
             $this->dockworkerIO,
             $options['env'],
-            $args
+            $args_array
         );
     }
 
@@ -44,7 +50,7 @@ class DockworkerDrushCommands extends DockworkerShellCommands
      *   The IO to use for input and output.
      * @param string $env
      *   The environment to run the command in.
-     * @param string $command
+     * @param string[] $command
      *   The command to run.
      *
      * @option string $env
@@ -53,22 +59,22 @@ class DockworkerDrushCommands extends DockworkerShellCommands
     protected function executeDrushCommand(
         DockworkerIO $io,
         string $env,
-        string $command
+        array $command
     ): void {
-        $this->initShellCommand($env);
-        $container = $this->getDeployedContainer(
-            $io,
-            $env
-        );
         $io->title('Drush');
-        $io->say("[$env] Running 'drush $command'...");
         $cmd_base = [
             'drush',
         ];
-        $args = explode(' ', $command);
-        $container->run(
-            array_merge($cmd_base, $args),
-            $io
+        $this->executeContainerCommand(
+            $env,
+            array_merge($cmd_base, $command),
+            $this->dockworkerIO,
+            'Generating ULI',
+            sprintf(
+                "[%s] Running 'drush %s'...",
+                $env,
+                implode(' ', $command)
+            )
         );
     }
 }
