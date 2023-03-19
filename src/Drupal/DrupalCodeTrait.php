@@ -30,7 +30,7 @@ trait DrupalCodeTrait
     public function getCustomModulesThemes(): void
     {
         $projects = new Finder();
-        $projects->files()->in($this->applicationRoot . '/custom/')->files()->name('*info.yml');;
+        $projects->files()->in($this->applicationRoot . '/custom/')->files()->name('*info.yml');
         foreach ($projects as $project) {
             $type = explode('/', $project->getRelativePath())[0];
             if ($type == 'modules') {

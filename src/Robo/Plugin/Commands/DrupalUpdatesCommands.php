@@ -20,6 +20,8 @@ class DrupalUpdatesCommands extends DockworkerUpdateCommands
      * Performs Drupal updates.
      *
      * @hook post-command dockworker:update
+     *
+     * @throws \CzProject\GitPhp\GitException
      */
     public function updateDrupalModulesAndDependencies(): void {
         $this->executeContainerCommand(

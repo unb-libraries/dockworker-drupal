@@ -26,7 +26,7 @@ class DrupalThemeCommands extends DockworkerThemeCommands {
      *
      * @var string
      */
-    private $path;
+    private string $path;
 
     /**
      * Compiles Drupal themes.
@@ -148,6 +148,8 @@ class DrupalThemeCommands extends DockworkerThemeCommands {
      *   The IO to use for input and output.
      *
      * @TODO Optimize images into a standard instead of just copying them.
+     *
+     * @throws \Robo\Exception\TaskException
      */
     private function buildImageAssets(DockworkerIO $io): void {
         $this->copyThemeAssets($io, 'img', 'Image');
@@ -160,6 +162,8 @@ class DrupalThemeCommands extends DockworkerThemeCommands {
      *   The IO to use for input and output.
      *
      * @TODO Minify javascript files instead of just copying them.
+     *
+     * @throws \Robo\Exception\TaskException
      */
     private function buildJsAssets(DockworkerIO $io): void {
         $this->copyThemeAssets($io, 'js', 'Javascript');
@@ -170,6 +174,8 @@ class DrupalThemeCommands extends DockworkerThemeCommands {
      *
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
+     *
+     * @throws \Robo\Exception\TaskException
      */
     private function buildFontAssets(DockworkerIO $io): void {
         $this->copyThemeAssets($io, 'fonts', 'Font');
@@ -184,8 +190,6 @@ class DrupalThemeCommands extends DockworkerThemeCommands {
      *   The directory to copy.
      * @param string $type
      *   A label to use when identifying the directory contents.
-     *
-     * @throws \Robo\Exception\TaskException
      */
     private function copyThemeAssets(
         DockworkerIO $io,
