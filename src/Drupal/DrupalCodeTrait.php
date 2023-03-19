@@ -2,37 +2,33 @@
 
 namespace Dockworker\Drupal;
 
-use Dockworker\Robo\Plugin\Commands\DockworkerLocalCommands;
 use Symfony\Component\Finder\Finder;
 
 /**
- * Provides methods to interact with a Drupal codebase.
- *
- * @TODO: Needs review, was migrated from Dockworker 5.x.
+ * Provides methods to interact with a Drupal codebase in a lean repository.
  */
-trait DrupalCodeTrait {
-
+trait DrupalCodeTrait
+{
     /**
      * The modules within the current repository.
      *
      * @var \Symfony\Component\Finder\SplFileInfo[]
      */
-    protected $drupalModules = [];
+    protected array $drupalModules = [];
 
     /**
      * The themes within the current repository.
      *
      * @var \Symfony\Component\Finder\SplFileInfo[]
      */
-    protected $drupalThemes = [];
+    protected array $drupalThemes = [];
 
 
     /**
      * Sets up the custom modules and themes in the current repository.
-     *
-     * @hook init @drupalcode
      */
-    public function getCustomModulesThemes() {
+    public function getCustomModulesThemes(): void
+    {
         $projects = new Finder();
         $projects->files()->in($this->applicationRoot . '/custom/')->files()->name('*info.yml');;
         foreach ($projects as $project) {
