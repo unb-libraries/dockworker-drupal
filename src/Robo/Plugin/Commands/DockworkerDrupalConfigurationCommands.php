@@ -4,7 +4,6 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Docker\DockerContainerExecTrait;
 use Dockworker\DockworkerCommands;
-use Dockworker\Robo\Plugin\Commands\DockworkerShellCommands;
 
 /**
  * Provides commands for manipulating configuration in a Drupal application.

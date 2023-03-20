@@ -3,12 +3,14 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Docker\DockerComposeTrait;
+use Dockworker\Docker\DockerContainerExecTrait;
 
 /**
  * Provides commands for generating an admin ULI link within a Drupal application.
  */
 class DockworkerDrupalComposerCommands extends DockworkerApplicationDeployCommands
 {
+    use DockerContainerExecTrait;
     use DockerComposeTrait;
 
     /**
@@ -26,17 +28,14 @@ class DockworkerDrupalComposerCommands extends DockworkerApplicationDeployComman
             'env' => 'local',
         ]
     ): void {
-        if ($options['env'] === 'local') {
-            $this->composeApplicationCopyFile(
-                "$this->applicationName:/app/html/composer.lock",
-                "$this->applicationRoot/build/composer.lock",
-            );
-        } else {
-            // @TODO Add deployed support.
-            $this->dockworkerIO->say(
-                'Lockfile export is currently only supported for local environments.'
-            );
-            exit(1);
-        }
+        $container = $this->initGetDeployedContainer(
+            $this->dockworkerIO,
+            $options['env']
+        );
+        $container->copyFrom(
+            $this->dockworkerIO,
+            '/app/html/composer.lock',
+            $this->applicationRoot . '/build/composer.lock'
+        );
     }
 }

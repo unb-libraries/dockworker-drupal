@@ -30,7 +30,10 @@ class DockworkerDrupalUliCommands extends DockworkerCommands
             'uid' => '1',
         ]
     ): void {
-        $cmd = ['/scripts/drupalUli.sh', $options['uid']];
+        $cmd = [
+            '/scripts/drupalUli.sh',
+            $options['uid']
+        ];
         $this->executeContainerCommand(
             $options['env'],
             $cmd,
