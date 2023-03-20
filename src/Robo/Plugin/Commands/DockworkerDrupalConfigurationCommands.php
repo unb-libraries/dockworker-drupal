@@ -63,11 +63,21 @@ class DockworkerDrupalConfigurationCommands extends DockworkerCommands
                 'Exporting Configuration',
             );
         } else {
-            // @TODO Add deployed support.
-            $this->dockworkerIO->say(
-                'Configuration export is currently only supported for local environments.'
+            $container = $this->executeContainerCommand(
+                $options['env'],
+                ['/scripts/configExport.sh'],
+                $this->dockworkerIO,
+                'Exporting Configuration',
+                sprintf(
+                    'Exporting configuration from %s',
+                    $options['env']
+                )
             );
-            exit(1);
+            $container->copyFrom(
+                $this->dockworkerIO,
+                '/app/configuration',
+                $this->applicationRoot . '/config-yml'
+            );
         }
     }
 }
