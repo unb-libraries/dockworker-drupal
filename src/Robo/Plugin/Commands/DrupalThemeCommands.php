@@ -85,7 +85,7 @@ class DrupalThemeCommands extends DockworkerThemeCommands {
                     'command' => [
                         'mkdir',
                         '-p',
-                        'dist/css'
+                        "$this->path/dist/css"
                     ],
                     'message' => 'Creating dist directory',
                     'tty' => false
@@ -96,7 +96,7 @@ class DrupalThemeCommands extends DockworkerThemeCommands {
                         'chgrp',
                         '-R',
                         $this->userGid,
-                        $this->path
+                        "$this->path/dist"
                     ],
                     'message' => 'Setting group ownership of theme',
                     'tty' => false
@@ -107,7 +107,7 @@ class DrupalThemeCommands extends DockworkerThemeCommands {
                         'chmod',
                         '-R',
                         'g+w',
-                        'dist'
+                        "$this->path/dist"
                     ],
                     'message' => 'Setting group write of dist directory',
                     'tty' => false
