@@ -2,19 +2,18 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Docker\DockerComposeTrait;
 use Dockworker\Docker\DockerContainerExecTrait;
+use Dockworker\DockworkerCommands;
 
 /**
  * Provides commands for generating an admin ULI link within a Drupal application.
  */
-class DockworkerDrupalComposerCommands extends DockworkerApplicationDeployCommands
+class DockworkerDrupalComposerCommands extends DockworkerCommands
 {
     use DockerContainerExecTrait;
-    use DockerComposeTrait;
 
     /**
-     * Copies the composer lockfile from the application.
+     * Copies the composer lockfile from an application container.
      *
      * @option string $env
      *   The environment to copy the file from.
@@ -32,10 +31,12 @@ class DockworkerDrupalComposerCommands extends DockworkerApplicationDeployComman
             $this->dockworkerIO,
             $options['env']
         );
+        $this->dockworkerIO->title('Copying Lockfile');
         $container->copyFrom(
             $this->dockworkerIO,
             '/app/html/composer.lock',
             $this->applicationRoot . '/build/composer.lock'
         );
+        $this->dockworkerIO->say('Done!');
     }
 }
