@@ -6,10 +6,10 @@ use Dockworker\Docker\DockerContainerExecTrait;
 use Dockworker\DockworkerCommands;
 use Dockworker\Git\GitRepoTrait;
 use Dockworker\IO\DockworkerIOTrait;
-use Dockworker\PhpCsTrait;
+use Dockworker\PhpCs\PhpCsTrait;
 
 /**
- * Provides commands for generating an admin ULI link within a Drupal application.
+ * Provides commands for validating PHP within a Drupal application.
  */
 class DockworkerDrupalPhpValidateCommands extends DockworkerCommands
 {
@@ -34,7 +34,7 @@ class DockworkerDrupalPhpValidateCommands extends DockworkerCommands
     /**
      * Validates the staged PHP files.
      *
-     * @command drupal:php:validate
+     * @command validate:php:drupal
      */
     public function validateDrupalPhp(
         array $options = [
@@ -65,15 +65,19 @@ class DockworkerDrupalPhpValidateCommands extends DockworkerCommands
             $files = ['custom/'];
         }
 
-        $this->dockworkerIO->title($title);
-        $process = $this->validatePhpFiles(
-            $this->dockworkerIO,
-            $files,
-            self::PHPCS_STANDARDS,
-            self::PHPCS_EXTENSIONS
-        );
-        exit(
+        if (!empty($files)) {
+            $this->dockworkerIO->title($title);
+            $process = $this->validatePhpFiles(
+                $this->dockworkerIO,
+                $files,
+                self::PHPCS_STANDARDS,
+                self::PHPCS_EXTENSIONS
+            );
+            exit(
             $process->getExitCode()
-        );
+            );
+        }
+        $this->say('No PHP files found to validate');
+
     }
 }

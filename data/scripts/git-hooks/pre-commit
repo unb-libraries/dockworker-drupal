@@ -31,7 +31,7 @@ fi
 fi
 
 echo "Linting staged PHP files..."
-${ROOT_DIR}/vendor/bin/dockworker drupal:php:validate --staged
+${ROOT_DIR}/vendor/bin/dockworker validate:php:drupal --staged
 SNIFF_STATUS=$?
 if [ $SNIFF_STATUS -ne 0 ]; then
   exec < /dev/tty
@@ -44,7 +44,7 @@ if [ $SNIFF_STATUS -ne 0 ]; then
 fi
 
 echo "Linting YML files..."
-${ROOT_DIR}/vendor/bin/dockworker validate:drupal:yaml $LIST
+${ROOT_DIR}/vendor/bin/dockworker validate:yaml --staged
 SNIFF_STATUS=$?
 if [ $SNIFF_STATUS -ne 0 ]; then
   exec < /dev/tty
