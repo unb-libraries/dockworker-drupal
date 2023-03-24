@@ -3,12 +3,12 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Docker\DockerContainerExecTrait;
-use Dockworker\DockworkerCommands;
+use Dockworker\DockworkerDrupalCommands;
 
 /**
  * Provides commands for manipulating configuration in a Drupal application.
  */
-class DockworkerDrupalConfigurationCommands extends DockworkerCommands
+class DockworkerDrupalConfigurationCommands extends DockworkerDrupalCommands
 {
     use DockerContainerExecTrait;
 

@@ -3,12 +3,12 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Docker\DockerContainerExecTrait;
-use Dockworker\DockworkerCommands;
+use Dockworker\DockworkerDrupalCommands;
 
 /**
  * Provides commands for generating an admin ULI link within a Drupal application.
  */
-class DockworkerDrupalUliCommands extends DockworkerCommands
+class DockworkerDrupalUliCommands extends DockworkerDrupalCommands
 {
     use DockerContainerExecTrait;
 

@@ -3,14 +3,14 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Docker\DockerContainerExecTrait;
-use Dockworker\DockworkerCommands;
+use Dockworker\DockworkerDrupalCommands;
 use Dockworker\IO\DockworkerIO;
 use Dockworker\IO\DockworkerIOTrait;
 
 /**
  * Provides commands for running drush in the application's deployed resources.
  */
-class DockworkerDrushCommands extends DockworkerCommands
+class DockworkerDrushCommands extends DockworkerDrupalCommands
 {
     use DockerContainerExecTrait;
 

@@ -3,7 +3,7 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Docker\DockerContainerExecTrait;
-use Dockworker\DockworkerCommands;
+use Dockworker\DockworkerDrupalCommands;
 use Dockworker\Git\GitRepoTrait;
 use Dockworker\IO\DockworkerIOTrait;
 use Dockworker\PhpCs\PhpCsTrait;
@@ -11,7 +11,7 @@ use Dockworker\PhpCs\PhpCsTrait;
 /**
  * Provides commands for validating PHP within a Drupal application.
  */
-class DockworkerDrupalPhpValidateCommands extends DockworkerCommands
+class DockworkerDrupalPhpValidateCommands extends DockworkerDrupalCommands
 {
     use DockworkerIOTrait;
     use GitRepoTrait;

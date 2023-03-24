@@ -3,12 +3,12 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Docker\DockerContainerExecTrait;
-use Dockworker\DockworkerCommands;
+use Dockworker\DockworkerDrupalCommands;
 
 /**
  * Provides commands for rebuilding the cache in a drupal application.
  */
-class DockworkerDrupalCacheRebuildCommands extends DockworkerCommands
+class DockworkerDrupalCacheRebuildCommands extends DockworkerDrupalCommands
 {
     use DockerContainerExecTrait;
 
