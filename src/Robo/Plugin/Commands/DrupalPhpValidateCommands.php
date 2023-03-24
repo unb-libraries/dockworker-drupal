@@ -32,7 +32,12 @@ class DrupalPhpValidateCommands extends DockworkerDrupalCommands
     ];
 
     /**
-     * Validates the staged PHP files.
+     * Validates this application's PHP.
+     *
+     * @option bool $staged
+     *   Only validate files staged for commit.
+     * @option bool $changed
+     *   Only validate files changed since last commit.
      *
      * @command validate:php:drupal
      */

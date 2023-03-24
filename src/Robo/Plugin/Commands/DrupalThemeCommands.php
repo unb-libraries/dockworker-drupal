@@ -29,7 +29,7 @@ class DrupalThemeCommands extends ThemeCommands {
     private string $path;
 
     /**
-     * Compiles Drupal themes.
+     * Compiles this application's Drupal themes.
      *
      * @hook post-command theme:build-all
      */

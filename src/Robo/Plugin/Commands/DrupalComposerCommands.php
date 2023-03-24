@@ -13,7 +13,7 @@ class DrupalComposerCommands extends DockworkerDrupalCommands
     use DockerContainerExecTrait;
 
     /**
-     * Copies the composer lockfile from an application container.
+     * Copies this application's composer lockfile to the repository.
      *
      * @option string $env
      *   The environment to copy the file from.

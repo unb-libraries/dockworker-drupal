@@ -17,7 +17,7 @@ class DrupalUpdateCommands extends UpdateCommands
     use GitRepoTrait;
 
     /**
-     * Performs Drupal updates.
+     * Updates this application to the latest available packages.
      *
      * @hook post-command dockworker:update
      *

@@ -13,7 +13,7 @@ class DrupalCacheRebuildCommands extends DockworkerDrupalCommands
     use DockerContainerExecTrait;
 
     /**
-     * Rebuilds the cache in a Drupal application.
+     * Rebuilds this application's Drupal cache.
      *
      * @option string $env
      *   The environment to rebuild the cache in.

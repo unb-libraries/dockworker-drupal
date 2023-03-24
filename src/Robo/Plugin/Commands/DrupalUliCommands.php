@@ -13,7 +13,7 @@ class DrupalUliCommands extends DockworkerDrupalCommands
     use DockerContainerExecTrait;
 
     /**
-     * Generates a ULI link for the Drupal application.
+     * Generates a Drupal user login link for this application.
      *
      * @option string $env
      *   The environment to generate the ULI link in.

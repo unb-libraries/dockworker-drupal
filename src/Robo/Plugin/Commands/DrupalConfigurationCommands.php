@@ -13,7 +13,7 @@ class DrupalConfigurationCommands extends DockworkerDrupalCommands
     use DockerContainerExecTrait;
 
     /**
-     * Exports configuration from the running application to the repository.
+     * Exports this application's Drupal configuration to the repository.
      *
      * @option string $env
      *   The environment to export the configuration from.

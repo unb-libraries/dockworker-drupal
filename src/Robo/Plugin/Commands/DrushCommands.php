@@ -15,7 +15,7 @@ class DrushCommands extends DockworkerDrupalCommands
     use DockerContainerExecTrait;
 
     /**
-     * Runs a generic drush command passed as arguments.
+     * Runs a generic drush within this application.
      *
      * @param string $args
      *   The command and arguments to pass to drush.
@@ -44,7 +44,7 @@ class DrushCommands extends DockworkerDrupalCommands
     }
 
     /**
-     * Executes a drush command in the application.
+     * Executes a drush command in this application.
      *
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
