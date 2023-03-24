@@ -8,7 +8,7 @@ use Dockworker\DockworkerDrupalCommands;
 /**
  * Provides commands for manipulating configuration in a Drupal application.
  */
-class DockworkerDrupalConfigurationCommands extends DockworkerDrupalCommands
+class DrupalConfigurationCommands extends DockworkerDrupalCommands
 {
     use DockerContainerExecTrait;
 

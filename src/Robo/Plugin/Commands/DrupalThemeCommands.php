@@ -4,7 +4,7 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Cli\CliCommandTrait;
 use Dockworker\IO\DockworkerIO;
-use Dockworker\Robo\Plugin\Commands\DockworkerThemeCommands;
+use Dockworker\Robo\Plugin\Commands\ThemeCommands;
 use Dockworker\Drupal\DrupalCodeTrait;
 use Dockworker\IO\DockworkerIOTrait;
 use Dockworker\Scss\ScssCompileTrait;
@@ -15,7 +15,7 @@ use Symfony\Component\Finder\Finder;
  *
  * @TODO: Needs review, was migrated from Dockworker 5.x.
  */
-class DrupalThemeCommands extends DockworkerThemeCommands {
+class DrupalThemeCommands extends ThemeCommands {
     use CliCommandTrait;
     use DockworkerIOTrait;
     use DrupalCodeTrait;

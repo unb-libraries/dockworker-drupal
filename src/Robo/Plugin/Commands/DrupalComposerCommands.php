@@ -8,7 +8,7 @@ use Dockworker\DockworkerDrupalCommands;
 /**
  * Provides commands for generating an admin ULI link within a Drupal application.
  */
-class DockworkerDrupalComposerCommands extends DockworkerDrupalCommands
+class DrupalComposerCommands extends DockworkerDrupalCommands
 {
     use DockerContainerExecTrait;
 

@@ -11,7 +11,7 @@ use Dockworker\PhpCs\PhpCsTrait;
 /**
  * Provides commands for validating PHP within a Drupal application.
  */
-class DockworkerDrupalPhpValidateCommands extends DockworkerDrupalCommands
+class DrupalPhpValidateCommands extends DockworkerDrupalCommands
 {
     use DockworkerIOTrait;
     use GitRepoTrait;

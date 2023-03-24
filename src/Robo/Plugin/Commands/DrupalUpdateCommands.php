@@ -5,12 +5,12 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Dockworker\Core\CommandLauncherTrait;
 use Dockworker\Docker\DockerContainerExecTrait;
 use Dockworker\Git\GitRepoTrait;
-use Dockworker\Robo\Plugin\Commands\DockworkerUpdateCommands;
+use Dockworker\Robo\Plugin\Commands\UpdateCommands;
 
 /**
  * Provides commands for updating a Drupal application.
  */
-class DrupalUpdatesCommands extends DockworkerUpdateCommands
+class DrupalUpdateCommands extends UpdateCommands
 {
     use CommandLauncherTrait;
     use DockerContainerExecTrait;

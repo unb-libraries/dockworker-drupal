@@ -10,7 +10,7 @@ use Dockworker\IO\DockworkerIOTrait;
 /**
  * Provides commands for running drush in the application's deployed resources.
  */
-class DockworkerDrushCommands extends DockworkerDrupalCommands
+class DrushCommands extends DockworkerDrupalCommands
 {
     use DockerContainerExecTrait;
 

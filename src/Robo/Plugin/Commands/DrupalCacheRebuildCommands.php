@@ -8,7 +8,7 @@ use Dockworker\DockworkerDrupalCommands;
 /**
  * Provides commands for rebuilding the cache in a drupal application.
  */
-class DockworkerDrupalCacheRebuildCommands extends DockworkerDrupalCommands
+class DrupalCacheRebuildCommands extends DockworkerDrupalCommands
 {
     use DockerContainerExecTrait;
 
