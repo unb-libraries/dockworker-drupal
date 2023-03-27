@@ -30,7 +30,7 @@ class DrupalLocalLinksCommands extends DockworkerDaemonCommands
         $this->preInitDockworkerPersistentDataStorageDir();
         $this->registerDockerCliTool($this->dockworkerIO);
 
-        $this->dockworkerIO->title('Connection Info');
+        $this->dockworkerIO->title('Deployment Success!');
         $cmd = $this->dockerComposeRun(
             [
                 'exec',
