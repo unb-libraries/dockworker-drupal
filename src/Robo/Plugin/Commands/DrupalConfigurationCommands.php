@@ -64,8 +64,9 @@ class DrupalConfigurationCommands extends DockworkerDrupalCommands
                     'command' => [
                         'rm',
                         '-rf',
-                        '/app/configuration/devel.*',
-                        '/app/configuration/*.devel.yml',
+                        '/app/configuration/devel.settings.yml',
+                        '/app/configuration/devel.toolbar.settings.yml',
+                        '/app/configuration/system.menu.devel.yml',
                     ],
                     'message' => 'Removing devel configuration',
                     'use_tty' => false,
@@ -80,17 +81,6 @@ class DrupalConfigurationCommands extends DockworkerDrupalCommands
                     'message' => '',
                     'use_tty' => false,
                 ];
-                $cmd_set[] = [
-                    'command' => [
-                        'sed',
-                        '-i',
-                        '/[field,menu,views]_ui\: 0/d',
-                        '/app/configuration/core.extension.yml',
-                    ],
-                    'message' => '',
-                    'use_tty' => false,
-                ];
-
             }
             $this->executeContainerCommandSet(
                 'local',
