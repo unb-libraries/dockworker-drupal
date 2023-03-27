@@ -34,6 +34,8 @@ class DrupalThemeCommands extends ThemeCommands {
      * @hook post-command theme:build-all
      */
     public function setBuildAllDrupalThemes(): void {
+        $this->registerSassCliTool($this->dockworkerIO);
+        $this->checkPreflightChecks($this->dockworkerIO);
         $this->getCustomModulesThemes();
         if (!empty($this->drupalThemes)) {
             $this->dockworkerIO->title('Building Drupal Themes');
@@ -62,9 +64,6 @@ class DrupalThemeCommands extends ThemeCommands {
             $io->section("Building $path");
             $this->path = $path;
             $this->setPermissionsThemeDist($io);
-            $this->setScssCompiler(
-                $this->applicationRoot . '/vendor/bin/pscss'
-            );
             $this->buildThemeScss($io);
             $this->buildImageAssets($io);
             $this->buildJsAssets($io);
