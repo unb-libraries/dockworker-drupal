@@ -17,6 +17,8 @@ class DrupalConfigurationCommands extends DockworkerDrupalCommands
      *
      * @option string $env
      *   The environment to export the configuration from.
+     * @option string $no-devel-clear
+     *   Do not remove devel from the exported configuration.
      *
      * @command drupal:config:export
      * @aliases write-config
@@ -25,39 +27,74 @@ class DrupalConfigurationCommands extends DockworkerDrupalCommands
     public function exportDrupalConfiguration(
         array $options = [
             'env' => 'local',
+            'no-dev-clear' => false,
         ]
     ): void {
         if ($options['env'] === 'local') {
+            $cmd_set = [
+                [
+                    'command' => [
+                        '/scripts/configExport.sh'
+                    ],
+                    'message' => 'Exporting configuration from local',
+                ],
+                [
+                    'command' => [
+                        'chgrp',
+                        '-R',
+                        $this->userGid,
+                        '/app/configuration',
+                    ],
+                    'message' => 'Assigning ownership to local user group',
+                    'use_tty' => false,
+                ],
+                [
+                    'command' => [
+                        'chmod',
+                        '-R',
+                        'g+w',
+                        '/app/configuration',
+                    ],
+                    'message' => 'Adding group write permissions',
+                    'use_tty' => false,
+                ],
+            ];
+            if (!$options['no-dev-clear']) {
+                $cmd_set[] = [
+                    'command' => [
+                        'rm',
+                        '-rf',
+                        '/app/configuration/devel.*',
+                        '/app/configuration/*.devel.yml',
+                    ],
+                    'message' => 'Removing devel configuration',
+                    'use_tty' => false,
+                ];
+                $cmd_set[] = [
+                    'command' => [
+                        'sed',
+                        '-i',
+                        '/devel\: 0/d',
+                        '/app/configuration/core.extension.yml',
+                    ],
+                    'message' => '',
+                    'use_tty' => false,
+                ];
+                $cmd_set[] = [
+                    'command' => [
+                        'sed',
+                        '-i',
+                        '/[field,menu,views]_ui\: 0/d',
+                        '/app/configuration/core.extension.yml',
+                    ],
+                    'message' => '',
+                    'use_tty' => false,
+                ];
+
+            }
             $this->executeContainerCommandSet(
                 'local',
-                [
-                    [
-                        'command' => [
-                            '/scripts/configExport.sh'
-                        ],
-                        'message' => 'Exporting configuration from local',
-                    ],
-                    [
-                        'command' => [
-                            'chgrp',
-                            '-R',
-                            $this->userGid,
-                            '/app/configuration',
-                        ],
-                        'message' => 'Assigning ownership to local user group',
-                        'use_tty' => false,
-                    ],
-                    [
-                        'command' => [
-                            'chmod',
-                            '-R',
-                            'g+w',
-                            '/app/configuration',
-                        ],
-                        'message' => 'Adding group write permissions',
-                        'use_tty' => false,
-                    ],
-                ],
+                $cmd_set,
                 $this->dockworkerIO,
                 'Exporting Configuration',
             );
