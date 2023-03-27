@@ -89,7 +89,7 @@ class DrupalConfigurationCommands extends DockworkerDrupalCommands
                 'Exporting Configuration',
             );
         } else {
-            $container = $this->executeContainerCommand(
+            [$container, $cmd] = $this->executeContainerCommand(
                 $options['env'],
                 ['/scripts/configExport.sh'],
                 $this->dockworkerIO,
