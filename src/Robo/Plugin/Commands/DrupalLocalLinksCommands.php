@@ -44,6 +44,11 @@ class DrupalLocalLinksCommands extends DockworkerDaemonCommands
         );
         $uli_link = $cmd->getOutput();
         $this->dockworkerIO->block(
+            file_get_contents(
+                "$this->applicationRoot/vendor/unb-libraries/dockworker-drupal/data/art/complete.txt"
+            )
+        );
+        $this->dockworkerIO->block(
             $this->formatLinksBlock($uli_link)
         );
     }
