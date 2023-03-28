@@ -2,7 +2,6 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Docker\DockerContainerExecTrait;
 use Dockworker\DockworkerDrupalCommands;
 use Dockworker\Git\GitRepoTrait;
 use Dockworker\IO\DockworkerIOTrait;
@@ -17,7 +16,7 @@ class DrupalPhpValidateCommands extends DockworkerDrupalCommands
     use GitRepoTrait;
     use PhpCsTrait;
 
-    const PHPCS_EXTENSIONS = [
+    protected const PHPCS_EXTENSIONS = [
         'inc',
         'install',
         'lib',
@@ -26,7 +25,7 @@ class DrupalPhpValidateCommands extends DockworkerDrupalCommands
         'theme',
     ];
 
-    const PHPCS_STANDARDS = [
+    protected const PHPCS_STANDARDS = [
         'Drupal',
         'DrupalPractice',
     ];
@@ -40,6 +39,8 @@ class DrupalPhpValidateCommands extends DockworkerDrupalCommands
      *   Only validate files changed since last commit.
      *
      * @command validate:php:drupal
+     *
+     * @throws \CzProject\GitPhp\GitException
      */
     public function validateDrupalPhp(
         array $options = [
@@ -79,10 +80,9 @@ class DrupalPhpValidateCommands extends DockworkerDrupalCommands
                 self::PHPCS_EXTENSIONS
             );
             exit(
-            $process->getExitCode()
+                $process->getExitCode()
             );
         }
         $this->say('No PHP files found to validate');
-
     }
 }

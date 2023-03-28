@@ -3,19 +3,18 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\Cli\CliCommandTrait;
-use Dockworker\IO\DockworkerIO;
-use Dockworker\Robo\Plugin\Commands\ThemeCommands;
 use Dockworker\Drupal\DrupalCodeTrait;
+use Dockworker\IO\DockworkerIO;
 use Dockworker\IO\DockworkerIOTrait;
+use Dockworker\Robo\Plugin\Commands\ThemeCommands;
 use Dockworker\Scss\ScssCompileTrait;
 use Symfony\Component\Finder\Finder;
 
 /**
  * Defines commands used to build themes for the Drupal application.
- *
- * @TODO: Needs review, was migrated from Dockworker 5.x.
  */
-class DrupalThemeCommands extends ThemeCommands {
+class DrupalThemeCommands extends ThemeCommands
+{
     use CliCommandTrait;
     use DockworkerIOTrait;
     use DrupalCodeTrait;
@@ -33,7 +32,8 @@ class DrupalThemeCommands extends ThemeCommands {
      *
      * @hook post-command theme:build-all
      */
-    public function setBuildAllDrupalThemes(): void {
+    public function setBuildAllDrupalThemes(): void
+    {
         $this->registerSassCliTool($this->dockworkerIO);
         $this->checkPreflightChecks($this->dockworkerIO);
         $this->getCustomModulesThemes();
@@ -77,7 +77,8 @@ class DrupalThemeCommands extends ThemeCommands {
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      */
-    private function setPermissionsThemeDist(DockworkerIO $io): void {
+    private function setPermissionsThemeDist(DockworkerIO $io): void
+    {
         $this->executeCliCommandSet(
             [
                 [
@@ -123,7 +124,8 @@ class DrupalThemeCommands extends ThemeCommands {
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      */
-    private function buildThemeScss(DockworkerIO $io): void {
+    private function buildThemeScss(DockworkerIO $io): void
+    {
         $finder = new Finder();
         $finder->in($this->path)
             ->files()
@@ -146,11 +148,10 @@ class DrupalThemeCommands extends ThemeCommands {
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      *
-     * @TODO Optimize images into a standard instead of just copying them.
-     *
-     * @throws \Robo\Exception\TaskException
+     * @TODO Optimize images into a standard instead of simply copying them.
      */
-    private function buildImageAssets(DockworkerIO $io): void {
+    private function buildImageAssets(DockworkerIO $io): void
+    {
         $this->copyThemeAssets($io, 'img', 'Image');
     }
 
@@ -160,11 +161,10 @@ class DrupalThemeCommands extends ThemeCommands {
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
      *
-     * @TODO Minify javascript files instead of just copying them.
-     *
-     * @throws \Robo\Exception\TaskException
+     * @TODO Minify javascript files instead of simply copying them.
      */
-    private function buildJsAssets(DockworkerIO $io): void {
+    private function buildJsAssets(DockworkerIO $io): void
+    {
         $this->copyThemeAssets($io, 'js', 'Javascript');
     }
 
@@ -173,10 +173,9 @@ class DrupalThemeCommands extends ThemeCommands {
      *
      * @param \Dockworker\IO\DockworkerIO $io
      *   The IO to use for input and output.
-     *
-     * @throws \Robo\Exception\TaskException
      */
-    private function buildFontAssets(DockworkerIO $io): void {
+    private function buildFontAssets(DockworkerIO $io): void
+    {
         $this->copyThemeAssets($io, 'fonts', 'Font');
     }
 
@@ -201,7 +200,7 @@ class DrupalThemeCommands extends ThemeCommands {
                 [
                     'cp',
                     '-r',
-                "src/$asset_dir",
+                    "src/$asset_dir",
                     'dist/',
                 ],
                 $io,

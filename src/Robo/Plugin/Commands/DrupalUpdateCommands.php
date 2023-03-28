@@ -5,6 +5,7 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Dockworker\Core\CommandLauncherTrait;
 use Dockworker\Docker\DockerContainerExecTrait;
 use Dockworker\Git\GitRepoTrait;
+use Dockworker\IO\DockworkerIOTrait;
 use Dockworker\Robo\Plugin\Commands\UpdateCommands;
 
 /**
@@ -14,6 +15,7 @@ class DrupalUpdateCommands extends UpdateCommands
 {
     use CommandLauncherTrait;
     use DockerContainerExecTrait;
+    use DockworkerIOTrait;
     use GitRepoTrait;
 
     /**
@@ -23,7 +25,11 @@ class DrupalUpdateCommands extends UpdateCommands
      *
      * @throws \CzProject\GitPhp\GitException
      */
-    public function updateDrupalModulesAndDependencies(): void {
+    public function updateDrupalModulesAndDependencies(): void
+    {
+        // Hooks don't fire for other hooks, so we have to initialize resources.
+        $this->initDockworkerIO();
+
         $this->executeContainerCommand(
             'local',
             [
@@ -41,9 +47,13 @@ class DrupalUpdateCommands extends UpdateCommands
         );
         $this->dockworkerIO->section("Checking for Changes");
         if ($this->repoFileHasChanges('build/composer.lock')) {
-            $this->dockworkerIO->say('Changes to build/composer.lock detected. Application has updates. Commit as needed.');
+            $this->dockworkerIO->say(
+                'Changes to build/composer.lock detected. Application has updates. Commit as needed.'
+            );
         } else {
-            $this->dockworkerIO->say('No changes to build/composer.lock detected. Application has no updates.');
+            $this->dockworkerIO->say(
+                'No changes to build/composer.lock detected. Application has no updates.'
+            );
         }
     }
 }

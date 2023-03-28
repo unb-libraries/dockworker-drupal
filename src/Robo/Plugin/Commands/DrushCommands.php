@@ -13,6 +13,7 @@ use Dockworker\IO\DockworkerIOTrait;
 class DrushCommands extends DockworkerDrupalCommands
 {
     use DockerContainerExecTrait;
+    use DockworkerIOTrait;
 
     /**
      * Runs a generic drush within this application.

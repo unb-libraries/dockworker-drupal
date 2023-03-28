@@ -16,7 +16,7 @@ trait PhpCsTrait
     /**
      * Validates files using phpcs.
      *
-     * @param string $files
+     * @param string[] $files
      *   The files to validate.
      * @param string[] $lint_standards
      *   An array of linting standards to enforce.
@@ -33,7 +33,7 @@ trait PhpCsTrait
         array $files,
         array $lint_standards = ['PSR12'],
         array $extensions = ['php'],
-        $no_warnings = FALSE
+        bool $no_warnings = false
     ): CliCommand|null {
         if (!empty($files)) {
             $cmd = [
@@ -59,5 +59,6 @@ trait PhpCsTrait
                 true
             );
         }
+        return null;
     }
 }
