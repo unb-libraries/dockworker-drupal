@@ -17,11 +17,7 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
     public function provideErrorLogConfiguration()
     {
         return [
-            array_values(
-                [
-                    '',
-                ]
-            ),
+            [],
             array_values(
                 [
                     'Module, not an error.' => 'inline_form_errors',
