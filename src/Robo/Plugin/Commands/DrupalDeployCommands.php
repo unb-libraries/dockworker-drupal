@@ -16,25 +16,17 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
      */
     public function provideErrorLogConfiguration()
     {
-        /**
         return [
             array_values(
                 [
-                    'This is a description' => 'cache',
+                    '',
                 ]
             ),
             array_values(
                 [
-                    'This is a description' => 'page_cache',
+                    'Module, not an error.' => 'inline_form_errors',
                 ]
             ),
         ];
-         */
-        return (
-            [
-                [],
-                [],
-            ]
-        );
     }
 }
