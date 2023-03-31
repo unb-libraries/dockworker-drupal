@@ -132,7 +132,25 @@ class DrupalThemeCommands extends ThemeCommands
             ->name('/^[^_].*\.scss$/');
         foreach ($finder as $file) {
             $source_file = $file->getRealPath();
-            $target_file = str_replace(['/src/scss/', '.scss'], ['/dist/css/', '.css'], $source_file);
+
+            // Determine the source directory.
+            $source_file_name = basename($source_file);
+            $source_dirstring = str_replace(
+                [
+                    $this->path,
+                    $source_file_name,
+                ],
+                ['', ''],
+                $source_file
+            );
+
+            $target_file_name = preg_replace(
+                '/\.scss/',
+                '.css',
+                $source_file_name
+            );
+
+            $target_file = "$this->path/dist/$target_file_name";
             $this->compileScss(
                 $source_file,
                 $target_file,
