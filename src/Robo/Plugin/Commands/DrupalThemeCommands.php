@@ -150,7 +150,7 @@ class DrupalThemeCommands extends ThemeCommands
                 $source_file_name
             );
 
-            $target_file = "$this->path/dist/$target_file_name";
+            $target_file = "$this->path/dist/css/$target_file_name";
             $this->compileScss(
                 $source_file,
                 $target_file,
