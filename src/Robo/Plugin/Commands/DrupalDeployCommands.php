@@ -21,6 +21,7 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
             array_values(
                 [
                     'Module, not an error.' => 'inline_form_errors',
+                    'Expected error' => 'Config language.entity.en does not exist',
                 ]
             ),
         ];
