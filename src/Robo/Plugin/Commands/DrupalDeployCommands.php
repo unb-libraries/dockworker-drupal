@@ -22,6 +22,7 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
                 [
                     'Module, not an error.' => 'inline_form_errors',
                     'Expected error' => 'Config language.entity.en does not exist',
+                    ' 0 failed' => 'Migrate processes report 0 failed',
                 ]
             ),
         ];
