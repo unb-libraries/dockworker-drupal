@@ -71,7 +71,7 @@ class DrupalEnabledProjectAuditCommands extends DockworkerDrupalCommands
     public function validateEnabledProjectFiles(): void
     {
         $this->buildFilePath = $this->applicationRoot . '/build/composer.json';
-        $this->coreExtensionsFilePath = $this->applicationRoot . '/config-yml/core.extension.yml';
+        $this->coreExtensionsFilePath = $this->applicationRoot . '/configuration/core.extension.yml';
         $this->setBuildProjects();
         $this->setEnabledProjects();
         $this->setExtraneousProjects();

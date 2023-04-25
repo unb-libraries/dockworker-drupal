@@ -102,7 +102,7 @@ class DrupalConfigurationCommands extends DockworkerDrupalCommands
             $container->copyFrom(
                 $this->dockworkerIO,
                 '/app/configuration',
-                $this->applicationRoot . '/config-yml'
+                $this->applicationRoot . '/configuration'
             );
         }
     }

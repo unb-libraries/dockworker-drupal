@@ -16,11 +16,11 @@ then
 fi
 
 # Check for enabled development modules.
- if [[ -f ${ROOT_DIR}/config-yml/core.extension.yml ]] && [[ $LIST =~ "config-yml/core.extension.yml" ]]; then
+ if [[ -f ${ROOT_DIR}/configuration/core.extension.yml ]] && [[ $LIST =~ "configuration/core.extension.yml" ]]; then
   echo "Checking for enabled development extensions..."
-  if git --no-pager show :config-yml/core.extension.yml | grep -q 'devel\|kint\|dblog'; then
-    printf "\n** Warning : You appear to be committing changes to ./config-yml/core.extension.yml that enable modules typically only used for development.\n\n"
-    git diff HEAD config-yml/core.extension.yml
+  if git --no-pager show :configuration/core.extension.yml | grep -q 'devel\|kint\|dblog'; then
+    printf "\n** Warning : You appear to be committing changes to ./configuration/core.extension.yml that enable modules typically only used for development.\n\n"
+    git diff HEAD configuration/core.extension.yml
     exec < /dev/tty
     read -p "Would you still like to continue? " -n 1 -r
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
