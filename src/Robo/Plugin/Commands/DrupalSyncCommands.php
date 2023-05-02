@@ -7,6 +7,7 @@ use Dockworker\DrupalDrushSqlDumpTrait;
 use Dockworker\DrupalKubernetesPodTrait;
 use Dockworker\DrupalLocalDockerContainerTrait;
 use Dockworker\Robo\Plugin\Commands\DockworkerDeploymentDaemonCommands;
+use Robo\Robo;
 
 /**
  * Defines commands used to sync deployed data to the local Drupal application.
@@ -175,6 +176,19 @@ class DrupalSyncCommands extends DockworkerDeploymentDaemonCommands {
       );
     }
 
+    // Persistent config should not cause an error.
+    foreach (Robo::Config()->get('dockworker.drupal.persistent_config') as $ignore_delta_mask => $description) {
+      $this->say("Removing items related to: $description");
+      $delta_configs = array_values(
+        array_filter(
+          $delta_configs,
+          function ($item) use($ignore_delta_mask){
+            return !preg_match("/$ignore_delta_mask/", $item);
+          }
+        )
+      );
+    }
+
     if (!empty($delta_configs)) {
       $this->say("When comparing deployed active configuration and the deployed config sync directory, differences were found in the following objects:");
       $this->io()->block(print_r($delta_configs, TRUE));
@@ -187,6 +201,7 @@ class DrupalSyncCommands extends DockworkerDeploymentDaemonCommands {
     else {
       $this->say("No differences found when comparing deployed active configuration and the deployed config sync directory");
     }
+    exit(0);
   }
 
   /**
