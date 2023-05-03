@@ -556,7 +556,7 @@ class DrupalSyncCommands extends DockworkerDeploymentDaemonCommands {
     $this->runLocalContainerCommand('rm -f ' . $container_file_archive_path);
 
     $this->say("[Container] Setting config sync permissions...");
-    $this->runLocalContainerCommand('/scripts/pre-init.d/71_set_config_sync_permissions.sh');
+    $this->runLocalContainerCommand('/scripts/setConfigDirPermissions.sh');
     $this->say("[Container] Setting public file permissions...");
     $this->runLocalContainerCommand('/scripts/pre-init.d/71_set_public_file_permissions.sh');
     $this->say("[Container] Securing config sync dir...");
