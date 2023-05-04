@@ -28,6 +28,7 @@ class DrupalUpdateCommands extends UpdateCommands
     public function updateDrupalModulesAndDependencies(): void
     {
         // Hooks don't fire for other hooks, so we have to initialize resources.
+        $this->initOptions();
         $this->initDockworkerIO();
 
         $this->executeContainerCommand(

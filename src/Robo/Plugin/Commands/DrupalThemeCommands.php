@@ -34,6 +34,7 @@ class DrupalThemeCommands extends ThemeCommands
      */
     public function setBuildAllDrupalThemes(): void
     {
+        $this->initOptions();
         $this->initDockworkerIO();
         $this->preInitDockworkerPersistentDataStorageDir();
         $this->registerSassCliTool($this->dockworkerIO);
