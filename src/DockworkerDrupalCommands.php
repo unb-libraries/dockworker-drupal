@@ -16,8 +16,8 @@ class DockworkerDrupalCommands extends DockworkerDaemonCommands
     /**
      * @hook pre-init
      */
-    public function initOptions(InputInterface $input, AnnotationData $annotationData)
+    public function initOptions()
     {
-        parent::initOptions($input, $annotationData);
+        parent::initOptions();
     }
 }
