@@ -2,7 +2,9 @@
 
 namespace Dockworker;
 
+use Consolidation\AnnotatedCommand\AnnotationData;
 use Dockworker\DockworkerDaemonCommands;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * Defines a base abstract class for all dockworker-drupal commands.
@@ -12,12 +14,10 @@ use Dockworker\DockworkerDaemonCommands;
 class DockworkerDrupalCommands extends DockworkerDaemonCommands
 {
     /**
-     * DockworkerCommands constructor.
-     *
-     * @throws \Dockworker\DockworkerException
+     * @hook pre-init
      */
-    public function __construct()
+    public function initOptions(InputInterface $input, AnnotationData $annotationData)
     {
-        parent::__construct();
+        parent::initOptions($input, $annotationData);
     }
 }
