@@ -31,7 +31,7 @@ class DrupalUpdateCommands extends UpdateCommands
         $this->initOptions();
         $this->initDockworkerIO();
 
-        $this->executeContainerCommand(
+        [$container, $command] = $this->executeContainerCommand(
             'local',
             [
                 'composer',
@@ -42,10 +42,15 @@ class DrupalUpdateCommands extends UpdateCommands
             'Updating Application',
             'Checking for Updates'
         );
-        $this->setRunOtherCommand(
-            $this->dockworkerIO,
-            ['write-lock']
-        );
+
+      $this->dockworkerIO->title('Copying Lockfile');
+      $container->copyFrom(
+        $this->dockworkerIO,
+        '/app/html/composer.lock',
+        $this->applicationRoot . '/build/composer.lock'
+      );
+      $this->dockworkerIO->say('Done!');
+
         $this->dockworkerIO->section("Checking for Changes");
         if ($this->repoFileHasChanges('build/composer.lock')) {
             $this->dockworkerIO->say(
