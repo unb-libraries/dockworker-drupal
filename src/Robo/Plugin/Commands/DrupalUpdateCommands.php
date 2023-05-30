@@ -2,8 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Core\CommandLauncherTrait;
-use Dockworker\Docker\DockerContainerExecTrait;
+use Dockworker\Cli\CliCommandTrait;
 use Dockworker\Git\GitRepoTrait;
 use Dockworker\IO\DockworkerIOTrait;
 use Dockworker\Robo\Plugin\Commands\UpdateCommands;
@@ -13,8 +12,7 @@ use Dockworker\Robo\Plugin\Commands\UpdateCommands;
  */
 class DrupalUpdateCommands extends UpdateCommands
 {
-    use CommandLauncherTrait;
-    use DockerContainerExecTrait;
+    use CliCommandTrait;
     use DockworkerIOTrait;
     use GitRepoTrait;
 
@@ -31,27 +29,24 @@ class DrupalUpdateCommands extends UpdateCommands
         $this->initOptions();
         $this->initDockworkerIO();
 
-        [$container, $command] = $this->executeContainerCommand(
-            'local',
+        $this->dockworkerIO->title('Updating Drupal');
+        $this->dockworkerIO->section('Checking for Updates');
+        $this->executeCliCommand(
             [
                 'composer',
-                '--working-dir=/app/html',
                 'update',
+                '--no-autoloader',
+                '--no-scripts',
+                '--no-plugins',
             ],
             $this->dockworkerIO,
-            'Updating Application',
-            'Checking for Updates'
+            $this->applicationRoot . '/build',
+            '',
+            "Updating composer.lock",
+            true
         );
 
-      $this->dockworkerIO->title('Copying Lockfile');
-      $container->copyFrom(
-        $this->dockworkerIO,
-        '/app/html/composer.lock',
-        $this->applicationRoot . '/build/composer.lock'
-      );
-      $this->dockworkerIO->say('Done!');
-
-        $this->dockworkerIO->section("Checking for Changes");
+        $this->dockworkerIO->section('Checking for Changes');
         if ($this->repoFileHasChanges('build/composer.lock')) {
             $this->dockworkerIO->say(
                 'Changes to build/composer.lock detected. Application has updates. Commit as needed.'
