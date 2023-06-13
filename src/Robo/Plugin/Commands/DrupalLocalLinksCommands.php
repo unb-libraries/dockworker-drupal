@@ -18,6 +18,10 @@ class DrupalLocalLinksCommands extends DockworkerDaemonCommands
     /**
      * Informs the user of useful information after a successful deployment.
      *
+     * For the sake of simplicity, as this is a hook (and we know it is local)
+     * we bypass the container discovery process and just send the ULI command
+     * to the container directly.
+     *
      * @hook post-command application:deploy
      */
     public function displayDrupalLocalLinks(
@@ -31,10 +35,11 @@ class DrupalLocalLinksCommands extends DockworkerDaemonCommands
         $this->registerDockerCliTool($this->dockworkerIO);
 
         $this->dockworkerIO->title('Deployment Success!');
+
         $cmd = $this->dockerComposeRun(
             [
                 'exec',
-                $this->applicationName,
+                $this->applicationSlug,
                 '/scripts/drupalUli.sh'
             ],
             '',
