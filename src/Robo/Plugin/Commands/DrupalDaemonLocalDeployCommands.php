@@ -3,15 +3,17 @@
 namespace Dockworker\Robo\Plugin\Commands;
 
 use Consolidation\AnnotatedCommand\CommandData;
+use Dockworker\Docker\DeployedLocalResourcesTrait;
 use Dockworker\Docker\DockerComposeTrait;
 use Dockworker\DockworkerDaemonCommands;
 use Dockworker\IO\DockworkerIOTrait;
 
 /**
- * Provides commands for generating local links for a Drupal application.
+ * Provides commands for interacting with a Drupal deployment locally.
  */
-class DrupalLocalLinksCommands extends DockworkerDaemonCommands
+class DrupalDaemonLocalDeployCommands extends DockworkerDaemonCommands
 {
+    use DeployedLocalResourcesTrait;
     use DockerComposeTrait;
     use DockworkerIOTrait;
 
