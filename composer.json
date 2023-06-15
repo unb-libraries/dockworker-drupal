@@ -4,7 +4,12 @@
   "type": "library",
   "require": {
     "drupal/coder": "^8",
+    "ext-yaml": "*",
     "unb-libraries/dockworker-daemon": "6.x-dev"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^1",
+    "squizlabs/php_codesniffer": "^3"
   },
   "license": "MIT",
   "minimum-stability": "dev",

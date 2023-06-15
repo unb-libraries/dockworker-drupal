@@ -23,7 +23,6 @@ trait DrupalCodeTrait
      */
     protected array $drupalThemes = [];
 
-
     /**
      * Sets up the custom modules and themes in the current repository.
      */

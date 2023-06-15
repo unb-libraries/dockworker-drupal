@@ -16,7 +16,7 @@ class DockworkerDrupalCommands extends DockworkerDaemonCommands
     /**
      * @hook pre-init
      */
-    public function initOptions()
+    public function initOptions(): void
     {
         parent::initOptions();
     }

@@ -157,8 +157,7 @@ class DrupalThemeCommands extends ThemeCommands
             $this->compileScss(
                 $source_file,
                 $target_file,
-                $io,
-                $this->path
+                $io
             );
         }
     }

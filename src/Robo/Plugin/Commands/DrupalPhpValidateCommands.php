@@ -33,6 +33,9 @@ class DrupalPhpValidateCommands extends DockworkerDrupalCommands
     /**
      * Validates this application's PHP.
      *
+     * @param mixed[] $options
+     *   The options passed to the command.
+     *
      * @option bool $staged
      *   Only validate files staged for commit.
      * @option bool $changed

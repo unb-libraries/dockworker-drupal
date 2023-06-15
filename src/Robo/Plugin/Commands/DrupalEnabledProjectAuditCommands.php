@@ -157,6 +157,9 @@ class DrupalEnabledProjectAuditCommands extends DockworkerDrupalCommands
 
     /**
      * Reports mismatches or problems to the user.
+     *
+     * @param \Dockworker\IO\DockworkerIO $io
+     *   The IO to use for input and output.
      */
     protected function reportExtraneousProjects($io): void
     {
@@ -170,8 +173,7 @@ class DrupalEnabledProjectAuditCommands extends DockworkerDrupalCommands
                 'Projects (ex: ldap) may contain submodules that are different than their project name, and those modules are enabled.',
                 'Projects may be non-modules or have codebase portions required by other projects, but the modules are not enabled in Drupal.',
             ]);
-        }
-        else {
+        } else {
             $io->say('Hooray! No projects detected as built, but not enabled.');
         }
     }

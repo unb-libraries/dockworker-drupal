@@ -24,6 +24,11 @@ class DrupalDaemonLocalDeployCommands extends DockworkerDaemonCommands
      * we bypass the container discovery process and just send the ULI command
      * to the container directly.
      *
+     * @param mixed $result
+     *   The result of the command.
+     * @param \Consolidation\AnnotatedCommand\CommandData $commandData
+     *   The command data.
+     *
      * @hook post-command application:deploy
      */
     public function displayDrupalLocalLinks(
@@ -68,7 +73,8 @@ class DrupalDaemonLocalDeployCommands extends DockworkerDaemonCommands
      * @param string $login_link
      *   The login link to display.
      *
-     * @return array
+     * @return string[]
+     *   The formatted links block.
      */
     protected function formatLinksBlock($login_link): array
     {

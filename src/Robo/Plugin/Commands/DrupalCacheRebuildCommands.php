@@ -15,6 +15,9 @@ class DrupalCacheRebuildCommands extends DockworkerDrupalCommands
     /**
      * Rebuilds this application's Drupal cache.
      *
+     * @param mixed[] $options
+     *   The options passed to the command.
+     *
      * @option string $env
      *   The environment to rebuild the cache in.
      *

@@ -15,6 +15,9 @@ class DrupalConfigurationCommands extends DockworkerDrupalCommands
     /**
      * Exports this application's Drupal configuration to the repository.
      *
+     * @param mixed[] $options
+     *   The options passed to the command.
+     *
      * @option string $env
      *   The environment to export the configuration from.
      * @option string $no-devel-clear

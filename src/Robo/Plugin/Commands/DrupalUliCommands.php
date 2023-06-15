@@ -15,6 +15,9 @@ class DrupalUliCommands extends DockworkerDrupalCommands
     /**
      * Generates a Drupal user login link for this application.
      *
+     * @param mixed[] $options
+     *   The options passed to the command.
+     *
      * @option string $env
      *   The environment to generate the ULI link in.
      * @option string $uid

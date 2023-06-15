@@ -13,8 +13,11 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
      * The following function curently does nothing, but provides an example.
      *
      * @hook on-event dockworker-logs-errors-exceptions
+     *
+     * @return mixed[]
+     *   The error log exceptions.
      */
-    public function provideErrorLogConfiguration()
+    public function provideErrorLogConfiguration(): array
     {
         return [
             [],
