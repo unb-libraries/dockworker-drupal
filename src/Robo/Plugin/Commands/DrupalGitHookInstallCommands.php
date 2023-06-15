@@ -7,8 +7,8 @@ use Dockworker\RepoFinder;
 /**
  * Provides commands to copy git hooks into a drupal application repository.
  */
-class DrupalGitHookInstallCommands extends GitHookInstallCommands {
-
+class DrupalGitHookInstallCommands extends GitHookInstallCommands
+{
     /**
      * Sets up the required git hooks for dockworker-drupal.
      *
