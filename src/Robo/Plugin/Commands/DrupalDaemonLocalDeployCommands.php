@@ -51,6 +51,7 @@ class DrupalDaemonLocalDeployCommands extends DockworkerDaemonCommands
             ],
             '',
             null,
+            null,
             [],
             false
         );
