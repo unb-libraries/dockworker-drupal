@@ -1,0 +1,14 @@
+name: Update {{ project_name }}
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '{{ update_minute }} {{ update_hour }} * * 1,4'
+
+jobs:
+  deploy:
+    uses: unb-libraries/dockworker/.github/workflows/update.yaml@6.x
+    with:
+      add-paths: 'build/composer.*'
+    secrets:
+      {% verbatim %}PAT_TOKEN: ${{ secrets.UNBLIBBOT_PAT_TOKEN }}{% endverbatim %}

@@ -1,0 +1,22 @@
+name: Deploy {{ project_name }}
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: unb-libraries/dockworker/.github/workflows/build-push-deploy-notify.yaml@6.x
+    with:
+      branch-env-map: '{{ deploy_branch_map|raw }}'
+      build-themes: true
+      deploy-branches: '{{ deploy_branches|raw }}'
+      image-name: '{{ image_name }}'
+      k8s-deployment-name: '{{ project_slug }}'
+      push-branches: '{{ push_branches|raw }}'
+    secrets:
+      {% verbatim %}KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_DATA }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      GH_CONTAINER_REGISTRY_USER: ${{ secrets.GH_CONTAINER_REGISTRY_USER }}
+      GH_CONTAINER_REGISTRY_TOKEN: ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}{% endverbatim %}
