@@ -248,11 +248,9 @@ jobs:
         name: Set Image Tag
         run: cat /tmp/image_tag.env >> $GITHUB_ENV
       -
-        name: Deploy image to cluster
-        run: vendor/bin/dockworker docker:image:deploy $CI_REF_NAME --use-tag $BUILD_IMAGE_TAG
-        env:
-          GH_CONTAINER_REGISTRY_TOKEN: ${{secrets.GH_CONTAINER_REGISTRY_TOKEN}}
-          GH_CONTAINER_REGISTRY_USER: ${{secrets.GH_CONTAINER_REGISTRY_USER}}
+        name: Update Image In Kubernetes Deployment
+        run: |
+          kubectl set image "deployment/$CI_REPOSITORY_NAME_SLUG" "$CI_REPOSITORY_NAME_SLUG=ghcr.io/unb-libraries/$CI_REPOSITORY_NAME:$BUILD_IMAGE_TAG" --namespace="$CI_REF_NAME"
 
   check-live-deployment:
     name: Check Live Deployment Logs
