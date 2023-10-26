@@ -2,6 +2,7 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
+use Consolidation\AnnotatedCommand\CommandData;
 use Dockworker\Docker\DockerContainerExecTrait;
 use Dockworker\DockworkerDrupalCommands;
 
@@ -11,6 +12,33 @@ use Dockworker\DockworkerDrupalCommands;
 class DrupalUliCommands extends DockworkerDrupalCommands
 {
     use DockerContainerExecTrait;
+
+    /**
+     * Informs the user of the ULI after a snapshot install.
+     *
+     * @param mixed $result
+     *   The result of the command.
+     * @param \Consolidation\AnnotatedCommand\CommandData $commandData
+     *   The command data.
+     *
+     * @hook post-command snapshot:install
+     */
+    public function displayDrupalLocalLinksSnapshot(
+        $result,
+        CommandData $commandData
+    ): void {
+        $env = $commandData->input()->getOption('env');
+        $this->initOptions();
+        $this->initDockworkerIO();
+        $this->preInitDockworkerPersistentDataStorageDir();
+
+        $this->generateDrupalUli(
+            [
+                'env' => $env,
+                'uid' => '1',
+            ]
+        );
+    }
 
     /**
      * Generates a Drupal user login link for this application.
