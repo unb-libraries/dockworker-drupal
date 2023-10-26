@@ -18,6 +18,23 @@ class DrupalDaemonLocalDeployCommands extends DockworkerDaemonCommands
     use DockworkerIOTrait;
 
     /**
+     * Informs the user of the ULI after a snapshot deploy.
+     *
+     * @param mixed $result
+     *   The result of the command.
+     * @param \Consolidation\AnnotatedCommand\CommandData $commandData
+     *   The command data.
+     *
+     * @hook post-command snapshot:install
+     */
+    public function displayDrupalLocalLinksSnapshot(
+        $result,
+        CommandData $commandData
+    ): void {
+        $this->displayDrupalLocalLinks($result, $commandData);
+    }
+
+    /**
      * Informs the user of useful information after a successful deployment.
      *
      * For the sake of simplicity, as this is a hook (and we know it is local)
