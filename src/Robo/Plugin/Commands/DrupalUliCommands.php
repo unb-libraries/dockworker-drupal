@@ -23,7 +23,7 @@ class DrupalUliCommands extends DockworkerDrupalCommands
      *
      * @hook post-command snapshot:install
      */
-    public function displayDrupalLocalLinksSnapshot(
+    public function displayUliAfterSnapshot(
         $result,
         CommandData $commandData
     ): void {
