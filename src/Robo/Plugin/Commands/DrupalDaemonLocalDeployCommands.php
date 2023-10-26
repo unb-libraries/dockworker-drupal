@@ -31,7 +31,7 @@ class DrupalDaemonLocalDeployCommands extends DockworkerDaemonCommands
         $result,
         CommandData $commandData
     ): void {
-        $this->displayDrupalLocalLinks($result, $commandData);
+        $this->displayDrupalLocalLinks($result, $commandData, 'Snapshot Install');
     }
 
     /**
@@ -50,7 +50,8 @@ class DrupalDaemonLocalDeployCommands extends DockworkerDaemonCommands
      */
     public function displayDrupalLocalLinks(
         $result,
-        CommandData $commandData
+        CommandData $commandData,
+        $action = 'Deployment'
     ): void {
         // Hooks don't fire for other hooks, so we have to initialize resources.
         $this->initOptions();
@@ -58,7 +59,7 @@ class DrupalDaemonLocalDeployCommands extends DockworkerDaemonCommands
         $this->preInitDockworkerPersistentDataStorageDir();
         $this->registerDockerCliTool($this->dockworkerIO);
 
-        $this->dockworkerIO->title('Deployment Success!');
+        $this->dockworkerIO->title("$action Success!");
 
         $cmd = $this->dockerComposeRun(
             [
