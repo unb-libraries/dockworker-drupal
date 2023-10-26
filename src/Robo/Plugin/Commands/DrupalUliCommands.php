@@ -27,7 +27,7 @@ class DrupalUliCommands extends DockworkerDrupalCommands
         $result,
         CommandData $commandData
     ): void {
-        $env = $commandData->input()->getOption('env');
+        $env = $commandData->input()->getOption('target-env');
         $this->initOptions();
         $this->initDockworkerIO();
         $this->preInitDockworkerPersistentDataStorageDir();
