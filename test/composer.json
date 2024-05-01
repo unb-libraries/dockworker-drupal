@@ -10,6 +10,7 @@
     "unb-libraries/dockworker-drupal": "*"
   },
   "minimum-stability": "dev",
+  "prefer-stable": true,
   "config": {
     "allow-plugins": {
       "dealerdirect/phpcodesniffer-composer-installer": true,
