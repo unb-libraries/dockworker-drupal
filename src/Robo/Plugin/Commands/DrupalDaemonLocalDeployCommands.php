@@ -5,6 +5,7 @@ namespace Dockworker\Robo\Plugin\Commands;
 use Consolidation\AnnotatedCommand\CommandData;
 use Dockworker\Docker\DeployedLocalResourcesTrait;
 use Dockworker\Docker\DockerComposeTrait;
+use Dockworker\Docker\DockerContainerExecTrait;
 use Dockworker\DockworkerDaemonCommands;
 use Dockworker\IO\DockworkerIOTrait;
 
@@ -15,7 +16,42 @@ class DrupalDaemonLocalDeployCommands extends DockworkerDaemonCommands
 {
     use DeployedLocalResourcesTrait;
     use DockerComposeTrait;
+    use DockerContainerExecTrait;
     use DockworkerIOTrait;
+
+    /**
+     * Ensure that the local application deployment is tidied up for a restart.
+     *
+     * @hook on-event dockworker-pre-local-restart-actions
+     *
+     */
+    public function preRestartDrupalActions(): void
+    {
+        $this->initDockworkerIO();
+        $devel_modules = [
+            'devel',
+            'devel_generate',
+            'devel_php',
+            'devel_reinstall',
+            'devel_node_access',
+        ];
+        $command = [
+            'drush',
+            '-y',
+            'pmu',
+        ];
+        $this->executeContainerCommand(
+            'local',
+            array_merge($command, $devel_modules),
+            $this->dockworkerIO,
+            'Disabling Development Modules',
+            sprintf(
+                "[%s] Disabling development modules: %s'...",
+                'local',
+                implode(' ', $devel_modules)
+            )
+        );
+    }
 
     /**
      * Informs the user of useful information after a successful deployment.
