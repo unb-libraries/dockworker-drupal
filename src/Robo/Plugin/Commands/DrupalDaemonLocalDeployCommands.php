@@ -23,17 +23,15 @@ class DrupalDaemonLocalDeployCommands extends DockworkerDaemonCommands
      * Ensure that the local application deployment is tidied up for a restart.
      *
      * @hook on-event dockworker-pre-local-restart-actions
-     *
      */
     public function preRestartDrupalActions(): void
     {
+        $this->initOptions();
         $this->initDockworkerIO();
+        $this->preInitDockworkerPersistentDataStorageDir();
+        $this->registerDockerCliTool($this->dockworkerIO);
         $devel_modules = [
             'devel',
-            'devel_generate',
-            'devel_php',
-            'devel_reinstall',
-            'devel_node_access',
         ];
         $command = [
             'drush',
@@ -46,11 +44,30 @@ class DrupalDaemonLocalDeployCommands extends DockworkerDaemonCommands
             $this->dockworkerIO,
             'Disabling Development Modules',
             sprintf(
-                "[%s] Disabling development modules: %s'...",
+                "[%s] Disabling development modules: %s...",
                 'local',
-                implode(' ', $devel_modules)
+                implode(',', $devel_modules)
             )
         );
+    }
+
+    /**
+     * Informs the user of useful information after a successful deployment.
+     *
+     * This is necessary as it doesn't seem multiple hooks can be added to a method.
+     *
+     * @param mixed $result
+     *   The result of the command.
+     * @param \Consolidation\AnnotatedCommand\CommandData $commandData
+     *   The command data.
+     *
+     * @hook post-command application:restart
+     */
+    public function displayDrupalLocalLinksAfterRestart(
+        $result,
+        CommandData $commandData
+    ): void {
+        $this->displayDrupalLocalLinks($result, $commandData, 'Restart');
     }
 
     /**
