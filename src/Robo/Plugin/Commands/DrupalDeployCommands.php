@@ -23,9 +23,15 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
             [],
             array_values(
                 [
+                    // Drupal 10 exceptions.
                     'Module, not an error.' => 'inline_form_errors',
                     'Expected error' => 'Config language.entity.en does not exist',
                     'Migrate processes report 0 failed' =>  ' 0 failed',
+
+                    // Drupal 9 exceptions.
+                    'Expected in Local.' => 'Operation CREATE USER failed',
+                    'Expected composer summary output' => 'failure: 0',
+                    'Expected composer suggest output' => 'error-handler instead',
                 ]
             ),
         ];
