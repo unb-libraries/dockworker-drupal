@@ -2,18 +2,15 @@
 
 namespace Dockworker\Robo\Plugin\Commands;
 
-use Dockworker\Docker\DockerContainerExecTrait;
 use Dockworker\DockworkerDrupalCommands;
-use Dockworker\IO\DockworkerIO;
-use Dockworker\IO\DockworkerIOTrait;
+use Dockworker\Drupal\DrushCommandTrait;
 
 /**
  * Provides commands for running drush in the application's deployed resources.
  */
 class DrushCommands extends DockworkerDrupalCommands
 {
-    use DockerContainerExecTrait;
-    use DockworkerIOTrait;
+    use DrushCommandTrait;
 
     /**
      * Runs a generic drush within this application.
@@ -44,38 +41,4 @@ class DrushCommands extends DockworkerDrupalCommands
         );
     }
 
-    /**
-     * Executes a drush command in this application.
-     *
-     * @param \Dockworker\IO\DockworkerIO $io
-     *   The IO to use for input and output.
-     * @param string $env
-     *   The environment to run the command in.
-     * @param string[] $command
-     *   The command to run.
-     *
-     * @option string $env
-     *   The environment to run the command in.
-     */
-    protected function executeDrushCommand(
-        DockworkerIO $io,
-        string $env,
-        array $command
-    ): void {
-        $io->title('Drush');
-        $cmd_base = [
-            'drush',
-        ];
-        $this->executeContainerCommand(
-            $env,
-            array_merge($cmd_base, $command),
-            $this->dockworkerIO,
-            'Generating ULI',
-            sprintf(
-                "[%s] Running 'drush %s'...",
-                $env,
-                implode(' ', $command)
-            )
-        );
-    }
 }
