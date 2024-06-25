@@ -32,6 +32,9 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
                     'Expected in Local.' => 'Operation CREATE USER failed',
                     'Expected composer summary output' => 'failure: 0',
                     'Expected composer suggest output' => 'error-handler instead',
+
+                    // Generic exceptions.
+                    'Ignore .well-known trolling' => '/.well-known/',
                 ]
             ),
         ];
