@@ -34,7 +34,7 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
                     'Expected composer suggest output' => 'error-handler instead',
 
                     // Generic exceptions.
-                    'Ignore .well-known trolling' => '/.well-known/',
+                    'Ignore .well-known trolling' => '.well-known',
                 ]
             ),
         ];
