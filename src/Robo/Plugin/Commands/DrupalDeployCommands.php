@@ -35,6 +35,9 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
 
                     // Generic exceptions.
                     'Ignore .well-known trolling' => '.well-known',
+
+                    // Calendar exception.
+                    'Calendar template name' => 'HoursCalendarUnavailableTemplate',
                 ]
             ),
         ];
