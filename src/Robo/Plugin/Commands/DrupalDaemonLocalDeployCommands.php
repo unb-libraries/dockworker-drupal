@@ -140,10 +140,18 @@ http://local-%s:%s/',
             $this->applicationName,
             $this->applicationUuid
         );
+        // Get the path by removing everything before /user in the string
+        $login_link_path = preg_replace('/^.*?(\/user.*)$/', '$1', trim($login_link));
+        $local_login_link = sprintf(
+            'http://local-%s:%s%s',
+            $this->applicationName,
+            $this->applicationUuid,
+            $login_link_path
+        );
         $local_links[] = sprintf(
             'Log-in to your instance via:
 %s',
-            $login_link
+            $local_login_link
         );
         return $local_links;
     }
