@@ -24,7 +24,7 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
             array_values(
                 [
                     // Drupal 11 local exceptions.
-                    'Expected Drupal 11 exception' => 'Triage : Database connection issue: ERROR 1045 (28000): Access denied for user \'drupal\'',
+                    'Expected Drupal 11 exception' => 'Access denied for user \'drupal\'',
 
                     // Drupal 10 exceptions.
                     'Module, not an error.' => 'inline_form_errors',
