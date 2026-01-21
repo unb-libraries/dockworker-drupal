@@ -28,6 +28,7 @@ class DrupalUpdateCommands extends UpdateCommands
         // Hooks don't fire for other hooks, so we have to initialize resources.
         $this->initOptions();
         $this->initDockworkerIO();
+        $this->initGitRepo();
 
         $this->dockworkerIO->title('Updating Drupal');
         $this->dockworkerIO->section('Checking for Updates');
