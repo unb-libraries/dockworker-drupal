@@ -52,30 +52,84 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
             'Calendar template name' => 'HoursCalendarUnavailableTemplate',
         ];
 
-        $schema_pattern = $this->buildSchemaIgnoreExceptionPattern();
-        if ($schema_pattern !== null) {
-            $exceptions['Ignored Drupal config-schema warnings']
-                = $schema_pattern;
+        $exceptions['Drupal config-schema warning envelope']
+            = $this->schemaBoilerplateExceptionPattern();
+
+        $header = $this->buildSchemaIgnoreHeaderPattern();
+        if ($header !== null) {
+            $exceptions['Ignored Drupal config-schema warning headers']
+                = $header;
         }
 
         return [[], array_values($exceptions)];
     }
 
     /**
-     * Builds a regex alternative that suppresses configured schema warnings.
+     * Returns the always-on boilerplate pattern for schema-warning envelopes.
+     *
+     * These phrases are stable Drupal/Drush strings surrounding every
+     * config-schema warning, independent of the specific config named.
+     * Suppressing them is safe: the warning is cosmetic per Drupal's own
+     * "this is not a fatal error" note, and the primary header line is
+     * still visible in the stream.
+     *
+     * @return string
+     *   A pipe-joined list of regex alternatives.
+     */
+    private function schemaBoilerplateExceptionPattern(): string
+    {
+        return implode('|', [
+            // Wrap-tail anchor on the Drush "with the following | errors:"
+            // fragment when the header line itself wraps.
+            '\|\s+errors:\s*$',
+            // Single-line, most specific form.
+            'is configuration that does not comply with its schema',
+            // Shorter form: survives word-wrap that splits the
+            // "is configuration that" prefix onto the prior line.
+            'does not comply with its schema',
+            'not a fatal error, but it is',
+            'recommended to fix these issues',
+            'For more information on configuration schemas',
+            'check out the documentation',
+            // Stable docs-URL fragment. Immune to any rewording; only
+            // changes if Drupal moves the docs page.
+            'configuration-schemametadata',
+            'These errors mean there',
+            // Per-field continuation line of a "Schema errors for X"
+            // summary: "X:path missing schema" or "... missing schema, ...".
+            // Distinctive enough that it only appears in schema-warning
+            // output, so always-on suppression is safe.
+            'missing schema',
+        ]);
+    }
+
+    /**
+     * Builds header-only regex alternatives for the configured allowlist.
      *
      * Reads dockworker.drupal.schemas.ignore_enforcement from
-     * .dockworker/dockworker.yml. Each entry is a glob against the
-     * <config_name> slot in "[warning] Schema errors for <config_name> with
-     * the following errors: ...". Supports '*' as the only wildcard (matches
-     * any non-whitespace run); all other characters are literal.
+     * .dockworker/dockworker.yml. Each entry names a Drupal config (e.g.
+     * "views.settings", "system.authorize") and is matched against the
+     * <config_name> slot in the two Drush schema-warning headers:
+     *
+     *   [warning] Schema errors for <config_name> with the following ...
+     *   [warning] Message: No schema for <config_name>.
+     *
+     * A trailing ".*" wildcard matches the bare config name OR any
+     * non-whitespace descendant (so "system.authorize.*" matches both
+     * "system.authorize" and "system.authorize.foo"). Mid-string "*" is
+     * retained as a non-whitespace wildcard for back-compat.
+     *
+     * Generic boilerplate that trails every schema warning is handled
+     * separately by schemaBoilerplateExceptionPattern() and is always-on,
+     * so this function only contributes header matches.
      *
      * Emits a one-time informational note listing the active patterns.
      *
      * @return string|null
-     *   The regex alternative, or null when no patterns are configured.
+     *   The header regex alternative, or null when no patterns are
+     *   configured.
      */
-    private function buildSchemaIgnoreExceptionPattern(): ?string
+    private function buildSchemaIgnoreHeaderPattern(): ?string
     {
         $raw = Robo::config()->get(
             'dockworker.drupal.schemas.ignore_enforcement',
@@ -88,44 +142,38 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
 
         $fragments = [];
         foreach ($patterns as $entry) {
-            // preg_quote escapes '.' and '*'; turn the escaped '\*' back
-            // into a whitespace-terminated wildcard.
-            $fragments[] = str_replace(
-                '\*',
-                '[^\s]*',
-                preg_quote($entry, '/')
-            );
+            $quoted = preg_quote($entry, '/');
+            if (str_ends_with($quoted, '\.\*')) {
+                // "foo.bar.*" → matches "foo.bar" OR
+                // "foo.bar.<non-whitespace>".
+                $fragments[] = substr($quoted, 0, -4)
+                    . '(?:\.[^\s]*)?';
+            } else {
+                // Mid-string '*' kept as non-whitespace wildcard for
+                // back-compat.
+                $fragments[] = str_replace('\*', '[^\s]*', $quoted);
+            }
         }
 
         $this->noteActiveSchemaIgnore($patterns);
 
-        // Header match. Drush renders the LenientConfigSchemaChecker
-        // exception as '[warning] Message: Schema errors for X ...', and
-        // other renderers may inject different tokens between [warning]
-        // and 'Schema errors for'. Accept any non-newline content there.
-        $header = '\[warning\][^\n]*?Schema errors for (?:'
-            . implode('|', $fragments)
-            . ')(?=\s|:|$)';
+        $group = '(?:' . implode('|', $fragments) . ')';
 
-        // Boilerplate continuation match. Drush wraps the full schema-
-        // warning message across multiple lines at ~80 cols. Each wrapped
-        // line contains at least one error-keyword (errors, error, fatal)
-        // and would otherwise surface as a separate "error" under the
-        // line-level scanner. The boilerplate text is identical across
-        // every schema warning and carries no config-specific
-        // information, so suppressing it wholesale when the allowlist is
-        // active is safe: an un-allowlisted schema warning still fails
-        // the build via its primary header line.
-        $boilerplate = [
-            '\|\s+errors:\s*$',
-            'These errors mean there',
-            'is configuration that does not comply with its schema',
-            'not a fatal error, but it is recommended',
-            'recommended to fix these issues',
-            'For more information on configuration schemas',
-        ];
+        // Format 1: the LenientConfigSchemaChecker single-line form
+        // emitted during drush config-import. Drush may inject tokens
+        // between '[warning]' and 'Schema errors for', so accept any
+        // non-newline content there.
+        $header_schema_errors = '\[warning\][^\n]*?Schema errors for '
+            . $group . '(?=[\s:]|$)';
 
-        return $header . '|' . implode('|', $boilerplate);
+        // Format 2: the Drush exception-renderer form, e.g.
+        // '[warning] Message: No schema for system.authorize.'. The
+        // trailing period is sentence punctuation — the '\.' in the
+        // lookahead lets a bare config name bind.
+        $header_no_schema = '\[warning\][^\n]*?(?:Message:\s*)?'
+            . 'No schema for ' . $group . '(?=[\s\.:]|$)';
+
+        return $header_schema_errors . '|' . $header_no_schema;
     }
 
     /**
@@ -165,6 +213,10 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
     /**
      * Emits a one-shot informational note when schema-ignore is active.
      *
+     * Robo dispatches @hook on-event handlers on a fresh instance of the
+     * host class where $this->dockworkerIO is not initialised. Falling
+     * back to STDERR keeps the note visible in that context.
+     *
      * @param string[] $patterns
      *   The active patterns to list.
      */
@@ -174,17 +226,23 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
             return;
         }
         self::$schemaIgnoreNoteEmitted = true;
-        // Typed-property safe: isset() returns false on uninitialized
-        // typed properties without throwing.
-        if (!isset($this->dockworkerIO)) {
-            return;
-        }
-        $this->dockworkerIO->writeln(sprintf(
+
+        $lines = [sprintf(
             '[info] Drupal schema-enforcement ignore active: %d pattern(s)',
             count($patterns)
-        ));
+        )];
         foreach ($patterns as $p) {
-            $this->dockworkerIO->writeln('       - ' . $p);
+            $lines[] = '       - ' . $p;
         }
+
+        // Typed-property safe: isset() returns false on uninitialized
+        // typed properties without throwing.
+        if (isset($this->dockworkerIO)) {
+            foreach ($lines as $line) {
+                $this->dockworkerIO->writeln($line);
+            }
+            return;
+        }
+        fwrite(STDERR, implode("\n", $lines) . "\n");
     }
 }
