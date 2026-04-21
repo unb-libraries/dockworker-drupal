@@ -142,18 +142,11 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
 
         $fragments = [];
         foreach ($patterns as $entry) {
-            $quoted = preg_quote($entry, '/');
-            if (str_ends_with($quoted, '\.\*')) {
-                // "foo.bar.*" → matches "foo.bar" OR
-                // "foo.bar.<non-whitespace>".
-                $fragments[] = substr($quoted, 0, -4)
-                    . '(?:\.[^\s]*)?';
-            } else {
-                // Mid-string '*' kept as non-whitespace wildcard for
-                // back-compat.
-                $fragments[] = str_replace('\*', '[^\s]*', $quoted);
+            foreach ($this->schemaEntryFragments($entry) as $frag) {
+                $fragments[$frag] = true;
             }
         }
+        $fragments = array_keys($fragments);
 
         $this->noteActiveSchemaIgnore($patterns);
 
@@ -162,18 +155,66 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
         // Format 1: the LenientConfigSchemaChecker single-line form
         // emitted during drush config-import. Drush may inject tokens
         // between '[warning]' and 'Schema errors for', so accept any
-        // non-newline content there.
+        // non-newline content there. The lookahead disallows '\.' so
+        // a 2-part prefix "system.file" cannot bind inside
+        // "system.file.foo".
         $header_schema_errors = '\[warning\][^\n]*?Schema errors for '
             . $group . '(?=[\s:]|$)';
 
         // Format 2: the Drush exception-renderer form, e.g.
         // '[warning] Message: No schema for system.authorize.'. The
-        // trailing period is sentence punctuation — the '\.' in the
-        // lookahead lets a bare config name bind.
+        // trailing period is sentence punctuation. Accept '\.' in the
+        // lookahead only when followed by whitespace or end-of-line,
+        // so a 2-part prefix like "views.view" cannot bind inside
+        // "views.view.front".
         $header_no_schema = '\[warning\][^\n]*?(?:Message:\s*)?'
-            . 'No schema for ' . $group . '(?=[\s\.:]|$)';
+            . 'No schema for ' . $group . '(?=[\s:]|\.\s|\.$|$)';
 
         return $header_schema_errors . '|' . $header_no_schema;
+    }
+
+    /**
+     * Expands a single ignore-list entry into one or more regex fragments.
+     *
+     * Users may list either a config name (e.g. "system.file") or a schema
+     * PATH into that config (e.g. "system.file.path.temporary"). Drush's
+     * warning header prints only the top-level config name, so for schema-
+     * path entries we also emit a fragment covering the 2-segment config-
+     * name prefix ("system.file") so the allowlist binds regardless of
+     * which form the user wrote.
+     *
+     * Trailing ".*" wildcard matches bare config name OR non-whitespace
+     * descendant. Mid-string "*" is kept as a non-whitespace wildcard for
+     * back-compat.
+     *
+     * @param string $entry
+     *   The user-supplied allowlist entry.
+     *
+     * @return string[]
+     *   Regex fragments for use inside a '(?:…|…)' alternation.
+     */
+    private function schemaEntryFragments(string $entry): array
+    {
+        $out = [];
+        $quoted = preg_quote($entry, '/');
+        if (str_ends_with($quoted, '\.\*')) {
+            $out[] = substr($quoted, 0, -4) . '(?:\.[^\s]*)?';
+        } else {
+            $out[] = str_replace('\*', '[^\s]*', $quoted);
+        }
+
+        // Auto-derive a 2-segment config-name prefix for schema-path
+        // entries so headers that print only the top-level config name
+        // still bind. Skipped for wildcard entries — the wildcard
+        // expansion already covers bare-name + descendant.
+        if (str_contains($entry, '*')) {
+            return $out;
+        }
+        $parts = explode('.', $entry);
+        if (count($parts) > 2) {
+            $out[] = preg_quote($parts[0] . '.' . $parts[1], '/');
+        }
+        return $out;
     }
 
     /**
