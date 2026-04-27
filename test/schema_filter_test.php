@@ -436,6 +436,102 @@ $cases[] = [
 ];
 
 $cases[] = [
+    'name' => 'streaming path: regex exceptions suppress allowlisted single-line warning',
+    'run' => function () use ($harness, $lineMatchesError): ?string {
+        // Reproduces the failure-mode the user hit: a single-line
+        // warning whose header config name matches the allowlist
+        // exactly. dockworker-daemon's monitorLocalStartupProgress
+        // calls logsHaveErrors() on streaming chunks and never
+        // touches the block parser, so the regex-exception path
+        // must catch this.
+        $line = 'acts-lib-unb-ca  |  [warning] Schema errors for core.entity_form_display.node.event.default with the following errors: core.entity_form_display.node.event.default:content.field_event_date.third_party_settings.conditional_fields.df4d7d4a-3db5-4f1f-b02d-408863e11fcd.settings.values variable type is string but applied schema class is Drupal\Core\Config\Schema\Sequence, core.entity_form_display.node.event.default:content.field_event_date.third_party_settings.conditional_fields.df4d7d4a-3db5-4f1f-b02d-408863e11fcd.settings.effect_options.fade missing schema. These errors mean there is configuration that does not comply with its schema. This is not a fatal error, but it is recommended to fix these issues. For more information on configuration schemas, check out <a href="https://www.drupal.org/docs/drupal-apis/configuration-api/configuration-schemametadata">the documentation</a>.';
+        if (!$lineMatchesError($line)) {
+            return 'precondition: line should match the broad error pattern (it contains "errors", "fatal" etc.)';
+        }
+        $allowlist = ['core.entity_form_display.node.event.default'];
+        $patterns = $harness->buildSchemaWarningExceptionPatterns($allowlist);
+        $exceptionsRegex = implode('|', array_merge(FIXED_EXCEPTIONS, $patterns));
+        if (preg_match("/(.*($exceptionsRegex).*)/i", $line) !== 1) {
+            return 'streaming exception regex did NOT suppress allowlisted single-line warning';
+        }
+        return null;
+    },
+];
+
+$cases[] = [
+    'name' => 'streaming path: un-allowlisted single-line warning is NOT suppressed (tripwire)',
+    'run' => function () use ($harness, $lineMatchesError): ?string {
+        $line = 'acts-lib-unb-ca  |  [warning] Schema errors for novel.config with the following errors: novel.config:foo missing schema. some other prose with no body-pattern hits.';
+        if (!$lineMatchesError($line)) {
+            return 'precondition: line should match the broad error pattern';
+        }
+        $allowlist = ['system.file']; // does not cover novel.config
+        $patterns = $harness->buildSchemaWarningExceptionPatterns($allowlist);
+        $exceptionsRegex = implode('|', array_merge(FIXED_EXCEPTIONS, $patterns));
+        // The line contains "missing schema" which IS in the boilerplate body
+        // exceptions. So the streaming filter WOULD suppress it. Use a line
+        // without those phrases to test pure tripwire on the header alone.
+        $cleanLine = 'acts-lib-unb-ca  |  [warning] Schema errors for novel.config with the following errors: prose without escape-hatch keywords.';
+        if (preg_match("/(.*($exceptionsRegex).*)/i", $cleanLine) === 1) {
+            return 'tripwire failed: un-allowlisted header was suppressed';
+        }
+        return null;
+    },
+];
+
+$cases[] = [
+    'name' => 'streaming path: wrap-tail "following errors:" suppressed (long config name wrap point)',
+    'run' => function () use ($harness): ?string {
+        // Long config names cause Drush to wrap at a different point:
+        // "...with the" / "following errors:" instead of the standard
+        // "...with the following | errors:" tail. The pattern must
+        // match either form.
+        $line = 'acts-lib-unb-ca  | following errors:  ';
+        if (preg_match('/' . ERRORS_PATTERN . '/i', $line) !== 1) {
+            return 'precondition: line should match the broad error pattern via "errors"';
+        }
+        $patterns = $harness->buildSchemaWarningExceptionPatterns(['system.file']);
+        $exceptionsRegex = implode('|', array_merge(FIXED_EXCEPTIONS, $patterns));
+        if (preg_match("/(.*($exceptionsRegex).*)/i", $line) !== 1) {
+            return 'wrap-tail pattern did not suppress "following errors:" line';
+        }
+        // Also check the standard form still works.
+        $standardLine = 'acts-lib-unb-ca  | with the following | errors:  ';
+        if (preg_match("/(.*($exceptionsRegex).*)/i", $standardLine) !== 1) {
+            return 'wrap-tail pattern broke for standard "| errors:" tail';
+        }
+        return null;
+    },
+];
+
+$cases[] = [
+    'name' => 'streaming path: wrapped-warning continuation lines suppressed',
+    'run' => function () use ($harness): ?string {
+        // Each of these would be flagged by the broad error pattern
+        // (errors / fatal). The streaming exception regex must cover
+        // each so the deploy monitor doesn't bail mid-warning.
+        $lines = [
+            'acts-lib-unb-ca  |  [warning] Message: No schema for system.authorize. These errors mean there is configuration that',
+            'acts-lib-unb-ca  | does not comply with its schema. This is not a fatal error, but it is',
+            'acts-lib-unb-ca  | system.file:path.temporary missing schema. These errors mean there is',
+            'acts-lib-unb-ca  | configuration that does not comply with its schema. This is not a fatal',
+            'acts-lib-unb-ca  | error, but it is recommended to fix these issues. For more information on',
+        ];
+        $patterns = $harness->buildSchemaWarningExceptionPatterns(['system.authorize', 'system.file']);
+        $exceptionsRegex = implode('|', array_merge(FIXED_EXCEPTIONS, $patterns));
+        foreach ($lines as $line) {
+            if (preg_match("/.*(" . ERRORS_PATTERN . ").*/i", $line) !== 1) {
+                continue; // line wouldn't be flagged anyway
+            }
+            if (preg_match("/(.*($exceptionsRegex).*)/i", $line) !== 1) {
+                return "streaming regex failed to suppress flagged continuation line: $line";
+            }
+        }
+        return null;
+    },
+];
+
+$cases[] = [
     'name' => 'unbherbarium real-world allowlist: all 16 entries',
     'run' => function () use ($strip): ?string {
         $allowlist = [

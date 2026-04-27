@@ -181,6 +181,97 @@ trait SchemaWarningFilterTrait
     }
 
     /**
+     * Builds regex exception patterns for the streaming log scanner.
+     *
+     * The block parser (stripSchemaWarningBlocks) only runs for the
+     * file-based logs:check-file path. The local deploy monitor in
+     * dockworker-daemon scans streaming log chunks via logsHaveErrors()
+     * and never sees a complete file. For that path we still need
+     * regex-based line suppression so allowlisted schema-warning lines
+     * don't trip the build mid-deploy.
+     *
+     * Returns:
+     *  - one allowlist-header pattern (or null if allowlist is empty)
+     *  - a fixed set of boilerplate body-line patterns whose substrings
+     *    contain error-pattern keywords ("errors", "fatal", etc.) and
+     *    therefore would otherwise be flagged
+     *
+     * @param string[] $allowlist
+     *   Config-name allowlist as accepted by stripSchemaWarningBlocks().
+     *
+     * @return string[]
+     *   Regex alternatives suitable for use as exception strings by
+     *   LogCheckerTrait::logsHaveErrors().
+     */
+    public function buildSchemaWarningExceptionPatterns(array $allowlist): array
+    {
+        $patterns = [
+            // Wrap-tail anchor: any line ending with "errors:" or
+            // "error:" (Drush wraps "Schema errors for X with the
+            // following errors:" at varying points depending on the
+            // length of X).
+            '\berrors?:\s*$',
+            // Body-prose lines that contain error-pattern substrings.
+            'These errors mean there',
+            'is configuration that does not comply with its schema',
+            'does not comply with its schema',
+            'not a fatal error, but it is',
+            'recommended to fix these issues',
+            'missing schema',
+        ];
+
+        $headerPattern = $this->buildAllowlistHeaderPattern($allowlist);
+        if ($headerPattern !== null) {
+            $patterns[] = $headerPattern;
+        }
+
+        return $patterns;
+    }
+
+    /**
+     * Builds a regex matching "[warning] Schema errors for X" / "No
+     * schema for X" headers where X is in the allowlist.
+     *
+     * Used only by the streaming exception path; the block parser
+     * matches on headers structurally, not via regex.
+     *
+     * @return string|null
+     *   The regex alternation, or null if the allowlist is empty.
+     */
+    private function buildAllowlistHeaderPattern(array $allowlist): ?string
+    {
+        $fragments = [];
+        foreach ($allowlist as $entry) {
+            if (!is_string($entry)) {
+                continue;
+            }
+            $entry = trim($entry);
+            if ($entry === '') {
+                continue;
+            }
+            // Reuse the same wildcard semantics as matchesSchemaAllowlist.
+            if (str_ends_with($entry, '.*')) {
+                $prefix = preg_quote(substr($entry, 0, -2), '/');
+                $fragments[$prefix . '(?:\.[^\s]*)?'] = true;
+                continue;
+            }
+            if (str_contains($entry, '*')) {
+                $fragments[str_replace('\*', '[^.\s]*', preg_quote($entry, '/'))] = true;
+                continue;
+            }
+            // Exact entry: bind tightly so "system.file" doesn't bind
+            // inside "system.file.foo" via the streaming regex.
+            $fragments[preg_quote($entry, '/') . '(?=[\s:.]|$)'] = true;
+        }
+        if ($fragments === []) {
+            return null;
+        }
+        $group = '(?:' . implode('|', array_keys($fragments)) . ')';
+        // Either header verb, with optional "Message:" prefix.
+        return '\[warning\][^\n]*?(?:Message:\s*)?(?:Schema errors for|No schema for)\s+' . $group;
+    }
+
+    /**
      * Returns the config name from a schema-warning header line, or null.
      *
      * Handles all four observed Drush header forms:
