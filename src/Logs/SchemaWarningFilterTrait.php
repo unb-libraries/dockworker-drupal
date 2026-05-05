@@ -64,9 +64,49 @@ trait SchemaWarningFilterTrait
         $inBlock = false;
         $blockBodyLines = 0;
         $blockHeaderLineNum = 0;
+        // Buffer for the verb-only header line when the config name
+        // wraps to the following line (Drush 13 / Symfony Console wraps
+        // long config names after the verb). Held until the name lands
+        // on a subsequent line so the allowlist decision can be made
+        // atomically.
+        $pendingHeaderLine = null;
 
         foreach ($lines as $index => $line) {
             $bare = $this->stripAnsi($line);
+
+            // Verb-then-name wrap: previous line was a bare verb. Try
+            // to extract the config name from the start of this line.
+            if ($pendingHeaderLine !== null) {
+                if ($this->isContentlessLine($bare)) {
+                    // Drush sometimes leaves a blank between verb and
+                    // name. Drop it silently and keep waiting. Also
+                    // covers docker-compose prefix-only lines like
+                    // "nbbib-lib-unb-ca  |" with no content after the
+                    // pipe.
+                    continue;
+                }
+                $headerName = $this->detectWrappedHeaderName($bare);
+                $inBlock = true;
+                $blockBodyLines = 0;
+                $blockHeaderLineNum = $index;
+                if (
+                    $headerName === null
+                    || !$this->matchesSchemaAllowlist($headerName, $allowlist)
+                ) {
+                    // Tripwire — emit both the buffered verb line and
+                    // this line so the build still fails on configs
+                    // the user hasn't opted into suppressing (or on a
+                    // future Drush format we can't parse).
+                    $output[] = $pendingHeaderLine;
+                    $output[] = $line;
+                }
+                $pendingHeaderLine = null;
+                if ($this->isBlockTerminator($bare)) {
+                    $inBlock = false;
+                }
+                continue;
+            }
+
             $headerName = $this->detectSchemaHeader($bare);
 
             if ($headerName !== null) {
@@ -90,6 +130,14 @@ trait SchemaWarningFilterTrait
                 if ($this->isBlockTerminator($bare)) {
                     $inBlock = false;
                 }
+                continue;
+            }
+
+            // Bare-verb form: verb on this line, name will arrive on
+            // the next non-blank line.
+            if ($this->isPendingHeader($bare)) {
+                $pendingHeaderLine = $line;
+                $inBlock = false;
                 continue;
             }
 
@@ -211,6 +259,15 @@ trait SchemaWarningFilterTrait
             // following errors:" at varying points depending on the
             // length of X).
             '\berrors?:\s*$',
+            // Bare-verb form: long config names get wrapped onto the
+            // next line after the verb, leaving "[warning] Message:
+            // Schema errors for" alone (plus trailing whitespace) on
+            // the header line. logsHaveErrors is line-by-line and
+            // can't correlate with the next-line name, so suppression
+            // here is unconditional. Tripwire fidelity for this wrap
+            // shape lives in the file-scan block parser, which has
+            // the whole log in hand.
+            '\[warning\][^\n]*?(?:Message:\s*)?(?:Schema errors for|No schema for)\s*$',
             // Body-prose lines that contain error-pattern substrings.
             'These errors mean there',
             'is configuration that does not comply with its schema',
@@ -305,6 +362,54 @@ trait SchemaWarningFilterTrait
     private function isBlockTerminator(string $line): bool
     {
         return str_contains($line, 'configuration-schemametadata');
+    }
+
+    /**
+     * Tests whether a line has no content after stripping a possible
+     * docker-compose log prefix ("<slug>  | ").
+     *
+     * Used to skip blank continuation lines between a bare verb and
+     * the wrapped name without mis-classifying them as the name line.
+     */
+    private function isContentlessLine(string $line): bool
+    {
+        $stripped = preg_replace('/^[^|]*\|\s*/', '', $line) ?? $line;
+        return trim($stripped) === '';
+    }
+
+    /**
+     * Tests whether a line is a bare-verb header awaiting a wrapped name.
+     *
+     * Drush 13 / Symfony Console wraps schema warnings whose config
+     * name pushes the line past the wrap column right after the verb,
+     * yielding a header line whose only content after "Schema errors
+     * for" / "No schema for" is whitespace. The config name lands at
+     * the start of the next non-blank line.
+     */
+    private function isPendingHeader(string $line): bool
+    {
+        return preg_match(
+            '/\[warning\][^\n]*?(?:Message:\s*)?(?:Schema errors for|No schema for)\s*$/',
+            $line
+        ) === 1;
+    }
+
+    /**
+     * Extracts a config name from the start of a wrapped continuation line.
+     *
+     * Used only when the previous line was a bare verb. The bracketed
+     * "[warning]" prefix is on the previous line, so we look for the
+     * first config-name-shaped token, after optionally consuming a
+     * docker-compose log prefix ("<slug>  | "). Without the prefix
+     * skip, the slug itself (which is a valid name token) would be
+     * captured instead of the config name.
+     */
+    private function detectWrappedHeaderName(string $line): ?string
+    {
+        if (preg_match('/^(?:[^|]*\|\s*)?([A-Za-z0-9_.\-]+)/', $line, $m) !== 1) {
+            return null;
+        }
+        return rtrim($m[1], '.');
     }
 
     /**
