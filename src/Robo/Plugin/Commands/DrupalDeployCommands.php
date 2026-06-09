@@ -4,8 +4,6 @@ namespace Dockworker\Robo\Plugin\Commands;
 
 use Dockworker\DockworkerDrupalCommands;
 use Dockworker\IO\DockworkerIOTrait;
-use Dockworker\Logs\SchemaWarningFilterTrait;
-use Robo\Robo;
 
 /**
  * Provides commands for building and deploying the Drupal application locally.
@@ -13,25 +11,17 @@ use Robo\Robo;
 class DrupalDeployCommands extends DockworkerDrupalCommands
 {
     use DockworkerIOTrait;
-    use SchemaWarningFilterTrait;
 
     /**
      * Provides the Drupal log error exceptions.
      *
-     * Two consumers feed off this hook:
-     *
-     *  - LogCheckCommands::checkLogFileForErrors() — file-based scan
-     *    invoked from CI as "logs:check-file <path>". For this path
-     *    DrupalLogCheckCommands also runs a pre-command hook that
-     *    strips schema-warning blocks structurally; the regex
-     *    exceptions returned here are belt-and-suspenders.
-     *
-     *  - dockworker-daemon's monitorLocalStartupProgress() — streaming
-     *    scan over incremental "docker compose logs -f" chunks. There
-     *    is no file to pre-process; the regex exceptions returned here
-     *    are the ONLY suppression mechanism, so they must cover every
-     *    schema-warning line that would otherwise match the broad
-     *    error pattern.
+     * The log classifier (LogCheckerTrait::partitionLogLines) demotes every
+     * Drupal '[warning]'-level line to non-fatal and collects it for an
+     * end-of-deploy summary, and never scans '[notice]/[success]/...' lines.
+     * The exceptions below only need to cover BENIGN lines that reach the fatal
+     * scan: markerless output that happens to contain an error-pattern
+     * substring. Consumed by both the streaming monitor
+     * (monitorLocalStartupProgress) and the file scan (logs:check-file).
      *
      * @hook on-event dockworker-logs-errors-exceptions
      *
@@ -59,48 +49,31 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
 
             // Calendar exception.
             'Calendar template name' => 'HoursCalendarUnavailableTemplate',
+
+            // Drush proceeding past a non-fatal requirements check: it
+            // auto-answers "yes" and continues, so this is informational.
+            'Drush requirements auto-continue' => 'Do you wish to continue\?: yes',
+
+            // Stable Drupal-core config-schema warning body prose. Schema
+            // warnings are '[warning]'-level and are demoted by the classifier,
+            // but Drush wraps long ones across lines (e.g. its end-of-run
+            // "Message:" summary). Wrapping co-locates denylist words
+            // ("errors"/"fatal error") with otherwise-benign prose, so we
+            // suppress the FULL set of stable core phrases - not just the ones
+            // that themselves carry a denylist word. These are fixed Drupal-core
+            // strings. The wrap-tail is anchored to "following errors:$" (not a
+            // bare "errors:$") so a genuine "...failed with errors:" line is
+            // never excepted - a stray wrap fails loudly rather than hiding an
+            // error.
+            'Schema warning wrap-tail' => 'following errors:\s*$',
+            'Schema warning prose 1' => 'These errors mean there',
+            'Schema warning prose 2' => 'is configuration that does not comply with its schema',
+            'Schema warning prose 3' => 'does not comply with its schema',
+            'Schema warning prose 4' => 'not a fatal error, but it is',
+            'Schema warning prose 5' => 'recommended to fix these issues',
+            'Schema warning prose 6' => 'missing schema',
         ];
 
-        $exceptions = array_values($fixed);
-        $allowlist = $this->loadSchemaAllowlist();
-        foreach ($this->buildSchemaWarningExceptionPatterns($allowlist) as $p) {
-            $exceptions[] = $p;
-        }
-
-        return [[], $exceptions];
-    }
-
-    /**
-     * Reads the schema-warning allowlist from dockworker.yml.
-     *
-     * Same shape as DrupalLogCheckCommands::resolveSchemaWarningAllowlist
-     * but without the misplaced-key warning (avoids double-emission;
-     * the hook command is the canonical place for that note).
-     *
-     * @return string[]
-     */
-    private function loadSchemaAllowlist(): array
-    {
-        $raw = Robo::config()->get('dockworker.drupal.schemas.ignore_enforcement', []);
-        if (is_string($raw)) {
-            $raw = explode(',', $raw);
-        }
-        if (!is_array($raw)) {
-            return [];
-        }
-        $clean = [];
-        $seen = [];
-        foreach ($raw as $entry) {
-            if (!is_string($entry)) {
-                continue;
-            }
-            $entry = trim($entry);
-            if ($entry === '' || isset($seen[$entry])) {
-                continue;
-            }
-            $seen[$entry] = true;
-            $clean[] = $entry;
-        }
-        return $clean;
+        return [[], array_values($fixed)];
     }
 }
