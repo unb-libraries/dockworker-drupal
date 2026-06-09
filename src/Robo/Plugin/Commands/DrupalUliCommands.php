@@ -41,6 +41,33 @@ class DrupalUliCommands extends DockworkerDrupalCommands
     }
 
     /**
+     * Informs the user of the ULI after a test upgrade.
+     *
+     * @param mixed $result
+     *   The result of the command.
+     * @param \Consolidation\AnnotatedCommand\CommandData $commandData
+     *   The command data.
+     *
+     * @hook post-command drupal:test-upgrade
+     */
+    public function displayUliAfterTestUpgrade(
+        $result,
+        CommandData $commandData
+    ): void {
+        $uid = $commandData->input()->getOption('uid');
+        $this->initOptions();
+        $this->initDockworkerIO();
+        $this->preInitDockworkerPersistentDataStorageDir();
+
+        $this->generateDrupalUli(
+            [
+                'env' => 'local',
+                'uid' => $uid ?? '1',
+            ]
+        );
+    }
+
+    /**
      * Generates a Drupal user login link for this application.
      *
      * @param mixed[] $options
