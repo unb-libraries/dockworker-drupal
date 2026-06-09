@@ -56,8 +56,8 @@ trait DrushCommandTrait
      *   The IO to use for input and output.
      * @param string $env
      *   The environment to run the command in.
-     * @param array[] $command
-     *   An array of commands to run.
+     * @param array<string, string[]> $commands
+     *   An array of commands to run, keyed by message.
      *
      * @option string $env
      *   The environment to run the command in.

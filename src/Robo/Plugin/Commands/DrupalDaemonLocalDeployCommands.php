@@ -81,13 +81,15 @@ class DrupalDaemonLocalDeployCommands extends DockworkerDaemonCommands
      *   The result of the command.
      * @param \Consolidation\AnnotatedCommand\CommandData $commandData
      *   The command data.
+     * @param string $action
+     *   The action that was performed.
      *
      * @hook post-command application:deploy
      */
     public function displayDrupalLocalLinks(
         $result,
         CommandData $commandData,
-        $action = 'Deployment'
+        string $action = 'Deployment'
     ): void {
         // Hooks don't fire for other hooks, so we have to initialize resources.
         $this->initOptions();
