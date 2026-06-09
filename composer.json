@@ -3,6 +3,7 @@
   "description": "Extends the dockworker application to deploy and develop Drupal applications via a consistent and unified workflow.",
   "type": "library",
   "require": {
+    "php": "^8.3",
     "drupal/coder": "^8",
     "ext-yaml": "*",
     "unb-libraries/dockworker-daemon": "6.x-dev"
