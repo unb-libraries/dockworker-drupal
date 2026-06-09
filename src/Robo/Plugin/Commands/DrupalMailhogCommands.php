@@ -53,7 +53,7 @@ class DrupalMailhogCommands extends DockworkerDrupalCommands
             sprintf(
                 'Visit the mailhog instance at: http://local-%s:%s/',
                 $this->applicationName,
-                $this->applicationUuid + 1000
+                ((int) $this->applicationUuid) + 1000
             )
         );
     }
