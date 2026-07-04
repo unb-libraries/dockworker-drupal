@@ -67,6 +67,8 @@ class DrupalTestUpgradeCommands extends DockworkerDrupalCommands implements Cust
      * @param mixed[] $options
      *   The options passed to the command.
      *
+     * @option string $name
+     *   The name of the production snapshot to upgrade against.
      * @option bool $files
      *   Also import the production public files, not just the database.
      * @option bool $no-build
@@ -75,6 +77,8 @@ class DrupalTestUpgradeCommands extends DockworkerDrupalCommands implements Cust
      *   configuration are picked up regardless.
      * @option bool $reindex
      *   Rebuild and reindex Solr after the upgrade. Skipped by default.
+     * @option bool $force
+     *   Use the snapshot even if it has no valid manifest (advanced).
      * @option string $uid
      *   The uid to generate the post-upgrade login link for. Defaults to uid 1.
      * @option int $timeout
@@ -84,17 +88,21 @@ class DrupalTestUpgradeCommands extends DockworkerDrupalCommands implements Cust
      * @command drupal:test-upgrade
      * @aliases test-upgrade
      * @usage --files --uid=1
+     * @usage --name=pre-upgrade --files
      */
     public function testUpgrade(
         array $options = [
+            'name' => 'nightly',
             'files' => false,
             'no-build' => false,
             'reindex' => false,
+            'force' => false,
             'uid' => '1',
             'timeout' => 1800,
         ]
     ): void {
         $env = $this->testUpgradeEnv;
+        $this->validateSnapshotName($options['name']);
         $this->dockworkerIO->title("Testing $this->applicationName Upgrade Against a Production Snapshot");
 
         // The import must run inside a live application container, and the
@@ -111,7 +119,21 @@ class DrupalTestUpgradeCommands extends DockworkerDrupalCommands implements Cust
         if (!$options['files']) {
             $this->dockworkerIO->say('Importing the database only (use --files to also import production files).');
         }
-        $this->initSnapshotCommand('prod', $files_to_skip);
+
+        // Read the manifest (the snapshot's commit marker) before selecting it:
+        // its absence means the snapshot is in progress, failed, or unmigrated.
+        $this->initSnapshotConnection('prod');
+        $manifest = $this->readManifest($options['name']);
+        if ($manifest === null && !$options['force']) {
+            $this->dockworkerIO->error(
+                sprintf(
+                    "The [prod] snapshot '%s' has no valid manifest (snapshot.json). It may be in progress, failed, or not yet migrated. Re-run with --force to use it anyway.",
+                    $options['name']
+                )
+            );
+            exit(1);
+        }
+        $this->selectSnapshot('prod', $options['name'], $files_to_skip);
         $this->initContainerExecCommand($this->dockworkerIO, $env);
         $this->renderAllSnapshotFiles('prod');
 
@@ -129,7 +151,10 @@ class DrupalTestUpgradeCommands extends DockworkerDrupalCommands implements Cust
         );
         if (
             !$this->dockworkerIO->confirm(
-                'Are you sure you want to test the upgrade with the above-listed production snapshot?'
+                sprintf(
+                    "Are you sure you want to test the upgrade with the above-listed production snapshot '%s'?",
+                    $options['name']
+                )
             )
         ) {
             $this->dockworkerIO->say('Test upgrade aborted.');
