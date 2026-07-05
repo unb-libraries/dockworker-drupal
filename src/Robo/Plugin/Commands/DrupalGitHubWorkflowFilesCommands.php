@@ -43,7 +43,6 @@ class DrupalGitHubWorkflowFilesCommands extends DockworkerDrupalCommands
                 'project_name' => $this->applicationName,
                 'project_slug' => $this->applicationSlug,
                 'image_name' => $this->getRequiredConfigurationItem('dockworker.workflows.image.name'),
-                'push_branches' => json_encode($this->getRequiredConfigurationItem('dockworker.workflows.image.push-branches')),
                 'deploy_branches' => json_encode($deploy_branches),
                 'deploy_branch_map' => json_encode(array_combine($deploy_branches, $deploy_branches)),
             ]

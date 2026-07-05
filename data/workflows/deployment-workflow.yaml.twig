@@ -14,7 +14,6 @@ jobs:
       deploy-branches: '{{ deploy_branches|raw }}'
       image-name: '{{ image_name }}'
       k8s-deployment-name: '{{ project_slug }}'
-      push-branches: '{{ push_branches|raw }}'
     secrets:
       {% verbatim %}KUBE_CONFIG: ${{ secrets.KUBE_CONFIG_DATA }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
