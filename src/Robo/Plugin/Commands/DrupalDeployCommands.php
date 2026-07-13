@@ -66,6 +66,12 @@ class DrupalDeployCommands extends DockworkerDrupalCommands
             // never excepted - a stray wrap fails loudly rather than hiding an
             // error.
             'Schema warning wrap-tail' => 'following errors:\s*$',
+            // Drush also wraps "...with the following\nerrors:", leaving a bare
+            // continuation line of just "errors:" (optionally behind the
+            // docker-compose "<slug> |" prefix) that reaches the fatal scan.
+            // Anchor to a line whose entire message is "errors:" so a genuine
+            // "...failed with errors:" line is never excepted.
+            'Schema warning bare wrap-tail' => '(\||^)\s*errors:\s*$',
             'Schema warning prose 1' => 'These errors mean there',
             'Schema warning prose 2' => 'is configuration that does not comply with its schema',
             'Schema warning prose 3' => 'does not comply with its schema',
