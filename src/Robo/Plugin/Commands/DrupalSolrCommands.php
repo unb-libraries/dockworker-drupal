@@ -83,10 +83,11 @@ class DrupalSolrCommands extends DockworkerDrupalCommands
      * @return bool
      *   TRUE if the instance has a Solr service, FALSE otherwise.
      */
-    protected function instanceHasSolr(): bool {
+    protected function instanceHasSolr(): bool
+    {
         if (!empty($this->config->get('dockworker.endpoints.deployments.drupal-solr-lib-unb-ca'))) {
-            return TRUE;
+            return true;
         }
-        return FALSE;
+        return false;
     }
 }

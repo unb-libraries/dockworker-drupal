@@ -14,7 +14,8 @@ class DrupalGitHookInstallCommands extends GitHookInstallCommands
      *
      * @hook post-init git:setup-hooks
      */
-    public function setupDrupalGitHooks(): void {
+    public function setupDrupalGitHooks(): void
+    {
         $this->applicationRoot = RepoFinder::findRepoRoot();
         $this->copyGitHookFiles('dockworker-drupal');
     }

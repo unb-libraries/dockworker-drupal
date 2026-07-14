@@ -40,5 +40,4 @@ class DrushCommands extends DockworkerDrupalCommands
             $args_array
         );
     }
-
 }

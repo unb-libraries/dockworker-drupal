@@ -11,9 +11,7 @@ use Dockworker\IO\DockworkerIOTrait;
  * Provides commands for running drush in the application's deployed resources.
  */
 class DrushSqlDumpCommands extends DrushCommands
-
 {
-
     /**
      * Runs a drush sql-dump command within this application.
      *

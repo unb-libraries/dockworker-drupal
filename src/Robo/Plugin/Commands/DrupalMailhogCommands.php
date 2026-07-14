@@ -20,7 +20,8 @@ class DrupalMailhogCommands extends DockworkerDrupalCommands
      * @command drupal:mailhog:enable
      * @aliases mailhog
      */
-    public function startMailHogContainer(): void {
+    public function startMailHogContainer(): void
+    {
         $this->registerDockerCliTool($this->dockworkerIO);
         if ($this->isMailhogEnabled()) {
             $this->say('Mailhog is already enabled.');
@@ -36,7 +37,8 @@ class DrupalMailhogCommands extends DockworkerDrupalCommands
      *
      * @command drupal:mailhog:disable
      */
-    public function stopMailHogContainer(): void {
+    public function stopMailHogContainer(): void
+    {
         $this->registerDockerCliTool($this->dockworkerIO);
         if (!$this->isMailhogEnabled()) {
             $this->say('Mailhog is already disabled.');
@@ -48,7 +50,8 @@ class DrupalMailhogCommands extends DockworkerDrupalCommands
     /**
      * Shows the Mailhog URI.
      */
-    protected function showMailHogUri(): void {
+    protected function showMailHogUri(): void
+    {
         $this->dockworkerIO->block(
             sprintf(
                 'Visit the mailhog instance at: http://local-%s:%s/',
@@ -64,7 +67,8 @@ class DrupalMailhogCommands extends DockworkerDrupalCommands
      * @return bool
      *   TRUE if Mailhog is enabled, FALSE otherwise.
      */
-    protected function isMailhogEnabled(): bool {
+    protected function isMailhogEnabled(): bool
+    {
         return $this->composeServiceIsRunning('mailhog');
     }
 }
